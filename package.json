@@ -1,0 +1,18 @@
+{
+    "name": "reports",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "electron-prebuilt": "^1.4.13"
+    },
+    "dependencies": {
+        "browser-window": "^0.4.0",
+        "electron": "^1.7.9"
+    }
+}
