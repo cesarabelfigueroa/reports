@@ -1,30 +1,19 @@
 <template>
   <div id="wrapper">
-    <img id="logo" src="~@/assets/logo.png" alt="electron-vue">
+    <div class="ui massive fixed inverted borderless menu">
+      <div class="ui container">
+        <a class="header item" href="#">Project Name</a><a class="active item" href="#">Home</a><a class="item" href="#">About</a><a class="item" href="#">Contact</a>
+      </div>
+    </div>
     <main>
-      <div class="left-side">
-        <span class="title">
-          Welcome to your new project!
-        </span>
-        <system-information></system-information>
-      </div>
-
-      <div class="right-side">
-        <div class="doc">
-          <div class="title">Getting Started</div>
-          <p>
-            electron-vue comes packed with detailed documentation that covers everything from
-            internal configurations, using the project structure, building your application,
-            and so much more.
-          </p>
-          <button @click="open('https://simulatedgreg.gitbooks.io/electron-vue/content/')">Read the Docs</button><br><br>
-        </div>
-        <div class="doc">
-          <div class="title alt">Other Documentation</div>
-          <button class="alt" @click="open('https://electron.atom.io/docs/')">Electron</button>
-          <button class="alt" @click="open('https://vuejs.org/v2/guide/')">Vue.js</button>
-        </div>
-      </div>
+      <div class="ui main center aligned text container">
+      <h1 class="ui huge header">
+        Semantic UI starter template
+      </h1>
+      <p class="lead">
+        Use this document as a way to quickly start any new project.<br>All you get is this text and a mostly barebones HTML document.
+      </p>
+    </div>
     </main>
   </div>
 </template>

@@ -11,5 +11,5 @@
 </script>
 
 <style>
-  /* CSS */
+  @import '../../semantic/dist/semantic.css';
 </style>
