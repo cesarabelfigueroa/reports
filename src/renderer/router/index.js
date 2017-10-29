@@ -11,6 +11,16 @@ export default new Router({
       component: require('@/components/LandingPage').default
     },
     {
+      path: '/Formulario',
+      name: 'formulario',
+      component: require('@/components/Formulario').default
+    },
+    {
+      path: '/Home',
+      name: 'home',
+      component: require('@/components/Home').default
+    },
+    {
       path: '*',
       redirect: '/'
     }

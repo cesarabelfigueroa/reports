@@ -1,17 +1,47 @@
 <template>
-    <div id="wrapper">
-        <div class="ui container fluid">
-          
-        </div>
-    </div>
+  <div class="principal">
+     <div class="fondo"></div>
+     <div class="ui center aligned container" id="contenedor">
+       <div class="ui center aligned container">
+         <div class="">
+           <h1>Login</h1>
+         </div>
+          <div class="ui justified aligned container">
+            <br><br><br>
+            <form class="ui form">
+              <div class="field">
+                <label>Usuario: </label>
+                <div class="ui left icon input">
+                  <input type="text" placeholder="Usuario">
+                  <i class="user icon"></i>
+                </div>
+              </div>
+              <br>
+              <div class="field">
+                <label>Contraseña:</label>
+                <div class="ui left icon input">
+                  <input type="password" placeholder="Contraseña">
+                  <i class="lock icon"></i>
+                </div>
+              </div>
+            </form>
+          </div>
+          <br><br>
+            <p href="#">¿Olvidaste tu contraseña?</p>
+          <br>
+          <router-link to="/home"><button class="ui yellow button" id="login">Inicio</button></router-link>
+       </div>
+     </div>
+  </div>
+
 </template>
 
 <script>
-  import SystemInformation from './LandingPage/SystemInformation'
+
 
   export default {
     name: 'landing-page',
-    components: { SystemInformation },
+    components: {  },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
@@ -19,7 +49,33 @@
     }
   }
 </script>
-<style>
- 
- 
+<style scoped>
+  .principal{
+    padding-top: 10%;
+  }
+  #contenedor{
+    height: 500px;
+    width: 400px;
+    color: white !important;
+    background: rgba(0,0,0, .7);
+    box-shadow: 0px 0px 23px 4px rgba(0,0,0,0.97);
+    padding: 40px;
+  }
+  .fondo{
+    background: url("~@/assets/blueCity.jpg") no-repeat center center;
+    background-size: cover;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+  #login{
+    padding-left: 125px;
+    padding-right: 125px;
+  }
+  label{
+    color: white !important;
+  }
 </style>
