@@ -43,7 +43,7 @@
 
   .fondo{
     background-color: white;
-    background: linear-gradient(gray, white); /* Standard syntax */
+    background: linear-gradient(lightgray, white); /* Standard syntax */
     position: fixed;
     width: 100%;
     height: 100%;

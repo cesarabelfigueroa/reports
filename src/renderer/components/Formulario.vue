@@ -28,7 +28,7 @@
             </div>
             <div class="inline fields">
               <div class="five wide field">
-                <label>Telefono: <i class="asterisk blue icon"></i></label>
+                <label>Telefono: </i></label>
                 <input type="number" placeholder="Codigo de Area">
               </div>
               <div class="eleven wide field">
