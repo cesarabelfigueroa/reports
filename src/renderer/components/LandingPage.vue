@@ -62,7 +62,7 @@
     padding: 40px;
   }
   .fondo{
-    background: url("~@/assets/blueCity.jpg") no-repeat center center;
+    background: url("~@/assets/financePuzzle.jpg") no-repeat center center;
     background-size: cover;
     position: fixed;
     width: 100%;
