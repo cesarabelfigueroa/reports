@@ -23,21 +23,21 @@
               <div class="field">
                 <label>Numero de Identidad: </label>
                 <div class="ui left icon input">
-                  <input type="text" placeholder="Numero de Identidad">
+                  <input type="text" pattern="[0-9]{4}+-[0-9]{4}+-[0-9]{4}" v-model="nID" placeholder="Numero de Identidad">
                   <i class="id card icon"></i>
                 </div>
               </div>
               <div class="field">
                 <label>Nombres: </label>
                 <div class="ui left icon input">
-                  <input type="text" placeholder="Nombres">
+                  <input type="text" v-model="nombres" placeholder="Nombres">
                   <i class="user icon"></i>
                 </div>
               </div>
               <div class="field">
                 <label>Apellidos: </label>
                 <div class="ui left icon input">
-                  <input type="text" placeholder="Apellidos">
+                  <input type="text" v-model="apellidos" placeholder="Apellidos">
                   <i class="user outline icon"></i>
                 </div>
               </div>
@@ -46,7 +46,7 @@
           </div>
           <br><br>
           <br>
-          <router-link to="/home"><button class="ui yellow button" id="nuevoCliente">Crear</button></router-link>
+          <router-link to="/home"><button class="ui yellow button" id="nuevoCliente" v-on:click="verify">Crear</button></router-link>
         </div>
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
           <h1>Test tabs</h1>
@@ -65,17 +65,27 @@
     name: 'cliente',
     data(){
       return {
-        activeTab : 1
+        activeTab : 1,
+        nID: '',
+        nombres: '',
+        apellidos: ''
       }
     },
     components: {  },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      verify(){
+        if(this.nID != '' && this.nombres != '' && this.apellidos != ''){
+          swal('Cliente agregado exitosamente!','','success');
+        }else{
+          swal('Oops!','Debe llenar todos los campos','error')
+        }
       }
     },
     beforeMount(){
-      $('.menu .item').tab();
+      //$('.menu .item').tab();
       
     }
   }
