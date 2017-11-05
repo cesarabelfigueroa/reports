@@ -24,6 +24,7 @@
 
 <style>
   @import '../../semantic/dist/semantic.css';
+  
   @import url('https://fonts.googleapis.com/css?family=Quicksand');
   #navBar{
     background-color: black;

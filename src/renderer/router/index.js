@@ -16,9 +16,10 @@ export default new Router({
       component: require('@/components/Cliente').default
     },
     {
-      path: '/Formulario',
+      path: '/Formulario/:test',
       name: 'formulario',
-      component: require('@/components/Formulario').default
+      component: require('@/components/Formulario').default,
+      props: true
     },
     {
       path: '/Reporteria',

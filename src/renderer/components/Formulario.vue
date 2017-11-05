@@ -4,10 +4,16 @@
     <br>
     <div id="contenido">
       <div class="titulo">
-        <div class="ui container">
+        <div v-if="test==2" id="header-cable" class="ui container">
           <br>
           <h1><i class="big tv icon"></i>Pago Cable</h1>
-          <h3>*Por mora se cobran L.10 extra. (Se aplica despues del 7mo dia de cada mes)</h3>
+          <h3 >*Por mora se cobran L.10 extra. (Se aplica despues del 7mo dia de cada mes)</h3>
+          <br>
+        </div>
+        <div v-if="test==1" id="header-agua" class="ui container">
+          <br>
+          <h1><i class="big shower icon"></i>Pago Agua</h1>
+          <h3>*No hay cobro extra por mora para este servicio</h3>
           <br>
         </div>
       </div>
@@ -62,7 +68,13 @@
 <script>
   export default {
     name: 'formulario',
+    data() {
+      return {
+        mode : false
+      }
+    },
     components: {  },
+    props: ['test'],
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
@@ -70,8 +82,10 @@
 
     },
     mounted(){
-      $('.max.example .ui.normal.dropdown').dropdown({maxSelections: 3});
+      //$('.max.example .ui.normal.dropdown').dropdown({maxSelections: 3});
+
     }
+
   }
 </script>
 <style scoped>
@@ -92,11 +106,19 @@
     left: 0;
     z-index: -1;
   }
-  .titulo{
+
+  #header-cable{
     background-color: #FFCC00;
     box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75);
     text-align: center;
   }
+
+  #header-agua{
+    background-color: #58B7D2;
+    box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75);
+    text-align: center;
+  }
+
   .franja{
     background-color: black;
     height: 25px;

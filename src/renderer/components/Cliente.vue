@@ -1,56 +1,59 @@
 <template>
   <div class="principal">
-     <div class="fondo"></div>
-     <div class="ui center aligned container" id="contenedor">
-       <div class="ui inverted segment">
-         <div class="ui inverted secondary pointing menu">
-           <a class="active item">
-             Nuevo Cliente
-            </a>
-            <a class="item">
-              Nuestros Clientes
-            </a>
+    <div class="fondo"></div>
+    <div class="ui center aligned container" id="contenedor">
+      <div class="ui inverted segment">
+        <div class="ui inverted top attached tabular menu">
+          <a v-bind:class="{active: activeTab==1}" data-tab="add" class="item" v-on:click="activeTab=1">
+            Nuevo Cliente
+          </a>
+          <a v-bind:class="{active: activeTab==2}" data-tab="list" class="item" v-on:click="activeTab=2">
+            Nuestros Clientes
+          </a>
         </div>
-       </div>
-       <div class="tabContent">
-         <div class="ui center aligned container">
-           <div class="">
-             <h1><i class="user circle outline icon"></i>Nuevo Cliente</h1>
-           </div>
-            <div class="ui justified aligned container">
-              <br><br><br>
-              <form class="ui form">
-                <div class="field">
-                  <label>Numero de Identidad: </label>
-                  <div class="ui left icon input">
-                    <input type="text" placeholder="Numero de Identidad">
-                    <i class="id card icon"></i>
-                  </div>
+      </div>
+      <div class="tabContent">
+        <div v-bind:class="{active : activeTab==1 }" v-bind:style="{display: activeTab==1}" data-tab="add"  class="ui bottom attached tab">
+          <div class="">
+            <h1><i class="user circle outline icon"></i>Nuevo Cliente</h1>
+          </div>
+          <div class="ui justified aligned container">
+            <br><br><br>
+            <form class="ui form">
+              <div class="field">
+                <label>Numero de Identidad: </label>
+                <div class="ui left icon input">
+                  <input type="text" placeholder="Numero de Identidad">
+                  <i class="id card icon"></i>
                 </div>
-                <div class="field">
-                  <label>Nombres: </label>
-                  <div class="ui left icon input">
-                    <input type="text" placeholder="Nombres">
-                    <i class="user icon"></i>
-                  </div>
+              </div>
+              <div class="field">
+                <label>Nombres: </label>
+                <div class="ui left icon input">
+                  <input type="text" placeholder="Nombres">
+                  <i class="user icon"></i>
                 </div>
-                <div class="field">
-                  <label>Apellidos: </label>
-                  <div class="ui left icon input">
-                    <input type="text" placeholder="Apellidos">
-                    <i class="user outline icon"></i>
-                  </div>
+              </div>
+              <div class="field">
+                <label>Apellidos: </label>
+                <div class="ui left icon input">
+                  <input type="text" placeholder="Apellidos">
+                  <i class="user outline icon"></i>
                 </div>
+              </div>
 
-              </form>
-            </div>
-            <br><br>
-            <br>
-            <router-link to="/home"><button class="ui yellow button" id="nuevoCliente">Crear</button></router-link>
-         </div>
-       </div>
-
-     </div>
+            </form>
+          </div>
+          <br><br>
+          <br>
+          <router-link to="/home"><button class="ui yellow button" id="nuevoCliente">Crear</button></router-link>
+        </div>
+        <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
+          <h1>Test tabs</h1>
+        </div> 
+      </div>
+       
+    </div>
   </div>
 
 </template>
@@ -60,11 +63,20 @@
 
   export default {
     name: 'cliente',
+    data(){
+      return {
+        activeTab : 1
+      }
+    },
     components: {  },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
       }
+    },
+    beforeMount(){
+      $('.menu .item').tab();
+      
     }
   }
 </script>

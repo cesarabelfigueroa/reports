@@ -4,7 +4,7 @@
       <div class="ui center aligned container" id="contenedor">
         <div class="ui two column grid">
           <div class="column">
-            <router-link to="/formulario">
+            <router-link to="/formulario/1" test="hola">
               <div class="ui circular segment " id="menu1">
                 <i class="huge shower icon"></i>
                 <h1>
@@ -16,7 +16,7 @@
               <br>Informacion de Consumo</h2>
           </div>
           <div class="column">
-            <router-link to="/formulario">
+            <router-link to="/formulario/2">
               <div class="ui circular segment" id="menu2">
                 <i class="huge tv icon"></i>
                 <h1>
