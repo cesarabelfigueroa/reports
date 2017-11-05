@@ -30,14 +30,14 @@
                 <h3>El monto total es de:</h3>
               </div>
               <div class="ui segment">
-                <h3> 1200 Lps</h3>
+                <h3> 0.00 Lps</h3>
               </div>
             </div>
             <br>
             <div class="two fields">
               <div class="field">
                 <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
-                <input type="number" placeholder="10000.00">
+                <input type="number" placeholder="Ej: 1000.00">
               </div>
             </div>
             <br>
@@ -66,10 +66,11 @@
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
-      },
-      mounted(){
-        $('.max.example .ui.normal.dropdown').dropdown({maxSelections: 3});
       }
+
+    },
+    mounted(){
+      $('.max.example .ui.normal.dropdown').dropdown({maxSelections: 3});
     }
   }
 </script>
@@ -92,7 +93,7 @@
     z-index: -1;
   }
   .titulo{
-    background-color: #FFA300;
+    background-color: #FFCC00;
     box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75);
     text-align: center;
   }

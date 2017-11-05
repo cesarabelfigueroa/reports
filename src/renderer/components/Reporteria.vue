@@ -24,7 +24,7 @@
           <p>5. Bottom</p>
         </div>
       </div>
-      <div class="ui teal inverted segment"><h1>En Mora pago de Agua</h1></div>
+      <div class="ui blue inverted segment"><h1>En Mora pago de Agua</h1></div>
       <div class="ui segments">
         <div class="ui segment">
           <p>1. Top</p>

@@ -6,6 +6,11 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
+      path: '/',
+      name: 'login',
+      component: require('@/components/Login').default
+    },
+    {
       path: '/Cliente',
       name: 'cliente',
       component: require('@/components/Cliente').default
@@ -21,7 +26,7 @@ export default new Router({
       component: require('@/components/Reporteria').default
     },
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: require('@/components/Home').default
     },
