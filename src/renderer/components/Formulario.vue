@@ -36,14 +36,14 @@
                 <h3>El monto total es de:</h3>
               </div>
               <div class="ui segment">
-                <h3> 0.00 Lps</h3>
+                <h3> {{montoAgua}} Lps</h3>
               </div>
             </div>
             <br>
             <div class="two fields">
               <div class="field">
                 <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
-                <input type="number" placeholder="Ej: 1000.00">
+                <input type="number" v-model="montoAgua" placeholder="Ej: 1000.00">
               </div>
             </div>
             <br>
@@ -70,7 +70,8 @@
     name: 'formulario',
     data() {
       return {
-        mode : false
+        mode : false,
+        montoAgua : 0
       }
     },
     components: {  },

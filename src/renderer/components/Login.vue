@@ -12,7 +12,7 @@
               <div class="field">
                 <label>Usuario: </label>
                 <div class="ui left icon input">
-                  <input type="text" placeholder="Usuario">
+                  <input type="text" v-model="username" placeholder="Usuario">
                   <i class="user icon"></i>
                 </div>
               </div>
@@ -20,7 +20,7 @@
               <div class="field">
                 <label>Contraseña:</label>
                 <div class="ui left icon input">
-                  <input type="password" placeholder="Contraseña">
+                  <input type="password" v-model="password" placeholder="Contraseña">
                   <i class="lock icon"></i>
                 </div>
               </div>
@@ -29,7 +29,7 @@
           <br><br>
             <p href="#">¿Olvidaste tu contraseña?</p>
           <br>
-          <router-link to="/home"><button class="ui yellow button" id="login">Inicio</button></router-link>
+          <button class="ui yellow button" id="login" v-on:click="verify">Inicio</button>
        </div>
      </div>
   </div>
@@ -41,10 +41,24 @@
 
   export default {
     name: 'login',
+    data(){
+      return {
+        username: '',
+        password: ''
+
+      }
+    },
     components: {  },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      verify(){
+        if(this.username == '' || this.password == ''){
+          swal('Debe ingresar un usuario y una contraseña!','','warning');
+        }else{
+          this.$router.push('/home');
+        }
       }
     }
   }
