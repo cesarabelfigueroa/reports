@@ -2,10 +2,12 @@
   <div id="app">
     <div class="ui massive fixed inverted borderless menu" id="navBar" >
       <div class="ui container" id="navBar">
-        <a><img id="logo" src="~@/assets/unicredit_LOGO.jpeg" height="65px;" width="292px;" alt="UNICREDIT"></a>
+        <a><img id="logo" src="~@/assets/unicredit_LOGO.jpeg"  width="295px;" alt="UNICREDIT"></a>
       </div>
       <div class="right menu" id="opciones">
-          <router-link  to="/"><a class="item">Logout</a></router-link>
+          <router-link  to="/"><a class="item"><i class="large home icon"></i>Inicio</a></router-link>
+          <router-link  to="/Cliente"><a class="item"><i class="large add user icon"></i>+Cliente</a></router-link>
+          <router-link  to="/Reporteria"><a class="item"><i class="large add bar chart icon"></i>Reporteria</a></router-link>
       </div>
     </div>
     <router-view></router-view>

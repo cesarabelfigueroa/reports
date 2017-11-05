@@ -4,32 +4,38 @@
      <div class="ui center aligned container" id="contenedor">
        <div class="ui center aligned container">
          <div class="">
-           <h1>Login</h1>
+           <h1>Nuevo Cliente</h1>
          </div>
           <div class="ui justified aligned container">
             <br><br><br>
             <form class="ui form">
               <div class="field">
-                <label>Usuario: </label>
+                <label>Codigo: </label>
                 <div class="ui left icon input">
-                  <input type="text" placeholder="Usuario">
+                  <input type="text" placeholder="Codigo">
+                  <i class="barcode icon"></i>
+                </div>
+              </div>
+              <div class="field">
+                <label>Nombres: </label>
+                <div class="ui left icon input">
+                  <input type="text" placeholder="Nombres">
                   <i class="user icon"></i>
                 </div>
               </div>
-              <br>
               <div class="field">
-                <label>Contraseña:</label>
+                <label>Apellidos: </label>
                 <div class="ui left icon input">
-                  <input type="password" placeholder="Contraseña">
-                  <i class="lock icon"></i>
+                  <input type="text" placeholder="Apellidos">
+                  <i class="user icon"></i>
                 </div>
               </div>
+
             </form>
           </div>
           <br><br>
-            <p href="#">¿Olvidaste tu contraseña?</p>
           <br>
-          <router-link to="/home"><button class="ui yellow button" id="login">Inicio</button></router-link>
+          <router-link to="/home"><button class="ui yellow button" id="login">Crear</button></router-link>
        </div>
      </div>
   </div>
@@ -40,7 +46,7 @@
 
 
   export default {
-    name: 'landing-page',
+    name: 'cliente',
     components: {  },
     methods: {
       open (link) {

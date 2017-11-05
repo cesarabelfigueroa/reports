@@ -6,9 +6,9 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'landing-page',
-      component: require('@/components/LandingPage').default
+      path: '/Cliente',
+      name: 'cliente',
+      component: require('@/components/Cliente').default
     },
     {
       path: '/Formulario',
@@ -16,7 +16,12 @@ export default new Router({
       component: require('@/components/Formulario').default
     },
     {
-      path: '/Home',
+      path: '/Reporteria',
+      name: 'reporteria',
+      component: require('@/components/Reporteria').default
+    },
+    {
+      path: '/',
       name: 'home',
       component: require('@/components/Home').default
     },

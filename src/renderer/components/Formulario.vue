@@ -6,8 +6,8 @@
       <div class="titulo">
         <div class="ui container">
           <br>
-          <h1>Informacion del Negocio</h1>
-          <h2>Aplicante para cuenta de credito</h2>
+          <h1><i class="big tv icon"></i>Pago Cable</h1>
+          <h3>*Por mora se cobran L.10 extra. (Se aplica despues del 7mo dia de cada mes)</h3>
           <br>
         </div>
       </div>
@@ -16,47 +16,39 @@
         <div class="ui container">
           <br>
           <div class="ui form">
-            <div class="two fields">
-              <div class="field">
-                <label>Nombre de la Compañia: <i class="asterisk blue icon"></i></label>
-                <input type="text" placeholder="Nombre de la Compañia">
-              </div>
-              <div class="field">
-                <label>Correo Electronico: <i class="asterisk blue icon"></i></label>
-                <input type="text" placeholder="Ej: nombre@ejemplo.com">
-              </div>
-            </div>
-            <div class="inline fields">
-              <div class="five wide field">
-                <label>Telefono: </i></label>
-                <input type="number" placeholder="Codigo de Area">
-              </div>
-              <div class="eleven wide field">
-                <input type="number" placeholder="Numero de Telefono">
-              </div>
-            </div>
-
             <div class="field">
-              <label>Direccion:</label>
-              <input type="text" placeholder="Direccion">
+              <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
+              <select class="ui dropdown">
+                <option value="">Codigo - Nombre</option>
+                <option value="1">0000 - Maria Rodriguez</option>
+                <option value="0">2020 - Jose Paz</option>
+              </select>
             </div>
+            <br>
+            <div class="ui horizontal segments">
+              <div class="ui segment">
+                <h3>El monto total es de:</h3>
+              </div>
+              <div class="ui segment">
+                <h3> 1200 Lps</h3>
+              </div>
+            </div>
+            <br>
             <div class="two fields">
               <div class="field">
-                <label>Departamento:<i class="asterisk blue icon"></i></label>
-                <input type="text" placeholder="Departamento">
-              </div>
-              <div class="field">
-                <label>Ciudad:<i class="asterisk blue icon"></i> </label>
-                <input type="text" placeholder="Ciudad">
+                <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
+                <input type="number" placeholder="10000.00">
               </div>
             </div>
+            <br>
+            <button class="big ui button blue">
+              <i class="handshake file word outline icon"></i>
+              Generar Factura
+            </button>
           </div>
-          <br>
-          <button class="big ui button inverted orange">
-            <i class="handshake big icon"></i>
-            Ingresar Aplicacion
-          </button>
+
           <br><br>
+          <br>
         </div>
       </div>
 
@@ -76,6 +68,7 @@
         this.$electron.shell.openExternal(link)
       },
       mounted(){
+        $('.max.example .ui.normal.dropdown').dropdown({maxSelections: 3});
       }
     }
   }
@@ -84,10 +77,13 @@
   .main, #contenido{
     padding-top: 50px;
   }
+  .horizontal, .segments{
+    text-align: center;
+  }
   .fondo{
-    background: url("~@/assets/lightRow.jpeg");
+    background: url("~@/assets/blueCity.jpg");
     background-size: cover;
-    filter: blur(5px) brightness(80%) ;
+    filter: blur(2px) brightness(170%) ;
     position: fixed;
     width: 100%;
     height: 100%;
@@ -98,7 +94,7 @@
   .titulo{
     background-color: #FFA300;
     box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75);
-
+    text-align: center;
   }
   .franja{
     background-color: black;
