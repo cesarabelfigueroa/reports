@@ -1,5 +1,5 @@
-import { app, BrowserWindow } from 'electron'
-
+import { app, BrowserWindow, ipcMain } from 'electron'
+import Datastore from 'nedb';
 
 /**
  * Set `__static` path to static files in production
@@ -44,6 +44,15 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+ipcMain.on('create-user', (event, user)=> {
+  var users = new Datastore({ filename: './../../storage/client.json', autoload: true }); // LLAMAN LA TABLA
+  users.insert(user, function(err, doc) {
+      console.log('Inserted', doc.name, 'with ID', doc._id);
+  });
+});
+
+
 
 /**
  * Auto Updater

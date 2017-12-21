@@ -23,25 +23,31 @@
               <div class="field">
                 <label>Numero de Identidad: </label>
                 <div class="ui left icon input">
-                  <input type="text" pattern="[0-9]{4}+-[0-9]{4}+-[0-9]{4}" v-model="nID" placeholder="Numero de Identidad">
+                  <input type="text"  v-model="user.idnumber" placeholder="Numero de Identidad">
                   <i class="id card icon"></i>
                 </div>
               </div>
               <div class="field">
                 <label>Nombres: </label>
                 <div class="ui left icon input">
-                  <input type="text" v-model="nombres" placeholder="Nombres">
+                  <input type="text" v-model="user.firstname" placeholder="Nombres">
                   <i class="user icon"></i>
                 </div>
               </div>
               <div class="field">
                 <label>Apellidos: </label>
                 <div class="ui left icon input">
-                  <input type="text" v-model="apellidos" placeholder="Apellidos">
+                  <input type="text" v-model="user.lastname" placeholder="Apellidos">
                   <i class="user outline icon"></i>
                 </div>
               </div>
-
+              <div class="field">
+                <label>Correo: </label>
+                <div class="ui left icon input">
+                  <input type="text" v-model="user.email" placeholder="Correo">
+                  <i class="user outline icon"></i>
+                </div>
+              </div>
             </form>
           </div>
           <br><br>
@@ -50,9 +56,9 @@
         </div>
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
           <h1>Test tabs</h1>
-        </div> 
+        </div>
       </div>
-       
+
     </div>
   </div>
 
@@ -66,9 +72,12 @@
     data(){
       return {
         activeTab : 1,
-        nID: '',
-        nombres: '',
-        apellidos: ''
+        user: {
+          idnumber: '',
+          firstname: '',
+          lastname: '',
+          email: ''
+        }
       }
     },
     components: {  },
@@ -77,16 +86,22 @@
         this.$electron.shell.openExternal(link)
       },
       verify(){
-        if(this.nID != '' && this.nombres != '' && this.apellidos != ''){
-          swal('Cliente agregado exitosamente!','','success');
-        }else{
-          swal('Oops!','Debe llenar todos los campos','error')
-        }
+        //pattern="[0-9]{4}+-[0-9]{4}+-[0-9]{4}"
+        // identidad = this.user.idnumber.trim();
+        // name = this.user.firstname.trim()+' '+this.user.lastname.trim();
+        // mail = this.user.email.trim();
+        // if(identidad != '' && name != '' && mail != ''){
+          const { ipcRenderer } = require('electron');
+          ipcRenderer.send('create-user', this.user);
+          alert('Cliente agregado exitosamente!');
+        // }else{
+        //   alert('Oops!','Debe llenar todos los campos')
+        // }
       }
     },
     beforeMount(){
       //$('.menu .item').tab();
-      
+
     }
   }
 </script>

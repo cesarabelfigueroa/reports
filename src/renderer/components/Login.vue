@@ -59,24 +59,17 @@
 
         var users = new Datastore({ filename: './storage/users.json', autoload: true }); // LLAMAN LA TABLA
 
-        var scott = {  
+        var scott = {
           name: 'Scott',
           twitter: '@ScottWRobinson'
         };
 
 
         //Corren la query y ya, ese es el backend
-        users.insert(scott, function(err, doc) {  
-          console.log('Inserted', doc.name, 'with ID', doc._id);
+        users.insert(scott, function(err, doc) {
+          console.log('Inserted', doc, 'with ID', doc._id);
         });
 
-
-
-       /* if(this.username == '' || this.password == ''){
-          swal('Debe ingresar un usuario y una contraseña!','','warning');
-        }else{
-          this.$router.push('/home');
-        } */
       }
     }
   }
