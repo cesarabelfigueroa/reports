@@ -38,6 +38,8 @@
 
 <script>
 
+  import Datastore from 'nedb';
+
 
   export default {
     name: 'login',
@@ -54,11 +56,27 @@
         this.$electron.shell.openExternal(link)
       },
       verify(){
-        if(this.username == '' || this.password == ''){
+
+        var users = new Datastore({ filename: './storage/users', autoload: true }); // LLAMAN LA TABLA
+
+        var scott = {  
+          name: 'Scott',
+          twitter: '@ScottWRobinson'
+        };
+
+
+        //Corren la query y ya, ese es el backend
+        users.insert(scott, function(err, doc) {  
+          console.log('Inserted', doc.name, 'with ID', doc._id);
+        });
+
+
+
+       /* if(this.username == '' || this.password == ''){
           swal('Debe ingresar un usuario y una contraseña!','','warning');
         }else{
           this.$router.push('/home');
-        }
+        } */
       }
     }
   }

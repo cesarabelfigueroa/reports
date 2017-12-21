@@ -1,0 +1,8 @@
+{
+	"client": "idClient",
+	"balance": 10,
+	"tax": 0,
+	"type": "w", // wather or light
+	"init": "tal dia",
+	"end": "tal dia" 
+}
