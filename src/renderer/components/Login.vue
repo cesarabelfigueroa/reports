@@ -57,7 +57,7 @@
       },
       verify(){
 
-        var users = new Datastore({ filename: './storage/users', autoload: true }); // LLAMAN LA TABLA
+        var users = new Datastore({ filename: './storage/users.json', autoload: true }); // LLAMAN LA TABLA
 
         var scott = {  
           name: 'Scott',
