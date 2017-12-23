@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron'
 import Datastore from 'nedb';
 
 /**
@@ -45,14 +45,20 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.on('create-user', (event, user)=> {
-  var users = new Datastore({ filename: './../../storage/client.json', autoload: true }); // LLAMAN LA TABLA
-  users.insert(user, function(err, doc) {
+const clients = new Datastore({ filename: './../../storage/client.json', autoload: true }); // LLAMAN LA TABLA
+
+ipcMain.on('create-user', (event, client)=> {
+
+  clients.insert(client, function(err, doc) {
       console.log('Inserted', doc.name, 'with ID', doc._id);
   });
 });
 
-
+ipcMain.on('get-clients', (event) => {
+  clients.find({}, (err, docs) => {
+    event.sender.send('return-clients', docs);
+  });
+});
 
 /**
  * Auto Updater

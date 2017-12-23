@@ -24,10 +24,9 @@
           <div class="ui form">
             <div class="field">
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-              <select class="ui dropdown">
+              <select class="ui dropdown" id="clientdropdown">
                 <option value="">Codigo - Nombre</option>
-                <option value="1">0000 - Maria Rodriguez</option>
-                <option value="0">2020 - Jose Paz</option>
+                <option v-for="(client, index) in clients" :value="index">{{client.firstname}}</option>
               </select>
             </div>
             <br>
@@ -36,18 +35,18 @@
                 <h3>El monto total es de:</h3>
               </div>
               <div class="ui segment">
-                <h3> {{montoAgua}} Lps</h3>
+                <h3> {{pago}} Lps</h3>
               </div>
             </div>
             <br>
             <div class="two fields">
               <div class="field">
                 <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
-                <input type="number" v-model="montoAgua" placeholder="Ej: 1000.00">
+                <input type="number" v-model="pago" placeholder="Ej: 1000.00">
               </div>
             </div>
             <br>
-            <button class="big ui button blue">
+            <button class="big ui button blue" v-on:click="verify">
               <i class="handshake file word outline icon"></i>
               Generar Factura
             </button>
@@ -66,12 +65,19 @@
 </template>
 
 <script>
+  const { ipcRenderer } = require('electron');
+
+
+
   export default {
+
     name: 'formulario',
     data() {
       return {
         mode : false,
-        montoAgua : 0
+        pago : 0,
+        clients: []
+
       }
     },
     components: {  },
@@ -79,7 +85,33 @@
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      verify() {
+        const dd = document.getElementById('clientdropdown');
+        let val = dd.options[dd.selectedIndex].value;
+
+        let text = dd.options[dd.selectedIndex].text;
+        let service = this.test===1? 'agua' : 'cable'
+        console.log('Text: ',text);
+        console.log('Val: ', val);
+        console.log('Service: ', service);
+        // if(val !== '' && this.pago > 0){
+        //   let info = {
+        //     service
+        //
+        //   }
+        // }else{
+        //   alert('Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion');
+        // }
       }
+
+
+    },
+    beforeMount(){
+      ipcRenderer.on('return-clients', (event, arg) => {
+        this.clients = arg;
+      });
+      ipcRenderer.send('get-clients');
 
     },
     mounted(){
