@@ -26,7 +26,7 @@
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
               <select class="ui dropdown" id="clientdropdown">
                 <option value="">Codigo - Nombre</option>
-                <option v-for="(client, index) in clients" :value="index">{{client.firstname}}</option>
+                <option v-for="(client, index) in clients" :value="client._id">{{client.firstname}}</option>
               </select>
             </div>
             <br>
@@ -35,14 +35,14 @@
                 <h3>El monto total es de:</h3>
               </div>
               <div class="ui segment">
-                <h3> {{pago}} Lps</h3>
+                <h3> {{amount}} Lps</h3>
               </div>
             </div>
             <br>
             <div class="two fields">
               <div class="field">
                 <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
-                <input type="number" v-model="pago" placeholder="Ej: 1000.00">
+                <input type="number" v-model="amount" placeholder="Ej: 1000.00">
               </div>
             </div>
             <br>
@@ -66,7 +66,7 @@
 
 <script>
   const { ipcRenderer } = require('electron');
-
+  const moment = require('moment');
 
 
   export default {
@@ -75,8 +75,9 @@
     data() {
       return {
         mode : false,
-        pago : 0,
-        clients: []
+        amount : 0,
+        clients: [],
+        fine: 0
 
       }
     },
@@ -88,24 +89,28 @@
       },
       verify() {
         const dd = document.getElementById('clientdropdown');
-        let val = dd.options[dd.selectedIndex].value;
+        let client_id = dd.options[dd.selectedIndex].value;
+        if(client_id !== '' && this.amount > 0){
+          let service = this.test===1? 'agua' : 'cable';
 
-        let text = dd.options[dd.selectedIndex].text;
-        let service = this.test===1? 'agua' : 'cable'
-        console.log('Text: ',text);
-        console.log('Val: ', val);
-        console.log('Service: ', service);
-        // if(val !== '' && this.pago > 0){
-        //   let info = {
-        //     service
-        //
-        //   }
-        // }else{
-        //   alert('Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion');
-        // }
+          let day = moment().format("DD");
+          if(parseInt(day) > 7 && service==2){
+            this.fine = 10;
+          }
+          let date = moment().format("DD-MM-YYYY hh:mm:ssa");
+          let bill = {
+            client_id,
+            service,
+            amount: this.amount,
+            fine: this.fine,
+            date
+          }
+          console.log(bill);
+          ipcRenderer.send('create-bill', bill);
+        }else{
+          alert('Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion');
+        }
       }
-
-
     },
     beforeMount(){
       ipcRenderer.on('return-clients', (event, arg) => {

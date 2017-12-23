@@ -1,8 +1,2 @@
-{
-	"client": "idClient",
-	"balance": 10,
-	"tax": 0,
-	"type": "w", // wather or light
-	"init": "tal dia",
-	"end": "tal dia" 
-}
+{"amount":"123.40","client_id":"2HDJrRxN0UadIWZN","date":"22-12-2017 11:14:33pm","fine":0,"service":"cable","_id":"KuAaquDzn9w2e8Wc"}
+{"amount":"555.50","client_id":"EFziGyns7EPskIK5","date":"22-12-2017 11:15:21pm","fine":0,"service":"cable","_id":"iPYqQ2ANYz53MsR2"}

@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron'
 import Datastore from 'nedb';
+import moment from 'moment';
 
 /**
  * Set `__static` path to static files in production
@@ -45,11 +46,13 @@ app.on('activate', () => {
   }
 })
 
-const clients = new Datastore({ filename: './../../storage/client.json', autoload: true }); // LLAMAN LA TABLA
+//Tablas
+const clients = new Datastore({ filename: './storage/client.json', autoload: true });
+const bills = new Datastore({ filename: './storage/bill.json', autoload: true });
 
 ipcMain.on('create-user', (event, client)=> {
 
-  clients.insert(client, function(err, doc) {
+  clients.insert(client, (err, doc) => {
       console.log('Inserted', doc.name, 'with ID', doc._id);
   });
 });
@@ -59,6 +62,14 @@ ipcMain.on('get-clients', (event) => {
     event.sender.send('return-clients', docs);
   });
 });
+
+ipcMain.on('create-bill', (event, bill) => {
+
+  bills.insert(bill, (err, doc) => {
+    console.log('Inserted with id', doc._id);
+  });
+});
+
 
 /**
  * Auto Updater
