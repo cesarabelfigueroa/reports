@@ -52,7 +52,7 @@
           </div>
           <br><br>
           <br>
-          <router-link to="/home"><button class="ui yellow button" id="nuevoCliente" v-on:click="verify">Crear</button></router-link>
+          <button class="ui yellow button" id="nuevoCliente" v-on:click="verify">Crear</button>
         </div>
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
           <h1>Test tabs</h1>
@@ -86,17 +86,30 @@
         this.$electron.shell.openExternal(link)
       },
       verify(){
-        //pattern="[0-9]{4}+-[0-9]{4}+-[0-9]{4}"
-        // identidad = this.user.idnumber.trim();
-        // name = this.user.firstname.trim()+' '+this.user.lastname.trim();
-        // mail = this.user.email.trim();
-        // if(identidad != '' && name != '' && mail != ''){
+
+        let idnumber = this.user.idnumber.trim();
+        let firstname = this.user.firstname.trim();
+        let lastname = this.user.lastname.trim();
+        let email = this.user.email.trim();
+        if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
           const { ipcRenderer } = require('electron');
+          this.user = {
+            idnumber,
+            firstname,
+            lastname,
+            email
+          }
           ipcRenderer.send('create-user', this.user);
           alert('Cliente agregado exitosamente!');
-        // }else{
-        //   alert('Oops!','Debe llenar todos los campos')
-        // }
+          this.user = {
+            idnumber: '',
+            firstname: '',
+            lastname: '',
+            email: ''
+          }
+        }else{
+          alert('Debe llenar todos los campos y asegurarse que sean validos');
+        }
       }
     },
     beforeMount(){

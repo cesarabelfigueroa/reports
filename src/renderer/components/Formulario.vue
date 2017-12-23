@@ -105,8 +105,11 @@
             fine: this.fine,
             date
           }
-          console.log(bill);
           ipcRenderer.send('create-bill', bill);
+          this.fine = 0;
+          this.amount = 0;
+          dd.selectedIndex = 0;
+          alert('Factura ingresada con exito');
         }else{
           alert('Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion');
         }
