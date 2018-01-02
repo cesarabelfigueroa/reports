@@ -54,25 +54,32 @@
             <!-- <ol>
               <li v-for="cli in clients">{{cli.idnumber}} - {{cli.firstname}} {{cli.lastname}} - {{cli.email}}</li>
             </ol> -->
+            <div id="tableContainer" v-if="clients.length>0">
+              <table class="ui celled padded table">
+                <col width="30%">
+                <col width="25%">
+                <col width="25%">
+                <col width="15%">
+                <thead class="tableHeader">
+                  <tr>
+                    <th>No. Identidad</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Correo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(cli, index) in clients">
+                    <td>{{cli.idnumber}}</td>
+                    <td>{{cli.firstname}}</td>
+                    <td>{{cli.lastname}}</td>
+                    <td>{{cli.email}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p v-if="clients.length===0">No hay clientes registrados.</p>
 
-            <table class="ui celled padded table">
-              <thead>
-                <tr>
-                  <th>No. Identidad</th>
-                  <th>Nombres</th>
-                  <th>Apellidos</th>
-                  <th>Correo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(cli, index) in clients">
-                  <td>{{cli.idnumber}}</td>
-                  <td>{{cli.firstname}}</td>
-                  <td>{{cli.lastname}}</td>
-                  <td>{{cli.email}}</td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
@@ -192,10 +199,17 @@
   label{
     color: white !important;
   }
-  table {
-    height: 300px;
-    max-width: 700px;
-    max-height: 300px;
+
+
+  #tableContainer {
+    position: absolute;
+    height: 400px;
+    width: 700px;
+    max-width: 900px;
+    max-height: 400px;
     overflow-y: scroll;
+    overflow-x: auto;
   }
+
+  
 </style>
