@@ -2,19 +2,13 @@
   <div class="principal">
     <div class="fondo"></div>
     <div class="ui center aligned container" id="contenedor">
-      <div class="ui inverted segment">
-        <div class="ui inverted top attached tabular menu">
-          <a v-bind:class="{active: activeTab==1}" data-tab="add" class="item" v-on:click="activeTab=1">
-            Nuevo Cliente
-          </a>
-          <a v-bind:class="{active: activeTab==2}" data-tab="list" class="item" v-on:click="activeTab=2">
-            Nuestros Clientes
-          </a>
-        </div>
+      <div class="ui inverted top attached tabular menu grid">
+        <a class="item eight wide column" v-bind:class="{active : activeTab==1 }" v-on:click="change(1)" data-tab="add">Agregar Cliente</a>
+        <a class="item eight wide column" v-bind:class="{active : activeTab==2 }" v-on:click="change(2)" data-tab="list">Nuestros Clientes</a>
       </div>
       <div class="tabContent">
         <div v-bind:class="{active : activeTab==1 }" v-bind:style="{display: activeTab==1}" data-tab="add"  class="ui bottom attached tab">
-          <div class="">
+          <div class="contentHeader">
             <h1><i class="user circle outline icon"></i>Nuevo Cliente</h1>
           </div>
           <div class="ui justified aligned container">
@@ -23,28 +17,28 @@
               <div class="field">
                 <label>Numero de Identidad: </label>
                 <div class="ui left icon input">
-                  <input type="text"  v-model="user.idnumber" placeholder="Numero de Identidad">
+                  <input type="text"  v-model="client.idnumber" placeholder="Numero de Identidad">
                   <i class="id card icon"></i>
                 </div>
               </div>
               <div class="field">
                 <label>Nombres: </label>
                 <div class="ui left icon input">
-                  <input type="text" v-model="user.firstname" placeholder="Nombres">
+                  <input type="text" v-model="client.firstname" placeholder="Nombres">
                   <i class="user icon"></i>
                 </div>
               </div>
               <div class="field">
                 <label>Apellidos: </label>
                 <div class="ui left icon input">
-                  <input type="text" v-model="user.lastname" placeholder="Apellidos">
+                  <input type="text" v-model="client.lastname" placeholder="Apellidos">
                   <i class="user outline icon"></i>
                 </div>
               </div>
               <div class="field">
                 <label>Correo: </label>
                 <div class="ui left icon input">
-                  <input type="text" v-model="user.email" placeholder="Correo">
+                  <input type="text" v-model="client.email" placeholder="Correo">
                   <i class="user outline icon"></i>
                 </div>
               </div>
@@ -55,7 +49,31 @@
           <button class="ui yellow button" id="nuevoCliente" v-on:click="verify">Crear</button>
         </div>
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
-          <h1>Test tabs</h1>
+          <div class="contentHeader">
+            <h1><i class="user circle outline icon"></i>Lista de Clientes</h1>
+            <!-- <ol>
+              <li v-for="cli in clients">{{cli.idnumber}} - {{cli.firstname}} {{cli.lastname}} - {{cli.email}}</li>
+            </ol> -->
+
+            <table class="ui celled padded table">
+              <thead>
+                <tr>
+                  <th>No. Identidad</th>
+                  <th>Nombres</th>
+                  <th>Apellidos</th>
+                  <th>Correo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(cli, index) in clients">
+                  <td>{{cli.idnumber}}</td>
+                  <td>{{cli.firstname}}</td>
+                  <td>{{cli.lastname}}</td>
+                  <td>{{cli.email}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -66,18 +84,20 @@
 
 <script>
 
+  const { ipcRenderer } = require('electron');
 
   export default {
     name: 'cliente',
     data(){
       return {
         activeTab : 1,
-        user: {
+        client: {
           idnumber: '',
           firstname: '',
           lastname: '',
           email: ''
-        }
+        },
+        clients: []
       }
     },
     components: {  },
@@ -87,33 +107,47 @@
       },
       verify(){
 
-        let idnumber = this.user.idnumber.trim();
-        let firstname = this.user.firstname.trim();
-        let lastname = this.user.lastname.trim();
-        let email = this.user.email.trim();
+        let idnumber = this.client.idnumber.trim();
+        let firstname = this.client.firstname.trim();
+        let lastname = this.client.lastname.trim();
+        let email = this.client.email.trim();
         if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
           const { ipcRenderer } = require('electron');
-          this.user = {
+          this.client = {
             idnumber,
             firstname,
             lastname,
             email
           }
-          ipcRenderer.send('create-user', this.user);
+          ipcRenderer.send('create-user', this.client);
           alert('Cliente agregado exitosamente!');
-          this.user = {
-            idnumber: '',
-            firstname: '',
-            lastname: '',
-            email: ''
-          }
+          this.resetClient();
         }else{
           alert('Debe llenar todos los campos y asegurarse que sean validos');
+        }
+      },
+      change(activetab) {
+        this.activeTab = activetab;
+        if(activetab == 1) {
+          this.resetClient();
+        }else{
+          ipcRenderer.send('get-clients');
+        }
+      },
+      resetClient() {
+        this.client = {
+          idnumber: '',
+          firstname: '',
+          lastname: '',
+          email: ''
         }
       }
     },
     beforeMount(){
-      //$('.menu .item').tab();
+      ipcRenderer.on('return-clients', (event, arg) => {
+        this.clients = arg;
+      });
+      ipcRenderer.send('get-clients');
 
     }
   }
@@ -122,6 +156,8 @@
   .principal{
     padding-top: 8%;
   }
+
+
   #contenedor{
     height: 600px;
     width: 800px;
@@ -130,6 +166,11 @@
     box-shadow: 0px 0px 23px 4px rgba(0,0,0,0.97);
 
   }
+
+  .contentHeader {
+      padding-top: 2rem;
+  }
+
   .tabContent{
     padding-left: 60px;
     padding-right: 60px;
@@ -150,5 +191,11 @@
   }
   label{
     color: white !important;
+  }
+  table {
+    height: 300px;
+    max-width: 700px;
+    max-height: 300px;
+    overflow-y: scroll;
   }
 </style>
