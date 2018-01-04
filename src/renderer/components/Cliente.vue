@@ -196,6 +196,7 @@
     padding-left: 125px;
     padding-right: 125px;
   }
+  
   label{
     color: white !important;
   }
@@ -211,5 +212,5 @@
     overflow-x: auto;
   }
 
-  
+
 </style>
