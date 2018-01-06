@@ -66,6 +66,8 @@
                     <th>Nombres</th>
                     <th>Apellidos</th>
                     <th>Correo</th>
+                    <th>Modificar</th>
+                    <th>Eliminar</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -74,6 +76,8 @@
                     <td>{{cli.firstname}}</td>
                     <td>{{cli.lastname}}</td>
                     <td>{{cli.email}}</td>
+                    <td><button>Modificar</button></td>
+                    <td><button>X</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -104,7 +108,8 @@
           lastname: '',
           email: ''
         },
-        clients: []
+        clients: [],
+        ids: []
       }
     },
     components: {  },
@@ -115,22 +120,27 @@
       verify(){
 
         let idnumber = this.client.idnumber.trim();
-        let firstname = this.client.firstname.trim();
-        let lastname = this.client.lastname.trim();
-        let email = this.client.email.trim();
-        if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
-          const { ipcRenderer } = require('electron');
-          this.client = {
-            idnumber,
-            firstname,
-            lastname,
-            email
+        if(!this.ids.includes(idnumber)){
+          this.ids.push(idnumber);
+          let firstname = this.client.firstname.trim();
+          let lastname = this.client.lastname.trim();
+          let email = this.client.email.trim();
+          if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
+            this.client = {
+              idnumber,
+              firstname,
+              lastname,
+              email
+            }
+            ipcRenderer.send('create-user', this.client);
+            alert('Cliente agregado exitosamente!');
+            this.resetClient();
+
+          }else{
+            alert('Debe llenar todos los campos y asegurarse que sean validos');
           }
-          ipcRenderer.send('create-user', this.client);
-          alert('Cliente agregado exitosamente!');
-          this.resetClient();
         }else{
-          alert('Debe llenar todos los campos y asegurarse que sean validos');
+          alert('Ya existe un cliente con ese numero de identidad.');
         }
       },
       change(activetab) {
@@ -151,27 +161,32 @@
       }
     },
     beforeMount(){
-      ipcRenderer.on('return-clients', (event, arg) => {
+      this.clients = [];
+      this.ids = [];
+      ipcRenderer.on('fetch-clients', (event, arg) => {
         this.clients = arg;
+        for (var key in this.clients) {
+            if (this.clients.hasOwnProperty(key)) {
+                this.ids.push(this.clients[key].idnumber);
+            }
+        }
       });
       ipcRenderer.send('get-clients');
-
     }
   }
 </script>
 <style scoped>
+
   .principal{
     padding-top: 8%;
   }
 
-
   #contenedor{
     height: 600px;
-    width: 800px;
+    width: 900px;
     color: white !important;
     background: rgba(0,0,0, .7);
     box-shadow: 0px 0px 23px 4px rgba(0,0,0,0.97);
-
   }
 
   .contentHeader {
@@ -182,6 +197,7 @@
     padding-left: 60px;
     padding-right: 60px;
   }
+
   .fondo{
     background: url("~@/assets/mathParty.jpg") no-repeat center center;
     background-size: cover;
@@ -192,6 +208,7 @@
     left: 0;
     z-index: -1;
   }
+
   #nuevoCliente{
     padding-left: 125px;
     padding-right: 125px;
@@ -201,16 +218,18 @@
     color: white !important;
   }
 
-
   #tableContainer {
     position: absolute;
-    height: 400px;
-    width: 700px;
-    max-width: 900px;
+    height: 60%;
+    width: 50%;
+    max-width: 800px;
     max-height: 400px;
     overflow-y: scroll;
     overflow-x: auto;
   }
 
-
+  table {
+    width: 100%;
+  }
+  
 </style>

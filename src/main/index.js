@@ -51,20 +51,18 @@ const clients = new Datastore({ filename: './storage/client.json', autoload: tru
 const bills = new Datastore({ filename: './storage/bill.json', autoload: true });
 
 ipcMain.on('create-user', (event, client)=> {
-
   clients.insert(client, (err, doc) => {
-      console.log('Inserted', doc.name, 'with ID', doc._id);
+      console.log('Inserted', doc.firstname, 'with ID', doc._id);
   });
 });
 
 ipcMain.on('get-clients', (event) => {
   clients.find({}, (err, docs) => {
-    event.sender.send('return-clients', docs);
+    event.sender.send('fetch-clients', docs);
   });
 });
 
 ipcMain.on('create-bill', (event, bill) => {
-
   bills.insert(bill, (err, doc) => {
     console.log('Inserted with id', doc._id);
   });

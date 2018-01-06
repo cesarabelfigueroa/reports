@@ -7,7 +7,8 @@
         <div v-if="test==2" id="header-cable" class="ui container">
           <br>
           <h1><i class="big tv icon"></i>Pago Cable</h1>
-          <h3 >*Por mora se cobran L.10 extra. (Se aplica despues del 7mo dia de cada mes)</h3>
+          <h3>*Por mora se cobran L.10 extra. (Se aplica despues del 7mo dia de cada mes)</h3>
+          <h2>{{warning}}</h2>
           <br>
         </div>
         <div v-if="test==1" id="header-agua" class="ui container">
@@ -35,7 +36,7 @@
                 <h3>El monto total es de:</h3>
               </div>
               <div class="ui segment">
-                <h3> {{amount}} Lps</h3>
+                <h3>{{total}}</h3>
               </div>
             </div>
             <br>
@@ -56,8 +57,6 @@
           <br>
         </div>
       </div>
-
-
     </div>
     <br><br>
   </div>
@@ -77,7 +76,15 @@
         mode : false,
         amount : 0,
         clients: [],
-        fine: 0
+        fine: 0,
+        day: 0,
+        warning: 'No hay mora'
+
+      }
+    },
+    computed : {
+      total: function () {
+        return this.amount != '' ? parseInt(this.fine) + parseInt(this.amount) : parseInt(this.fine);
 
       }
     },
@@ -88,16 +95,14 @@
         this.$electron.shell.openExternal(link)
       },
       verify() {
+        console.log('Fine: ', this.fine);
+        console.log('Amount: ', this.amount);
+        console.log('Total: ', this.total);
         const dd = document.getElementById('clientdropdown');
         let client_id = dd.options[dd.selectedIndex].value;
         if(client_id !== '' && this.amount > 0){
-          let service = this.test===1? 'agua' : 'cable';
-
-          let day = moment().format("DD");
-          if(parseInt(day) > 7 && service==2){
-            this.fine = 10;
-          }
           let date = moment().format("DD-MM-YYYY hh:mm:ssa");
+
           let bill = {
             client_id,
             service,
@@ -116,6 +121,12 @@
       }
     },
     beforeMount(){
+      this.day = parseInt(moment().format("DD"));
+      if(this.day>=7 && this.test===2) {
+        this.warning = 'Se aplicará cobro extra por mora (10Lps)';
+        this.fine = 10;
+      }
+
       ipcRenderer.on('return-clients', (event, arg) => {
         this.clients = arg;
       });
