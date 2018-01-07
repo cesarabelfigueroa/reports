@@ -68,6 +68,12 @@ ipcMain.on('create-bill', (event, bill) => {
   });
 });
 
+ipcMain.on('remove-client', (event, _id) => {
+  clients.remove({ _id }, {}, (err, numRemoved)=> {
+    event.sender.send('remove-client-ret', err);
+  });
+});
+
 
 /**
  * Auto Updater

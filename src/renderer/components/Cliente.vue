@@ -76,8 +76,8 @@
                     <td>{{cli.firstname}}</td>
                     <td>{{cli.lastname}}</td>
                     <td>{{cli.email}}</td>
-                    <td><button>Modificar</button></td>
-                    <td><button>X</button></td>
+                    <td><button v-on:click="modify(cli._id)">Modificar</button></td>
+                    <td><button v-on:click="remove(cli._id, index)">X</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -151,6 +151,15 @@
           ipcRenderer.send('get-clients');
         }
       },
+      modify(cli) {
+
+      },
+      remove(_id, index) {
+        console.log('Index: ',index);
+        this.clients.splice(index, 1);
+        console.log('Clients splice: ', this.clients);
+        ipcRenderer.send('remove-client', _id);
+      },
       resetClient() {
         this.client = {
           idnumber: '',
@@ -172,6 +181,14 @@
         }
       });
       ipcRenderer.send('get-clients');
+
+      ipcRenderer.on('remove-client-ret', (event, err) => {
+        if(!err){
+          alert('Cliente eliminado con exito!');
+        }else{
+          alert('Error al eliminar cliente', err); //err solo para debugging
+        }
+      });
     }
   }
 </script>
@@ -231,5 +248,5 @@
   table {
     width: 100%;
   }
-  
+
 </style>
