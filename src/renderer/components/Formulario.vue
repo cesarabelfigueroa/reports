@@ -25,7 +25,7 @@
             <div class="field">
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
               <select class="ui dropdown" id="clientdropdown">
-                <option value="">Codigo - Nombre</option>
+                <option value="">Nombre del Cliente</option>
                 <option v-for="(client, index) in clients" :value="client._id">{{client.firstname}}</option>
               </select>
             </div>

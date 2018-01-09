@@ -11,7 +11,7 @@
           <router-link  to="/Cliente">
             <div class="menu-item"><a class="item"><i class="large add user icon"></i>+Cliente</a></div>
           </router-link>
-          <router-link  to="/Reporteria">
+          <router-link  to="/Reportes">
             <div class="menu-item">
               <a class="item"><i class="large add bar chart icon"></i>Reporteria</a>
             </div>

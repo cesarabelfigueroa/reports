@@ -22,9 +22,9 @@ export default new Router({
       props: true
     },
     {
-      path: '/Reporteria',
-      name: 'reporteria',
-      component: require('@/components/Reporteria').default
+      path: '/Reportes',
+      name: 'reportes',
+      component: require('@/components/Reportes').default
     },
     {
       path: '/home',
