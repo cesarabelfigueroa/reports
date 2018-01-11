@@ -4,13 +4,13 @@
     <br>
     <div id="contenido">
       <div class="titulo">
-        <div v-if="test==2" id="header-cable" class="ui container">
+        <div v-if="test==2" id="header-cable">
           <br>
           <h1><i class="big tv icon"></i>Pago Cable</h1>
           <h3 >*Por mora se cobran L.10 extra. (Se aplica despues del 7mo dia de cada mes)</h3>
           <br>
         </div>
-        <div v-if="test==1" id="header-agua" class="ui container">
+        <div v-if="test==1" id="header-agua">
           <br>
           <h1><i class="big shower icon"></i>Pago Agua</h1>
           <h3>*No hay cobro extra por mora para este servicio</h3>
@@ -56,8 +56,6 @@
           <br>
         </div>
       </div>
-
-
     </div>
     <br><br>
   </div>
@@ -91,13 +89,12 @@
         const dd = document.getElementById('clientdropdown');
         let client_id = dd.options[dd.selectedIndex].value;
         if(client_id !== '' && this.amount > 0){
-          let service = this.test===1? 'agua' : 'cable';
-
+          let service = this.test==1? 'agua' : 'cable';
           let day = moment().format("DD");
-          if(parseInt(day) > 7 && service==2){
+          if(parseInt(day) > 7 && this.test==2){
             this.fine = 10;
           }
-          let date = moment().format("DD-MM-YYYY hh:mm:ssa");
+          let date = moment().format("YYYY-MM-DD");
           let bill = {
             client_id,
             service,

@@ -49,9 +49,12 @@ app.on('activate', () => {
 //Tablas
 const clients = new Datastore({ filename: './storage/client.json', autoload: true });
 const bills = new Datastore({ filename: './storage/bill.json', autoload: true });
+const services = new Datastore({ filename: './storage/service.json', autoload: true });
+const zones = new Datastore({ filename: './storage/zone.json', autoload: true });
 
-ipcMain.on('create-user', (event, client)=> {
+// ****************CLIENTS****************
 
+ipcMain.on('create-client', (event, client)=> {
   clients.insert(client, (err, doc) => {
       console.log('Inserted', doc.name, 'with ID', doc._id);
   });
@@ -62,10 +65,30 @@ ipcMain.on('get-clients', (event) => {
     event.sender.send('return-clients', docs);
   });
 });
+// ****************BILLS****************
+
+ipcMain.on('get-bills', (event) => {
+  bills.find({}, (err, docs) => {
+    event.sender.send('return-bills', docs);
+  });
+});
+
+ipcMain.on('get-bills-date', (event,date) => {
+  bills.find({'date':date}, (err, docs) => {
+    event.sender.send('return-bills-date', docs);
+  });
+});
 
 ipcMain.on('create-bill', (event, bill) => {
-
   bills.insert(bill, (err, doc) => {
+    console.log('Inserted with id', doc._id);
+  });
+});
+
+// ****************ZONES****************
+
+ipcMain.on('create-zone', (event, zone) => {
+  zones.insert(zone, (err, doc) => {
     console.log('Inserted with id', doc._id);
   });
 });

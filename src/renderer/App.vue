@@ -13,7 +13,12 @@
           </router-link>
           <router-link  to="/Reportes">
             <div class="menu-item">
-              <a class="item"><i class="large add bar chart icon"></i>Reporteria</a>
+              <a class="item"><i class="large add bar chart icon"></i>Reportes</a>
+            </div>
+          </router-link>
+          <router-link  to="/Configuracion">
+            <div class="menu-item">
+              <a class="item"><i class="large settings icon"></i>Configuración</a>
             </div>
           </router-link>
           <!-- <router-link  to="/">

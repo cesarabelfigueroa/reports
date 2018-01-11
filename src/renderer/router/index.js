@@ -22,6 +22,11 @@ export default new Router({
       props: true
     },
     {
+      path: '/Configuracion',
+      name: 'configuracion',
+      component: require('@/components/Configuracion').default
+    },
+    {
       path: '/Reportes',
       name: 'reportes',
       component: require('@/components/Reportes').default

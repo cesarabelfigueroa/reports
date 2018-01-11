@@ -12,41 +12,60 @@
             <h1><i class="user circle outline icon"></i>Nuevo Cliente</h1>
           </div>
           <div class="ui justified aligned container">
-            <br><br><br>
+            <br>
             <form class="ui form">
               <div class="field">
-                <label>Numero de Identidad: </label>
+                <label>Numero de Identidad:  <i class="asterisk blue icon"></i></label>
                 <div class="ui left icon input">
                   <input type="text"  v-model="client.idnumber" placeholder="Numero de Identidad">
                   <i class="id card icon"></i>
                 </div>
               </div>
               <div class="field">
-                <label>Nombres: </label>
+                <label>Nombres:  <i class="asterisk blue icon"></i></label>
                 <div class="ui left icon input">
                   <input type="text" v-model="client.firstname" placeholder="Nombres">
                   <i class="user icon"></i>
                 </div>
               </div>
               <div class="field">
-                <label>Apellidos: </label>
+                <label>Apellidos:  <i class="asterisk blue icon"></i></label>
                 <div class="ui left icon input">
                   <input type="text" v-model="client.lastname" placeholder="Apellidos">
                   <i class="user outline icon"></i>
                 </div>
               </div>
               <div class="field">
-                <label>Correo: </label>
+                <label>Correo: <i class="asterisk blue icon"></i></label>
                 <div class="ui left icon input">
                   <input type="text" v-model="client.email" placeholder="Correo">
-                  <i class="user outline icon"></i>
+                  <i class="mail icon"></i>
                 </div>
               </div>
+              <div class="field">
+                <label>Zona: <i class="asterisk blue icon"></i></label>
+                <select class="ui dropdown" id="clientdropdown">
+                  <option value="">Tipo de Zona</option>
+                  <!-- <option v-for="(zona, index) in zonas" :value="zona._id">{{zona.nombre}}</option> -->
+                </select>
+              </div>
+              <div class="field">
+                <label>Servicios:  <i class="asterisk blue icon"></i></label>
+                <div id='serviciosId'>
+                  <input type="checkbox" id="cable" value="Cable" v-model="checkedServices">
+                  <label for="cable">Cable</label>
+                  <input type="checkbox" id="agua" value="Agua" v-model="checkedServices">
+                  <label for="agua">Agua</label>
+                  <br><br>
+                  <span>Servicios Seleccionados: {{ checkedServices }}</span>
+                </div>
+              </div>
+
             </form>
           </div>
           <br><br>
           <br>
-          <button class="ui yellow button" id="nuevoCliente" v-on:click="verify">Crear</button>
+          <button class="ui yellow button" id="nuevoCliente" v-on:click="verify"><i class="plus icon"></i>Crear</button>
         </div>
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
           <div class="contentHeader">
@@ -66,6 +85,7 @@
                     <th>Nombres</th>
                     <th>Apellidos</th>
                     <th>Correo</th>
+                    <th>Eliminar</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -74,6 +94,11 @@
                     <td>{{cli.firstname}}</td>
                     <td>{{cli.lastname}}</td>
                     <td>{{cli.email}}</td>
+                    <td class="center aligned">
+                      <button class="circular ui red icon button">
+                        <i class="icon window close"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -104,7 +129,10 @@
           lastname: '',
           email: ''
         },
-        clients: []
+        clients: [],
+        services: [],
+        zones: [],
+        checkedServices:[]
       }
     },
     components: {  },
@@ -113,7 +141,6 @@
         this.$electron.shell.openExternal(link)
       },
       verify(){
-
         let idnumber = this.client.idnumber.trim();
         let firstname = this.client.firstname.trim();
         let lastname = this.client.lastname.trim();
@@ -126,7 +153,7 @@
             lastname,
             email
           }
-          ipcRenderer.send('create-user', this.client);
+          ipcRenderer.send('create-client', this.client);
           alert('Cliente agregado exitosamente!');
           this.resetClient();
         }else{
@@ -162,20 +189,24 @@
 <style scoped>
   .principal{
     padding-top: 8%;
+    padding-bottom: 3%;
   }
 
 
   #contenedor{
-    height: 600px;
+    height: 700px;
     width: 800px;
     color: white !important;
     background: rgba(0,0,0, .7);
     box-shadow: 0px 0px 23px 4px rgba(0,0,0,0.97);
 
   }
-
   .contentHeader {
       padding-top: 2rem;
+  }
+
+  #serviciosId label{
+    font-size: 15px !important;
   }
 
   .tabContent{
@@ -204,10 +235,10 @@
 
   #tableContainer {
     position: absolute;
-    height: 400px;
+    height: 500px;
     width: 700px;
     max-width: 900px;
-    max-height: 400px;
+    max-height: 500px;
     overflow-y: scroll;
     overflow-x: auto;
   }

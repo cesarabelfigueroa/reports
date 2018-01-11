@@ -37,6 +37,7 @@
               </tbody>
             </table>
           </div>
+          <br>
           <div id="tableContainer" v-if="clients.length>0">
             <table class="ui celled padded table">
               <col width="30%">
@@ -129,11 +130,11 @@
                 </tr>
               </thead>
               <tbody>
-                <tr >
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
+                <tr v-for="(factura, index) in bills">
+                  <td>{{factura.client_id}}</td>
+                  <td>{{factura.service}}</td>
+                  <td>{{factura.amount}}</td>
+                  <td>{{factura.date}}</td>
                 </tr>
               </tbody>
             </table>
@@ -142,7 +143,7 @@
         <!-- *********** TERCERA TAB *********** -->
         <div v-else="tabNumber==3">
           <div class="ui black inverted segment"><h1> <i class="calendar icon"></i>Ingreso Mensual {{yearActive}}</h1></div>
-          <table class="ui celled padded table">
+          <table class="ui celled padded inverted table">
             <col width="50%">
             <col width="50%">
             <thead class="tableHeader">
@@ -269,8 +270,9 @@ const moment = require('moment');
       },
       tabSelected(numero){
         if(numero===2){
-          this.dayActive = moment().format("MM-DD-YYYY");
-
+          this.dayActive = moment().format("YYYY-MM-DD");
+          this.reporteDia = moment().format("YYYY-MM-DD");
+          this.cambioFecha();
         }else if (numero === 3) {
           this.yearActive = moment().format("YYYY")
         }
@@ -281,6 +283,10 @@ const moment = require('moment');
       },
       cambioFecha(){
         this.dayActive = this.reporteDia;
+        ipcRenderer.on('return-bills-date', (event,arg)=>{
+          this.bills = arg
+        });
+        ipcRenderer.send('get-bills-date',this.dayActive);
       }
     },
     beforeMount(){
