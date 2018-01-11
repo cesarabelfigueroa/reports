@@ -112,8 +112,6 @@
               </h4>
             </div>
           </div>
-
-
           <br>
           <div id="tableContainer">
             <table class="ui celled padded table">
@@ -124,7 +122,7 @@
               <thead class="tableHeader">
                 <tr>
                   <th>No. Identidad</th>
-                  <th>Nombres</th>
+                  <th>Servicio</th>
                   <th>Fecha</th>
                   <th>Monto</th>
                 </tr>
@@ -133,8 +131,8 @@
                 <tr v-for="(factura, index) in bills">
                   <td>{{factura.client_id}}</td>
                   <td>{{factura.service}}</td>
-                  <td>{{factura.amount}}</td>
                   <td>{{factura.date}}</td>
+                  <td>{{factura.amount}}</td>
                 </tr>
               </tbody>
             </table>
