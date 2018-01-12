@@ -60,6 +60,15 @@ ipcMain.on('create-client', (event, client)=> {
   });
 });
 
+ipcMain.on('delete-client',(event,clientID)=>{
+  clients.findOne({'_id':this.client._id}, (event,err)=>{
+    if(!err){
+      client.remove();
+      console.log('Client deleted');
+    }
+  });
+});
+
 ipcMain.on('get-clients', (event) => {
   clients.find({}, (err, docs) => {
     event.sender.send('return-clients', docs);
@@ -79,6 +88,18 @@ ipcMain.on('get-bills-date', (event,date) => {
   });
 });
 
+ipcMain.on('get-bills-month', (event,month) => {
+  bills.find({'date':'****-'+month+'-**'}, (err, docs) => {
+    event.sender.send('return-bills-month', docs);
+  });
+});
+
+ipcMain.on('get-bills-year', (event,year) => {
+  bills.find({'date': year+'-**-**'}, (err, docs) => {
+    event.sender.send('return-bills-year', docs);
+  });
+});
+
 ipcMain.on('create-bill', (event, bill) => {
   bills.insert(bill, (err, doc) => {
     console.log('Inserted with id', doc._id);
@@ -91,6 +112,26 @@ ipcMain.on('create-zone', (event, zone) => {
   zones.insert(zone, (err, doc) => {
     console.log('Inserted with id', doc._id);
   });
+});
+
+ipcMain.on('get-zones', (event)=>{
+  zones.find({},(err,docs)=>{
+     event.sender('return-zones',docs);
+  });
+});
+
+// ****************SERVICES****************
+
+ipcMain.on('get-services', (event)=>{
+    services.find({},(event,docs)=>{
+      event.sender('return-services',docs);
+    });
+});
+
+ipcMain.on('create-services', (event,service)=>{
+    services.insert(service,(err,doc)=>{
+      console.log('Inserted with id', doc._id);
+    });
 });
 
 

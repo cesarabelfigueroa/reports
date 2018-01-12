@@ -95,7 +95,7 @@
                     <td>{{cli.lastname}}</td>
                     <td>{{cli.email}}</td>
                     <td class="center aligned">
-                      <button class="circular ui red icon button">
+                      <button v-on:click="deleteClient(cli)" class="circular ui red icon button">
                         <i class="icon window close"></i>
                       </button>
                     </td>
@@ -175,12 +175,19 @@
           lastname: '',
           email: ''
         }
+      },
+      deleteClient(cliente){
+        ipcRenderer.send('delete-client',cliente);
+        ipcRenderer.send('get-clients');
+        alert('Cliente eliminado exitosamente!');
       }
+
     },
     beforeMount(){
       ipcRenderer.on('return-clients', (event, arg) => {
         this.clients = arg;
       });
+
       ipcRenderer.send('get-clients');
 
     }

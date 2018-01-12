@@ -12,6 +12,33 @@
        <div class="tabContent">
          <!-- *********** SERVICE TAB *********** -->
          <div v-if="tabNumber==1">
+           <div id="tableContainer">
+             <table class="ui celled padded table">
+               <col width="20%">
+               <col width="15%">
+               <col width="35%">
+               <col width="10%">
+               <col width="20%">
+               <thead class="tableHeader">
+                 <tr>
+                   <th>Identidad</th>
+                   <th>Nombre</th>
+                   <th>Descripción</th>
+                   <th>Zona</th>
+                   <th>Monto</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr v-for="(servicio, index) in services">
+                   <td>{{servicio._id}}</td>
+                   <td>{{servicio.name}}</td>
+                   <td>{{servicio.description}}</td>
+                   <td>{{servicio.zone}}</td>
+                   <td>{{servicio.cost}}</td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
            <form class="ui form">
              <div class="field">
                <label>Nombre:  <i class="asterisk blue icon"></i></label>
@@ -42,10 +69,31 @@
              </div>
            </form>
            <br>
-           <button class="ui yellow button" id="nuevoServicio" ><i class="plus icon"></i>Añadir</button>
+           <button class="ui yellow button" id="nuevoServicio" ><i class="plus icon"></i>Modificar</button>
          </div>
          <!-- *********** ZONE TAB *********** -->
          <div v-if="tabNumber==2">
+           <div id="tableContainer">
+             <table class="ui celled padded table">
+               <col width="20%">
+               <col width="20%">
+               <col width="50%">
+               <thead class="tableHeader">
+                 <tr>
+                   <th>Identidad</th>
+                   <th>Nombre</th>
+                   <th>Descripción</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr v-for="(zona, index) in zones">
+                   <td>{{zona._id}}</td>
+                   <td>{{zona.name}}</td>
+                   <td>{{zona.description}}</td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
            <form class="ui form">
              <div class="field">
                <label>Nombre:  <i class="asterisk blue icon"></i></label>
@@ -62,7 +110,7 @@
              </div>
            </form>
            <br>
-           <button class="ui yellow button" id="nuevaZona" ><i class="plus icon"></i>Añadir</button>
+           <button class="ui yellow button" id="nuevaZona" ><i class="plus icon"></i>Modificar</button>
          </div>
        </div>
      </div>
@@ -94,7 +142,6 @@
         services: []
       }
     },
-    components: {  },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
@@ -125,6 +172,16 @@
           }
       }
 
+    },
+    beforeMount(){
+      // ipcRenderer.on('return-services',(event,arg)=>{
+      //   this.services =arg;
+      // });
+      // ipcRenderer.send('get-services');
+      // ipcRenderer.on('return-zones',(event,arg)=>{
+      //   this.zones =arg;
+      // });
+      // ipcRenderer.send('get-zones');
     }
   }
 </script>
