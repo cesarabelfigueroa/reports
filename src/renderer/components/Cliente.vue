@@ -85,7 +85,9 @@
                     <th>Nombres</th>
                     <th>Apellidos</th>
                     <th>Correo</th>
+                    <th>Modificar</th>
                     <th>Eliminar</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -95,10 +97,18 @@
                     <td>{{cli.lastname}}</td>
                     <td>{{cli.email}}</td>
                     <td class="center aligned">
-                      <button v-on:click="deleteClient(cli)" class="circular ui red icon button">
-                        <i class="icon window close"></i>
+                      <button  v-on:click="modify(cli._id)" class="circular ui teal icon button">
+                        <i class="icon write"></i>
                       </button>
                     </td>
+                    <td class="center aligned">
+                      <button  v-on:click="remove(cli._id, index)" class="circular ui red icon button">
+                        <i class="icon remove"></i>
+                      </button>
+                    </td>
+
+
+
                   </tr>
                 </tbody>
               </table>
@@ -132,7 +142,8 @@
         clients: [],
         services: [],
         zones: [],
-        checkedServices:[]
+        checkedServices:[],
+        ids: []
       }
     },
     components: {  },
@@ -142,22 +153,27 @@
       },
       verify(){
         let idnumber = this.client.idnumber.trim();
-        let firstname = this.client.firstname.trim();
-        let lastname = this.client.lastname.trim();
-        let email = this.client.email.trim();
-        if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
-          const { ipcRenderer } = require('electron');
-          this.client = {
-            idnumber,
-            firstname,
-            lastname,
-            email
+        if(!this.ids.includes(idnumber)){
+          this.ids.push(idnumber);
+          let firstname = this.client.firstname.trim();
+          let lastname = this.client.lastname.trim();
+          let email = this.client.email.trim();
+          if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
+            this.client = {
+              idnumber,
+              firstname,
+              lastname,
+              email
+            }
+            ipcRenderer.send('create-client', this.client);
+            alert('Cliente agregado exitosamente!');
+            this.resetClient();
+
+          }else{
+            alert('Debe llenar todos los campos y asegurarse que sean validos');
           }
-          ipcRenderer.send('create-client', this.client);
-          alert('Cliente agregado exitosamente!');
-          this.resetClient();
         }else{
-          alert('Debe llenar todos los campos y asegurarse que sean validos');
+          alert('Ya existe un cliente con ese numero de identidad.');
         }
       },
       change(activetab) {
@@ -167,6 +183,15 @@
         }else{
           ipcRenderer.send('get-clients');
         }
+      },
+      modify(cli) {
+
+      },
+      remove(_id, index) {
+        console.log('Index: ',index);
+        this.clients.splice(index, 1);
+        console.log('Clients splice: ', this.clients);
+        ipcRenderer.send('remove-client', _id);
       },
       resetClient() {
         this.client = {
@@ -184,21 +209,35 @@
 
     },
     beforeMount(){
-      ipcRenderer.on('return-clients', (event, arg) => {
+      this.clients = [];
+      this.ids = [];
+      ipcRenderer.on('fetch-clients', (event, arg) => {
         this.clients = arg;
+        for (var key in this.clients) {
+            if (this.clients.hasOwnProperty(key)) {
+                this.ids.push(this.clients[key].idnumber);
+            }
+        }
       });
 
       ipcRenderer.send('get-clients');
 
+      ipcRenderer.on('remove-client-ret', (event, err) => {
+        if(!err){
+          alert('Cliente eliminado con exito!');
+        }else{
+          alert('Error al eliminar cliente', err); //err solo para debugging
+        }
+      });
     }
   }
 </script>
 <style scoped>
+
   .principal{
     padding-top: 8%;
     padding-bottom: 3%;
   }
-
 
   #contenedor{
     height: 700px;
@@ -206,7 +245,6 @@
     color: white !important;
     background: rgba(0,0,0, .7);
     box-shadow: 0px 0px 23px 4px rgba(0,0,0,0.97);
-
   }
   .contentHeader {
       padding-top: 2rem;
@@ -220,6 +258,7 @@
     padding-left: 60px;
     padding-right: 60px;
   }
+
   .fondo{
     background: url("~@/assets/mathParty.jpg") no-repeat center center;
     background-size: cover;
@@ -230,6 +269,7 @@
     left: 0;
     z-index: -1;
   }
+
   #nuevoCliente{
     padding-left: 125px;
     padding-right: 125px;
@@ -238,7 +278,6 @@
   label{
     color: white !important;
   }
-
 
   #tableContainer {
     position: absolute;
@@ -250,5 +289,8 @@
     overflow-x: auto;
   }
 
+  table {
+    width: 100%;
+  }
 
 </style>

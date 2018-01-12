@@ -56,22 +56,19 @@ const zones = new Datastore({ filename: './storage/zone.json', autoload: true })
 
 ipcMain.on('create-client', (event, client)=> {
   clients.insert(client, (err, doc) => {
-      console.log('Inserted', doc.name, 'with ID', doc._id);
+      console.log('Inserted', doc.firstname, 'with ID', doc._id);
   });
 });
 
-ipcMain.on('delete-client',(event,clientID)=>{
-  clients.findOne({'_id':this.client._id}, (event,err)=>{
-    if(!err){
-      client.remove();
-      console.log('Client deleted');
-    }
+ipcMain.on('remove-client', (event, _id) => {
+  clients.remove({ _id }, {}, (err, numRemoved)=> {
+    event.sender.send('remove-client-ret', err);
   });
 });
 
 ipcMain.on('get-clients', (event) => {
   clients.find({}, (err, docs) => {
-    event.sender.send('return-clients', docs);
+    event.sender.send('fetch-clients', docs);
   });
 });
 // ****************BILLS****************
