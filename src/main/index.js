@@ -113,20 +113,20 @@ ipcMain.on('create-zone', (event, zone) => {
 
 ipcMain.on('get-zones', (event)=>{
   zones.find({},(err,docs)=>{
-     event.sender('return-zones',docs);
+     event.sender.send('return-zones',docs);
   });
 });
 
 // ****************SERVICES****************
 
 ipcMain.on('get-services', (event)=>{
-    services.find({},(event,docs)=>{
-      event.sender('return-services',docs);
+    services.find({},(err, docs)=>{
+      event.sender.send('return-services',docs);
     });
 });
 
-ipcMain.on('create-services', (event,service)=>{
-    services.insert(service,(err,doc)=>{
+ipcMain.on('create-service', (event,service)=>{
+    services.insert(service, (err, doc)=>{
       console.log('Inserted with id', doc._id);
     });
 });

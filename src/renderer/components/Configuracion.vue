@@ -57,7 +57,7 @@
                <label>Zona: <i class="asterisk blue icon"></i></label>
                <select class="ui dropdown" id="zonadropdown">
                  <option value="">Tipo de Zona</option>
-                 <!-- <option v-for="(zona, index) in zonas" :value="zona._id">{{zona.nombre}}</option> -->
+                 <option v-for="(zona, index) in zones" :value="zona._id">{{zona.name}}</option>
                </select>
              </div>
              <div class="field">
@@ -69,7 +69,7 @@
              </div>
            </form>
            <br>
-           <button class="ui yellow button" id="nuevoServicio" ><i class="plus icon"></i>Modificar</button>
+           <button class="ui yellow button" id="nuevoServicio" v-on:click="submitService()"><i class="plus icon"></i>Modificar</button>
          </div>
          <!-- *********** ZONE TAB *********** -->
          <div v-if="tabNumber==2">
@@ -110,7 +110,7 @@
              </div>
            </form>
            <br>
-           <button class="ui yellow button" id="nuevaZona" ><i class="plus icon"></i>Modificar</button>
+           <button class="ui yellow button" id="nuevaZona" v-on:click="submitZone()" ><i class="plus icon"></i>Modificar</button>
          </div>
        </div>
      </div>
@@ -154,7 +154,13 @@
           let description = this.service.description.trim();
           let zone = this.service.description.trim();
           let cost = this.service.cost.trim();
-
+          this.service = {
+            name,
+            description,
+            zone,
+            cost
+          }
+          ipcRenderer.send('create-service', this.service);
       },
       submitZone(){
           let name = this.zone.name.trim();
@@ -174,14 +180,14 @@
 
     },
     beforeMount(){
-      // ipcRenderer.on('return-services',(event,arg)=>{
-      //   this.services =arg;
-      // });
-      // ipcRenderer.send('get-services');
-      // ipcRenderer.on('return-zones',(event,arg)=>{
-      //   this.zones =arg;
-      // });
-      // ipcRenderer.send('get-zones');
+      ipcRenderer.on('return-services',(event,arg)=>{
+        this.services = arg;
+      });
+      ipcRenderer.send('get-services');
+      ipcRenderer.on('return-zones',(event,arg)=>{
+        this.zones = arg;
+      });
+      ipcRenderer.send('get-zones');
     }
   }
 </script>

@@ -188,9 +188,7 @@
 
       },
       remove(_id, index) {
-        console.log('Index: ',index);
         this.clients.splice(index, 1);
-        console.log('Clients splice: ', this.clients);
         ipcRenderer.send('remove-client', _id);
       },
       resetClient() {
@@ -200,11 +198,6 @@
           lastname: '',
           email: ''
         }
-      },
-      deleteClient(cliente){
-        ipcRenderer.send('delete-client',cliente);
-        ipcRenderer.send('get-clients');
-        alert('Cliente eliminado exitosamente!');
       }
 
     },
