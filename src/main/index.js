@@ -117,6 +117,18 @@ ipcMain.on('get-zones', (event)=>{
   });
 });
 
+ipcMain.on('delete-zone', (event, _id) => {
+    zones.remove({ _id }, (err, numRemoved) => {
+      if(!err && numRemoved===1){
+        console.log('Zona removida con exito!');
+
+      }else{
+        console.log('Error borrando zona', err);
+      }
+      ipcMain.send('delete-ret', err);
+    });
+});
+
 // ****************SERVICES****************
 
 ipcMain.on('get-services', (event)=>{
@@ -131,7 +143,16 @@ ipcMain.on('create-service', (event,service)=>{
     });
 });
 
-
+ipcMain.on('delete-service', (event, _id) => {
+  services.remove({ _id }, (err, numRemoved) => {
+    if(!err && numRemoved===1) {
+      console.log('Servicio borrado con exito!');
+    }else{
+      console.log('Error borrando servicio', err);
+    }
+    ipcMain.send('delete-ret', err);
+  });
+});
 /**
  * Auto Updater
  *

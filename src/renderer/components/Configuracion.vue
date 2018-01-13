@@ -176,18 +176,33 @@
           }else{
             alert('Error, tiene que escoger un nombre');
           }
+      },
+      deleteZone() {
+        ipcRenderer.send('delete-zone', this.zone._id);
       }
 
     },
     beforeMount(){
+      //Inicializacion de listeners para obtener info del backend
       ipcRenderer.on('return-services',(event,arg)=>{
         this.services = arg;
       });
-      ipcRenderer.send('get-services');
+
       ipcRenderer.on('return-zones',(event,arg)=>{
         this.zones = arg;
       });
+
+      ipcRenderer.on('delete-ret', (event, err) => {
+        if(!err) {
+          alert('Removido con exito!');
+        } else {
+          alert('Error al eliminar', err); //err solo para debbugging
+        }
+      });
+
+      //Llamado a eventos que retornaran info del backend
       ipcRenderer.send('get-zones');
+      ipcRenderer.send('get-services');
     }
   }
 </script>
