@@ -15,8 +15,8 @@
            <div id="tableContainer">
              <table class="ui celled padded table">
                <col width="20%">
-               <col width="15%">
-               <col width="35%">
+               <col width="10%">
+               <col width="40%">
                <col width="10%">
                <col width="20%">
                <thead class="tableHeader">
@@ -25,7 +25,9 @@
                    <th>Nombre</th>
                    <th>Descripción</th>
                    <th>Zona</th>
-                   <th>Monto</th>
+                   <th>Monto (Lps)</th>
+                   <th>Modificar</th>
+                   <th>Eliminar</th>
                  </tr>
                </thead>
                <tbody>
@@ -35,17 +37,29 @@
                    <td>{{servicio.description}}</td>
                    <td>{{servicio.zone}}</td>
                    <td>{{servicio.cost}}</td>
+                   <td class="center aligned">
+                     <button  v-on:click="modify(servicio._id)" class="circular ui teal icon button">
+                       <i class="icon write"></i>
+                     </button>
+                   </td>
+                   <td class="center aligned">
+                     <button  v-on:click="removeService(servicio._id, index)" class="circular ui red icon button">
+                       <i class="icon remove"></i>
+                     </button>
+                   </td>
                  </tr>
                </tbody>
              </table>
            </div>
+           <br>
            <form class="ui form">
              <div class="field">
-               <label>Nombre:  <i class="asterisk blue icon"></i></label>
-               <div class="ui left icon input">
-                 <input type="text"  v-model="service.name" placeholder="Nombre">
-                 <i class="suitcase icon"></i>
-               </div>
+               <label><i class="suitcase icon"></i>Nombre: <i class="asterisk blue icon"></i></label>
+               <select v-model="service.name" class="ui dropdown" id="servicioDropdown">
+                 <option value="">Servicio</option>
+                 <option value="Agua">Agua</option>
+                 <option value="Cable">Cable</option>
+               </select>
              </div>
              <div class="field">
                <label>Descripción: </label>
@@ -55,15 +69,15 @@
              </div>
              <div class="field">
                <label>Zona: <i class="asterisk blue icon"></i></label>
-               <select class="ui dropdown" id="zonadropdown">
+               <select v-model="service.zone" class="ui dropdown" id="zonadropdown">
                  <option value="">Tipo de Zona</option>
-                 <option v-for="(zona, index) in zones" :value="zona._id">{{zona.name}}</option>
+                 <option v-for="(zona, index) in zones" :value="zona.name">{{zona.name}}</option>
                </select>
              </div>
              <div class="field">
                <label>Monto: <i class="asterisk blue icon"></i></label>
                <div class="ui left icon input">
-                 <input type="text" v-model="service.cost" placeholder="Monto">
+                 <input type="number" v-model="service.cost" placeholder="Monto">
                  <i class="payment icon"></i>
                </div>
              </div>
@@ -77,12 +91,16 @@
              <table class="ui celled padded table">
                <col width="20%">
                <col width="20%">
-               <col width="50%">
+               <col width="40%">
+               <col width="5%">
+               <col width="5%">
                <thead class="tableHeader">
                  <tr>
                    <th>Identidad</th>
                    <th>Nombre</th>
                    <th>Descripción</th>
+                   <th>Modificar</th>
+                   <th>Eliminar</th>
                  </tr>
                </thead>
                <tbody>
@@ -90,6 +108,16 @@
                    <td>{{zona._id}}</td>
                    <td>{{zona.name}}</td>
                    <td>{{zona.description}}</td>
+                   <td class="center aligned">
+                     <button  v-on:click="modify(zona._id)" class="circular ui teal icon button">
+                       <i class="icon write"></i>
+                     </button>
+                   </td>
+                   <td class="center aligned">
+                     <button  v-on:click="deleteZone(zona._id, index)" class="circular ui red icon button">
+                       <i class="icon remove"></i>
+                     </button>
+                   </td>
                  </tr>
                </tbody>
              </table>
@@ -152,7 +180,7 @@
       submitService(){
           let name = this.service.name.trim();
           let description = this.service.description.trim();
-          let zone = this.service.description.trim();
+          let zone = this.service.zone.trim();
           let cost = this.service.cost.trim();
           this.service = {
             name,
@@ -177,8 +205,29 @@
             alert('Error, tiene que escoger un nombre');
           }
       },
-      deleteZone() {
-        ipcRenderer.send('delete-zone', this.zone._id);
+      deleteZone(_id, index) {
+        this.clients.splice(index, 1);
+        ipcRenderer.on('delete-zone-ret', (event, err) => {
+          if(!err) {
+            alert('Removido con exito!');
+          } else {
+            alert('Error al eliminar', err); //err solo para debbugging
+          }
+        });
+        ipcRenderer.send('delete-zone', _id);
+
+      },
+      removeService(_id, index){
+        this.services.splice(index,1);
+        ipcRenderer.on('delete-service-ret', (event, err) => {
+          if(!err) {
+            alert('Removido con exito!');
+          } else {
+            alert('Error al eliminar', err); //err solo para debbugging
+          }
+        });
+        ipcRenderer.send('delete-service',_id);
+
       }
 
     },
@@ -192,13 +241,13 @@
         this.zones = arg;
       });
 
-      ipcRenderer.on('delete-ret', (event, err) => {
-        if(!err) {
-          alert('Removido con exito!');
-        } else {
-          alert('Error al eliminar', err); //err solo para debbugging
-        }
-      });
+      // ipcRenderer.on('delete-ret', (event, err) => {
+      //   if(!err) {
+      //     alert('Removido con exito!');
+      //   } else {
+      //     alert('Error al eliminar', err); //err solo para debbugging
+      //   }
+      // });
 
       //Llamado a eventos que retornaran info del backend
       ipcRenderer.send('get-zones');
@@ -209,9 +258,10 @@
 <style scoped>
   .principal{
     padding-top: 8%;
+    padding-bottom: 3%;
   }
   #contenedor{
-    height: 600px;
+    min-height: 600px;
     width: 900px;
     color: white !important;
     background: rgba(0,0,0, .7);

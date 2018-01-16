@@ -1,7 +1,5 @@
-{"email":"inti@yahoo.com","firstname":"inti","idnumber":"123","lastname":"velasquez","_id":"14sHrLj3Vns51uJ5"}
-{"email":"juany@yahoo.com","firstname":"Juany","idnumber":"4321","lastname":"Juany","_id":"2HDJrRxN0UadIWZN"}
-{"email":"juan@pedro.com","firstname":"juan","idnumber":"0801-1991-12345","lastname":"pedro","_id":"E2LBqxVILlzyKA9Q"}
-{"email":"cesar@yahoo.com","firstname":"cesar","idnumber":"3241","lastname":"cesar","_id":"EFziGyns7EPskIK5"}
-{"email":"test4@test.com","firstname":"test4","idnumber":"0801-2132-12312","lastname":"test4","_id":"U8dLjTIBtfo4SCuT"}
-{"email":"maria@yahoo.com","firstname":"Maria","idnumber":"0801-1980-06325","lastname":"Fiallos","_id":"Xp5agXQa9LG3ero7"}
-{"$$deleted":true,"_id":"U8dLjTIBtfo4SCuT"}
+{"email":"inti@yahoo.com","firstname":"Inti","idnumber":"0801-1996-12345","lastname":"Velasquez","services":["Cable","Agua"],"zone":"Rural","_id":"14sHrLj3Vns51uJ5"}
+{"email":"juany@yahoo.com","firstname":"Juany","idnumber":"0801-1997-12345","lastname":"Ramirez","services":["Cable","Agua"],"zone":"Comercial","_id":"2HDJrRxN0UadIWZN"}
+{"email":"cesar@yahoo.com","firstname":"Cesar","idnumber":"0801-1997-54321","lastname":"Figueroa","services":["Cable","Agua"],"zone":"Residencial Urbana","_id":"EFziGyns7EPskIK5"}
+{"email":"mario@gmail.com","firstname":"Mario","idnumber":"0801-1960-02532","lastname":"Maldonado","services":["Cable","Agua"],"zone":"Rural","_id":"PL4FwwMb4jeWF1Pi"}
+{"email":"maria@yahoo.com","firstname":"Maria","idnumber":"0801-1980-06325","lastname":"Fiallos","services":["Cable","Agua"],"zone":"Comercial","_id":"Xp5agXQa9LG3ero7"}

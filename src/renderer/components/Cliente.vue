@@ -17,7 +17,7 @@
               <div class="field">
                 <label>Numero de Identidad:  <i class="asterisk blue icon"></i></label>
                 <div class="ui left icon input">
-                  <input type="text"  v-model="client.idnumber" placeholder="Numero de Identidad">
+                  <input type="text"  v-model="client.idnumber" placeholder="Ej: 0801-1900-00000">
                   <i class="id card icon"></i>
                 </div>
               </div>
@@ -44,20 +44,19 @@
               </div>
               <div class="field">
                 <label>Zona: <i class="asterisk blue icon"></i></label>
-                <select class="ui dropdown" id="clientdropdown">
-                  <option value="">Tipo de Zona</option>
-                  <!-- <option v-for="(zona, index) in zonas" :value="zona._id">{{zona.nombre}}</option> -->
+                <select v-model="client.zone" class="ui dropdown" id="zoneDropdown">
+                  <option v-for="(zona, index) in zones" :value="zona.name">{{zona.name}}</option>
                 </select>
               </div>
               <div class="field">
-                <label>Servicios:  <i class="asterisk blue icon"></i></label>
+                <label>Servicios {{ client.services }}:  <i class="asterisk blue icon"></i></label>
                 <div id='serviciosId'>
-                  <input type="checkbox" id="cable" value="Cable" v-model="checkedServices">
+                  <input type="checkbox" id="cable" value="Cable" v-model="client.services">
                   <label for="cable">Cable</label>
-                  <input type="checkbox" id="agua" value="Agua" v-model="checkedServices">
+                  <br>
+                  <input type="checkbox" id="agua" value="Agua" v-model="client.services">
                   <label for="agua">Agua</label>
                   <br><br>
-                  <span>Servicios Seleccionados: {{ checkedServices }}</span>
                 </div>
               </div>
 
@@ -75,16 +74,21 @@
             </ol> -->
             <div id="tableContainer" v-if="clients.length>0">
               <table class="ui celled padded table">
-                <col width="30%">
-                <col width="25%">
-                <col width="25%">
-                <col width="15%">
+                <col width="26%">
+                <col width="17%">
+                <col width="17%">
+                <col width="20%">
+                <col width="10%">
+                <col width="5%">
+                <col width="5%">
                 <thead class="tableHeader">
                   <tr>
                     <th>No. Identidad</th>
                     <th>Nombres</th>
                     <th>Apellidos</th>
                     <th>Correo</th>
+                    <th>Zona</th>
+                    <th>Servicios</th>
                     <th>Modificar</th>
                     <th>Eliminar</th>
 
@@ -96,8 +100,10 @@
                     <td>{{cli.firstname}}</td>
                     <td>{{cli.lastname}}</td>
                     <td>{{cli.email}}</td>
+                    <td>{{cli.zone}}</td>
+                    <td>{{cli.services}}</td>
                     <td class="center aligned">
-                      <button  v-on:click="modify(cli._id)" class="circular ui teal icon button">
+                      <button  v-on:click="modifyContent(cli._id, index)" class="circular ui teal icon button">
                         <i class="icon write"></i>
                       </button>
                     </td>
@@ -106,9 +112,6 @@
                         <i class="icon remove"></i>
                       </button>
                     </td>
-
-
-
                   </tr>
                 </tbody>
               </table>
@@ -137,16 +140,19 @@
           idnumber: '',
           firstname: '',
           lastname: '',
-          email: ''
+          email: '',
+          services:[],
+          zone: ''
         },
         clients: [],
-        services: [],
         zones: [],
-        checkedServices:[],
-        ids: []
+        ids: [],
+        showModal:false
       }
     },
-    components: {  },
+    components: {
+
+    },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
@@ -158,12 +164,16 @@
           let firstname = this.client.firstname.trim();
           let lastname = this.client.lastname.trim();
           let email = this.client.email.trim();
-          if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
+          let zone = this.client.zone;
+          let services = this.client.services;
+          if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && zone!=='' && services.length>0 && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
             this.client = {
               idnumber,
               firstname,
               lastname,
-              email
+              email,
+              zone,
+              services
             }
             ipcRenderer.send('create-client', this.client);
             alert('Cliente agregado exitosamente!');
@@ -184,7 +194,11 @@
           ipcRenderer.send('get-clients');
         }
       },
-      modify(cli) {
+      modifyContent(_id, index) {
+        this.client = this.clients[index];
+        this.showModal = true
+      },
+      modify(){
 
       },
       remove(_id, index) {
@@ -212,8 +226,11 @@
             }
         }
       });
-
       ipcRenderer.send('get-clients');
+      ipcRenderer.on('return-zones',(event,args)=>{
+        this.zones = args;
+      });
+      ipcRenderer.send('get-zones');
 
       ipcRenderer.on('remove-client-ret', (event, err) => {
         if(!err){
@@ -234,7 +251,7 @@
 
   #contenedor{
     height: 700px;
-    width: 800px;
+    width: 1000px;
     color: white !important;
     background: rgba(0,0,0, .7);
     box-shadow: 0px 0px 23px 4px rgba(0,0,0,0.97);
@@ -275,7 +292,7 @@
   #tableContainer {
     position: absolute;
     height: 500px;
-    width: 700px;
+    width: 900px;
     max-width: 900px;
     max-height: 500px;
     overflow-y: scroll;
@@ -285,5 +302,89 @@
   table {
     width: 100%;
   }
+
+  /* *********************** MODAL*********************** */
+
+    .modal-mask {
+      position: fixed;
+      z-index: 9998;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, .5);
+      display: table;
+      transition: opacity 1s ease;
+    }
+
+    .modal-wrapper {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .modal-footer{
+      align-items: flex-end;
+      align-content: flex-end;
+    }
+
+    .modal-container {
+      width: 800px;
+      margin: 0px auto;
+      padding: 20px 30px;
+      background-color: gray;
+      box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75)!important;
+      border-radius: 2px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+      transition: all 1s ease;
+      font-family: Roboto !important;
+      font-size: 18px;
+    }
+
+    .modal-header {
+      margin-top: 0;
+      color: black;
+    }
+    .modal-header span{
+      font-size: 15px!important;
+      color: white;
+      font-family: Roboto !important;
+    }
+
+    .modal-body label{
+      font-family: Roboto !important;
+    }
+
+    .modal-body {
+      margin: 20px 0;
+    }
+
+    .modal-default-button {
+      float: right;
+    }
+
+
+    /*
+     * The following styles are auto-applied to elements with
+     * transition="modal" when their visibility is toggled
+     * by Vue.js.
+     *
+     * You can easily play with the modal transition by editing
+     * these styles.
+     */
+
+    .modal-enter {
+      opacity: 0;
+    }
+
+    .modal-leave-active {
+      opacity: 0;
+    }
+
+    .modal-enter .modal-container,
+    .modal-leave-active .modal-container {
+      -webkit-transform: scale(1.1);
+      transform: scale(1.1);
+    }
+
 
 </style>

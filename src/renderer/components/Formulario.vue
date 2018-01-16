@@ -25,15 +25,15 @@
           <div class="ui form">
             <div class="field">
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-              <select class="ui dropdown" id="clientdropdown">
+              <select v-model="indexCliente" class="ui dropdown" id="clientdropdown">
                 <option value="">Nombre del Cliente</option>
-                <option v-for="(client, index) in clients" :value="client.idnumber">{{client.firstname}}</option>
+                <option v-for="(client, index) in clients" :value="client.idnumber">{{client.firstname}} {{client.lastname}}</option>
               </select>
             </div>
             <br>
             <div class="ui horizontal segments">
               <div class="ui segment">
-                <h3>El monto total es de:</h3>
+                <h3>Monto Total:</h3>
               </div>
               <div class="ui segment">
                 <h3>{{total}}</h3>
@@ -51,6 +51,12 @@
               <i class="handshake file word outline icon"></i>
               Generar Factura
             </button>
+            <div v-if="boolEnero==true" class="ui big yellow animated fade button" id="show-modal" @click="showModal = true">
+              <div class="hidden content">Pago Anual</div>
+              <div class="visible content">
+                <i class="certificate icon"></i>Promoción
+              </div>
+            </div>
           </div>
 
           <br><br>
@@ -58,6 +64,77 @@
         </div>
       </div>
     </div>
+    <!-- ************************MODAL PROMOCION************************ -->
+    <modal v-if="showModal" @close="showModal = false">
+      <transition name="modal">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-container">
+              <div class="">
+                <div class="modal-header">
+                  <slot name="header">
+                    <div class="ui blue inverted segment">
+                      <h1><i class="certificate yellow icon"></i> Pago Anual</h1>
+                    </div>
+                    <hr>
+                    <div class="ui secondary inverted blue segment">
+                      <span>Esta promoción solamente es válida en el mes de Enero. Al pagar el año entero, el cliente recibe un mes gratuito</span>
+                    </div>
+
+                  </slot>
+                </div>
+
+                <div class="modal-body">
+                  <slot name="body">
+                    <div class="ui form">
+                      <div class="field">
+                        <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
+                        <select v-model="indexCliente"class="ui dropdown" id="clientdropdown">
+                          <option value="">Nombre del Cliente</option>
+                          <option v-for="(client, index) in clients" :value="index">{{client.firstname}} {{client.lastname}}</option>
+                        </select>
+                      </div>
+                      <br>
+                      <div class="ui horizontal segments">
+                        <div class="ui segment">
+                          <h3>Monto Anual:</h3>
+                        </div>
+                        <div class="ui segment">
+                          <h3>{{total}}</h3>
+                        </div>
+                      </div>
+                      <br>
+                      <div class="two fields">
+                        <div class="field">
+                          <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
+                          <input type="number" v-model="amount" placeholder="Ej: 1000.00">
+                        </div>
+                      </div>
+                      <br>
+                      <button class="ui button yellow" v-on:click="verify">
+                        <i class="handshake file word outline icon"></i>
+                        Generar Factura
+                      </button>
+                    </div>
+                  </slot>
+                </div>
+
+                <div class="modal-footer">
+                  <slot name="footer">
+                    <div class="right aligned ui basic segment">
+                      <button class="ui button red" @click="modalFuncion()">
+                        Cancelar
+                      </button>
+                    </div>
+                  </slot>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </modal>
     <br><br>
   </div>
 
@@ -66,7 +143,6 @@
 <script>
   const { ipcRenderer } = require('electron');
   const moment = require('moment');
-
 
   export default {
 
@@ -78,14 +154,37 @@
         clients: [],
         fine: 0,
         day: 0,
-        warning: 'No hay mora'
-
+        warning: 'No hay mora',
+        showModal: false,
+        boolEnero: false,
+        indexCliente: 0,
+        client: {
+          idnumber: '',
+          firstname: '',
+          lastname: '',
+          email: '',
+          services:[],
+          zone: ''
+        },
+        service:{
+          name: '',
+          description: '',
+          zone: '',
+          cost: ''
+        }
       }
     },
     computed : {
       total: function () {
         return this.amount != '' ? parseInt(this.fine) + parseInt(this.amount) : parseInt(this.fine);
 
+      },
+      monto: function () {
+        ipcRenderer.on('return-services-cost', (event,arg)=>{
+          this.service = arg;
+        });
+        ipcRenderer.send('get-services-cost',this.clients[this.indexCliente].name,this.clients[this.indexCliente].zone);
+        return parseInt(this.fine) + parseInt(this.service.cost);
       }
     },
     components: {  },
@@ -93,6 +192,10 @@
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      modalFuncion(){
+        this.showModal = false
+
       },
       verify() {
         console.log('Fine: ', this.fine);
@@ -106,13 +209,19 @@
           if(parseInt(day) > 7 && this.test==2){
             this.fine = 10;
           }
-          let date = moment().format("YYYY-MM-DD");
+          let dateYear = moment().format("YYYY");
+          let dateMonth = moment().format("MM");
+          let dateDay = moment().format("DD");
+          let dateTime = moment().format("h:mm a");
           let bill = {
             client_id,
             service,
             amount: this.amount,
             fine: this.fine,
-            date
+            dateYear,
+            dateMonth,
+            dateDay,
+            dateTime
           }
           ipcRenderer.send('create-bill', bill);
           this.fine = 0;
@@ -130,21 +239,23 @@
         this.warning = 'Se aplicará cobro extra por mora (10Lps)';
         this.fine = 10;
       }
-
-      ipcRenderer.on('return-clients', (event, arg) => {
+      if ((parseInt(moment().format("MM")))== 1 ) {
+        this.boolEnero = true;
+      }
+      ipcRenderer.on('fetch-clients', (event, arg) => {
         this.clients = arg;
       });
       ipcRenderer.send('get-clients');
-
     },
     mounted(){
-      //$('.max.example .ui.normal.dropdown').dropdown({maxSelections: 3});
+
 
     }
 
   }
 </script>
 <style scoped>
+  @import url('https://fonts.googleapis.com/css?family=Roboto');
   .main, #contenido{
     padding-top: 50px;
   }
@@ -190,5 +301,89 @@
     color: white !important;
     font-size: 15px !important;
   }
+/* *********************** MODAL*********************** */
+
+  .modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    display: table;
+    transition: opacity 1s ease;
+  }
+
+  .modal-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .modal-footer{
+    align-items: flex-end;
+    align-content: flex-end;
+  }
+
+  .modal-container {
+    width: 800px;
+    margin: 0px auto;
+    padding: 20px 30px;
+    background-color: lightgray;
+    box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75)!important;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+    transition: all 1s ease;
+    font-family: Roboto !important;
+    font-size: 18px;
+  }
+
+  .modal-header {
+    margin-top: 0;
+    color: black;
+  }
+  .modal-header span{
+    font-size: 15px!important;
+    color: white;
+    font-family: Roboto !important;
+  }
+
+  .modal-body label{
+    font-family: Roboto !important;
+  }
+
+  .modal-body {
+    margin: 20px 0;
+  }
+
+  .modal-default-button {
+    float: right;
+  }
+
+
+  /*
+   * The following styles are auto-applied to elements with
+   * transition="modal" when their visibility is toggled
+   * by Vue.js.
+   *
+   * You can easily play with the modal transition by editing
+   * these styles.
+   */
+
+  .modal-enter {
+    opacity: 0;
+  }
+
+  .modal-leave-active {
+    opacity: 0;
+  }
+
+  .modal-enter .modal-container,
+  .modal-leave-active .modal-container {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+
 
 </style>

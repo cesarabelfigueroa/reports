@@ -10,7 +10,7 @@
         <!-- *********** PRIMERA TAB *********** -->
         <div v-if="tabNumber==1">
           <div class="ui yellow inverted segment"><h1><i class="history icon"></i> En Mora pago de Cable</h1></div>
-          <div id="tableContainer" v-if="clients.length>0">
+          <div id="tableContainer" v-if="bills.length>0">
             <table class="ui celled padded table">
               <col width="20%">
               <col width="30%">
@@ -32,7 +32,7 @@
                   <td>{{factura.service}}</td>
                   <td>{{factura.amount}}</td>
                   <td>{{factura.fine}}</td>
-                  <td>{{factura.date}}</td>
+                  <td>[{{factura.dateDay}}-{{factura.dateMonth}}-{{factura.dateYear}}] {{factura.dateTime}}</td>
                 </tr>
               </tbody>
             </table>
@@ -123,7 +123,7 @@
                 <tr>
                   <th>No. Identidad</th>
                   <th>Servicio</th>
-                  <th>Fecha</th>
+                  <th>Fecha [DD-MM-YYYY]</th>
                   <th>Monto</th>
                 </tr>
               </thead>
@@ -131,11 +131,14 @@
                 <tr v-for="(factura, index) in bills">
                   <td>{{factura.client_id}}</td>
                   <td>{{factura.service}}</td>
-                  <td>{{factura.date}}</td>
+                  <td>[{{factura.dateDay}}-{{factura.dateMonth}}-{{factura.dateYear}}] {{factura.dateTime}}</td>
                   <td>{{factura.amount}}</td>
                 </tr>
               </tbody>
             </table>
+          </div>
+          <div class="ui inverted red segment" v-if="bills.length===0">
+            <h5>No hay facturas del dia seleccionado.</h5>
           </div>
         </div>
         <!-- *********** TERCERA TAB *********** -->
@@ -151,9 +154,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr >
-                <td> </td>
-                <td> </td>
+              <tr v-for="(montoMes, index) in mensualidad" >
+                <td> {{montoMes.mes}}</td>
+                <td> {{montoMes.monto}} Lps.</td>
               </tr>
             </tbody>
           </table>
@@ -204,28 +207,33 @@
           <br>
           <div class="ui segment"><h2> {{monthActive}}</h2></div>
           <div id="tableContainer">
-            <table class="ui celled padded table">
-              <col width="25%">
-              <col width="30%">
-              <col width="25%">
-              <col width="15%">
-              <thead class="tableHeader">
-                <tr>
-                  <th>No. Identidad</th>
-                  <th>Nombres</th>
-                  <th>Fecha</th>
-                  <th>Monto</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr >
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                </tr>
-              </tbody>
-            </table>
+            <div id="tableContainer">
+              <table class="ui celled padded table">
+                <col width="25%">
+                <col width="30%">
+                <col width="25%">
+                <col width="15%">
+                <thead class="tableHeader">
+                  <tr>
+                    <th>No. Identidad</th>
+                    <th>Servicio</th>
+                    <th>Fecha [DD-MM-YYYY]</th>
+                    <th>Monto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(factura, index) in bills">
+                    <td>{{factura.client_id}}</td>
+                    <td>{{factura.service}}</td>
+                    <td>[{{factura.dateDay}}-{{factura.dateMonth}}-{{factura.dateYear}}] {{factura.dateTime}}</td>
+                    <td>{{factura.amount}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="ui inverted red segment" v-if="bills.length==0">
+              <h5>No hay facturas del mes seleccionado.</h5>
+            </div>
           </div>
         </div>
 
@@ -256,10 +264,27 @@ const moment = require('moment');
         bill:{
           client_id: '',
           service: '',
-          amount: '',
-          fine: '',
-          date: ''
-        }
+          amount: 0,
+          fine: 0,
+          dateDay: '',
+          dateMonth: '',
+          dateTime: '',
+          dateYear: ''
+        },
+        mensualidad: [
+          {mes: 'Enero', monto:0},
+          {mes: 'Febrero', monto:0},
+          {mes: 'Marzo', monto:0},
+          {mes: 'Abril', monto:0},
+          {mes: 'Mayo', monto:0},
+          {mes: 'Junio', monto:0},
+          {mes: 'Julio', monto:0},
+          {mes: 'Agosto', monto:0},
+          {mes: 'Septiembre', monto:0},
+          {mes: 'Octubre', monto:0},
+          {mes: 'Noviembre', monto:0},
+          {mes: 'Diciembre', monto:0}
+        ]
       }
     },
     methods: {
@@ -272,19 +297,86 @@ const moment = require('moment');
           this.reporteDia = moment().format("YYYY-MM-DD");
           this.cambioFecha();
         }else if (numero === 3) {
-          this.yearActive = moment().format("YYYY")
+          this.yearActive = moment().format("YYYY");
+          this.ingresoAnual();
+          this.cambioMes('ENERO');
         }
         this.tabNumber = numero;
       },
       cambioMes(monthActive){
         this.monthActive = monthActive;
+        let month = '01';
+        if(this.monthActive == 'ENERO'){
+          month = '01';
+        }else if (this.monthActive == 'FEBRERO') {
+          month = '02';
+        }else if (this.monthActive == 'MARZO') {
+          month = '03';
+        }else if (this.monthActive == 'ABRIL') {
+          month = '04';
+        }else if (this.monthActive == 'MAYO') {
+          month = '05';
+        }else if (this.monthActive == 'JUNIO') {
+          month = '06';
+        }else if (this.monthActive == 'JULIO') {
+          month = '07';
+        }else if (this.monthActive == 'AGOSTO') {
+          month = '08';
+        }else if (this.monthActive == 'SEPTIEMBRE') {
+          month = '09';
+        }else if (this.monthActive == 'OCTUBRE') {
+          month = '10';
+        }else if (this.monthActive == 'NOVIEMBRE') {
+          month = '11';
+        }else if (this.monthActive == 'DICIEMBRE') {
+          month = '12';
+        }
+        ipcRenderer.on('return-bills-month', (event,arg)=>{
+          this.bills = arg;
+        });
+        ipcRenderer.send('get-bills-month',month,this.yearActive);
+      },
+      ingresoAnual(){
+        ipcRenderer.on('return-bills-year', (event,arg)=>{
+          this.bills = arg;
+        });
+        ipcRenderer.send('get-bills-year',this.yearActive);
+        for (var i = 0; i < this.bills.length; i++){
+          this.bill = this.bills[i];
+          if(this.bill.dateMonth == '01'){
+            this.mensualidad[0].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '02') {
+            this.mensualidad[1].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '03') {
+            this.mensualidad[2].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '04') {
+            this.mensualidad[3].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '05') {
+            this.mensualidad[4].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '06') {
+            this.mensualidad[5].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '07') {
+            this.mensualidad[6].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '08') {
+            this.mensualidad[7].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '09') {
+            this.mensualidad[8].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '10') {
+            this.mensualidad[9].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '11') {
+            this.mensualidad[10].monto += parseInt(this.bill.amount);
+          }else if (this.bill.dateMonth == '12') {
+            this.mensualidad[11].monto += parseInt(this.bill.amount);
+          }
+        }
       },
       cambioFecha(){
         this.dayActive = this.reporteDia;
         ipcRenderer.on('return-bills-date', (event,arg)=>{
-          this.bills = arg
+          this.bills = arg;
         });
-        ipcRenderer.send('get-bills-date',this.dayActive);
+        let fecha = this.dayActive.split('-',3);
+        ipcRenderer.send('get-bills-date',fecha[2],fecha[1],fecha[0]);
       }
     },
     beforeMount(){
@@ -296,6 +388,7 @@ const moment = require('moment');
         this.bills = arg;
       });
       ipcRenderer.send('get-bills');
+
     }
   }
 </script>

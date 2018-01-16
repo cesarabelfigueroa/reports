@@ -79,20 +79,20 @@ ipcMain.on('get-bills', (event) => {
   });
 });
 
-ipcMain.on('get-bills-date', (event,date) => {
-  bills.find({'date':date}, (err, docs) => {
+ipcMain.on('get-bills-date', (event,date,month,year) => {
+  bills.find({'dateDay':date,'dateMonth':month,'dateYear': year}, (err, docs) => {
     event.sender.send('return-bills-date', docs);
   });
 });
 
-ipcMain.on('get-bills-month', (event,month) => {
-  bills.find({'date':'****-'+month+'-**'}, (err, docs) => {
+ipcMain.on('get-bills-month', (event,month,year) => {
+  bills.find({'dateMonth':month,'dateYear': year}, (err, docs) => {
     event.sender.send('return-bills-month', docs);
   });
 });
 
 ipcMain.on('get-bills-year', (event,year) => {
-  bills.find({'date': year+'-**-**'}, (err, docs) => {
+  bills.find({'dateYear': year}, (err, docs) => {
     event.sender.send('return-bills-year', docs);
   });
 });
@@ -125,7 +125,7 @@ ipcMain.on('delete-zone', (event, _id) => {
       }else{
         console.log('Error borrando zona', err);
       }
-      ipcMain.send('delete-ret', err);
+      ipcMain.send('delete-zone-ret', err);
     });
 });
 
@@ -135,6 +135,12 @@ ipcMain.on('get-services', (event)=>{
     services.find({},(err, docs)=>{
       event.sender.send('return-services',docs);
     });
+});
+
+ipcMain.on('get-services-cost', (event,service,zone) => {
+  bills.find({'name':service,'zone': zone}, (err, docs) => {
+    event.sender.send('return-services-cost', docs);
+  });
 });
 
 ipcMain.on('create-service', (event,service)=>{
@@ -150,7 +156,7 @@ ipcMain.on('delete-service', (event, _id) => {
     }else{
       console.log('Error borrando servicio', err);
     }
-    ipcMain.send('delete-ret', err);
+    ipcMain.send('delete-service-ret', err);
   });
 });
 /**

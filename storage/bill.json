@@ -1,26 +1,10 @@
-{"amount":"111","client_id":"14sHrLj3Vns51uJ5","date":"10-01-2018 10:37:43pm","fine":0,"service":"cable","_id":"2FrlpGkTINooikCH"}
-{"amount":"1532","client_id":"PL6k3rjwXs42VtQR","date":"10-01-2018 10:47:24pm","fine":0,"service":"agua","_id":"3jcF18s1VcpEesZs"}
-{"amount":"66447","client_id":"E2LBqxVILlzyKA9Q","date":"10-01-2018 11:49:57pm","fine":10,"service":"cable","_id":"6fEZGe0CHuRob8tH"}
-{"amount":"1522","client_id":"4321","date":"2018-01-11","fine":0,"service":"agua","_id":"855gdcHYwP0LrIw9"}
-{"amount":"15224","client_id":"4321","date":"2018-01-11","fine":0,"service":"agua","_id":"DSAntythlhpb9ncL"}
-{"amount":"5442","client_id":"PL6k3rjwXs42VtQR","date":"10-01-2018 10:33:25pm","fine":0,"service":"cable","_id":"H2iSDje6RZVqwlBu"}
-{"amount":"123.40","client_id":"2HDJrRxN0UadIWZN","date":"22-12-2017 11:14:33pm","fine":0,"service":"cable","_id":"KuAaquDzn9w2e8Wc"}
-{"amount":"44444","client_id":"14sHrLj3Vns51uJ5","date":"10-01-2018 10:59:14pm","fine":0,"service":"agua","_id":"N5MLuobnPgbXi4Bz"}
-{"amount":"2522","client_id":"Hurw08TxjbhZrE6w","date":"10-01-2018 10:58:28pm","fine":0,"service":"agua","_id":"NZOx18BLtc68rWVz"}
-{"amount":"123","client_id":"2HDJrRxN0UadIWZN","date":"04-01-2018 10:41:18am","fine":0,"service":"cable","_id":"P1bPL6wW0irSOSSy"}
-{"amount":"0152","client_id":"EFziGyns7EPskIK5","date":"10-01-2018 10:47:47pm","fine":0,"service":"agua","_id":"PWOZH61HAunLOHnd"}
-{"amount":"2411","client_id":"PL6k3rjwXs42VtQR","date":"10-01-2018 10:33:34pm","fine":0,"service":"cable","_id":"Ze4vBp5Qi3rHI9sb"}
-{"amount":"355","client_id":"2HDJrRxN0UadIWZN","date":"10-01-2018 11:08:27pm","fine":0,"service":"cable","_id":"bgebINShOxaBCt8a"}
-{"amount":"524566","client_id":"U8dLjTIBtfo4SCuT","date":"10-01-2018 10:58:48pm","fine":0,"service":"cable","_id":"d9oONexKyswXQC07"}
-{"amount":"567890","client_id":"EFziGyns7EPskIK5","date":"04-01-2018 10:39:58am","fine":0,"service":"cable","_id":"dUeFtRnMRNqNbQE3"}
-{"amount":"2465125555","client_id":"0801-1223-21222","date":"2018-01-11","fine":10,"service":"cable","_id":"fDsfBqhq6otlMTIq"}
-{"amount":"555.50","client_id":"EFziGyns7EPskIK5","date":"22-12-2017 11:15:21pm","fine":0,"service":"cable","_id":"iPYqQ2ANYz53MsR2"}
-{"amount":"3234","client_id":"2HDJrRxN0UadIWZN","date":"22-12-2017 11:19:03pm","fine":0,"service":"cable","_id":"lhWll2YDtj58v9T1"}
-{"amount":"8888888888888","client_id":"E2LBqxVILlzyKA9Q","date":"10-01-2018 11:48:59pm","fine":0,"service":"agua","_id":"rmd6nRD1xGOYQXMO"}
-{"amount":"655","client_id":"2HDJrRxN0UadIWZN","date":"10-01-2018 11:08:09pm","fine":0,"service":"agua","_id":"ruRoD8rCYOoYPLX4"}
-{"amount":"000000000222","client_id":"4321","date":"2018-01-11","fine":0,"service":"agua","_id":"s8hIvqkjiep1Xg3z"}
-{"amount":"8888","client_id":"14sHrLj3Vns51uJ5","date":"10-01-2018 10:48:29pm","fine":0,"service":"agua","_id":"sMZJ0WVhb2R7pyza"}
-{"amount":"885555555","client_id":"Hurw08TxjbhZrE6w","date":"11-01-2018","fine":0,"service":"agua","_id":"tlDP8CGPLiv4zH2R"}
-{"amount":"211524","client_id":"Hurw08TxjbhZrE6w","date":"08-01-2018 07:35:39pm","fine":0,"service":"cable","_id":"urAaYt7BVSUgcp9F"}
-{"amount":"9999","client_id":"PL6k3rjwXs42VtQR","date":"2018-01-11","fine":0,"service":"agua","_id":"vSlEBXT49BeSN2zV"}
-{"amount":"999999999999","client_id":"2HDJrRxN0UadIWZN","date":"10-01-2018 10:59:39pm","fine":0,"service":"cable","_id":"yu4zzHWBnoUrycJP"}
+{"amount":"150.33","client_id":"0801-1960-02532","dateDay":"15","dateMonth":"01","dateTime":"6:17 pm","dateYear":"2018","fine":0,"service":"agua","_id":"0VJoOBIDS5Vsuk4k"}
+{"amount":"160","client_id":"4321","dateDay":"11","dateMonth":"03","dateTime":"3:40 pm","dateYear":"2018","fine":0,"service":"agua","_id":"855gdcHYwP0LrIw9"}
+{"amount":"152","client_id":"4321","dateDay":"12","dateMonth":"03","dateTime":"3:40 pm","dateYear":"2018","fine":0,"service":"agua","_id":"DSAntythlhpb9ncL"}
+{"amount":"500","client_id":"0801-1997-12345","dateDay":"14","dateMonth":"01","dateTime":"6:17 pm","dateYear":"2018","fine":0,"service":"agua","_id":"ETulkDg8ZorX0zsG"}
+{"amount":"246","client_id":"0801-1223-21222","dateDay":"11","dateMonth":"01","dateTime":"6:17 pm","dateYear":"2018","fine":10,"service":"cable","_id":"fDsfBqhq6otlMTIq"}
+{"amount":"600","client_id":"0801-1997-54321","dateDay":"15","dateMonth":"04","dateTime":"4:17 pm","dateYear":"2018","fine":0,"service":"agua","_id":"lu5vGZHCv0yllZ3Q"}
+{"amount":"222","client_id":"4321","dateDay":"11","dateMonth":"01","dateTime":"4:17 pm","dateYear":"2018","fine":0,"service":"agua","_id":"s8hIvqkjiep1Xg3z"}
+{"amount":"99","client_id":"PL6k3rjwXs42VtQR","dateDay":"13","dateMonth":"02","dateTime":"9:55 am","dateYear":"2018","fine":0,"service":"agua","_id":"vSlEBXT49BeSN2zV"}
+{"amount":"152","client_id":"0801-1997-12345","dateDay":"14","dateMonth":"02","dateTime":"9:55 am","dateYear":"2018","fine":0,"service":"agua","_id":"wnaUCCZW7F3Twvb9"}
+{"amount":"150","client_id":"0801-1996-12345","dateDay":"15","dateMonth":"01","dateTime":"9:55 am","dateYear":"2018","fine":0,"service":"agua","_id":"ynDxcwiNcq5FWpx7"}

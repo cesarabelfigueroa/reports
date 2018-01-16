@@ -33,8 +33,9 @@
   </div>
 </template>
 
-<script>
-
+<script >
+  // src="../../jquery/dist/jquery.js"
+  // window.$ = window.jQuery = require ("../../jquery/dist/jquery.min.js");
   export default {
     name: 'reports',
     data(){
@@ -43,6 +44,7 @@
       }
     }
   }
+
 </script>
 
 <style>

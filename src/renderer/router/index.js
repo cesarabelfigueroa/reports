@@ -15,6 +15,12 @@ export default new Router({
       name: 'cliente',
       component: require('@/components/Cliente').default
     },
+    // {
+    //   path: '/Cliente/Promocion',
+    //   name: 'promocion',
+    //   component: require('@/components/Promocion').default,
+    //   props: true
+    // },
     {
       path: '/Formulario/:test',
       name: 'formulario',
