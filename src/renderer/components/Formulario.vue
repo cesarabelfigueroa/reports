@@ -51,7 +51,7 @@
               <i class="handshake file word outline icon"></i>
               Generar Factura
             </button>
-            <div v-if="boolEnero==true" class="ui big yellow animated fade button" id="show-modal" @click="showModal = true">
+            <div v-if="boolEnero==true" class="ui big yellow animated fade button" id="show-modal" v-on:click="showModal = true">
               <div class="hidden content">Pago Anual</div>
               <div class="visible content">
                 <i class="certificate icon"></i>Promoción
@@ -65,76 +65,9 @@
       </div>
     </div>
     <!-- ************************MODAL PROMOCION************************ -->
-    <modal v-if="showModal" @close="showModal = false">
-      <transition name="modal">
-        <div class="modal-mask">
-          <div class="modal-wrapper">
-            <div class="modal-container">
-              <div class="">
-                <div class="modal-header">
-                  <slot name="header">
-                    <div class="ui blue inverted segment">
-                      <h1><i class="certificate yellow icon"></i> Pago Anual</h1>
-                    </div>
-                    <hr>
-                    <div class="ui secondary inverted blue segment">
-                      <span>Esta promoción solamente es válida en el mes de Enero. Al pagar el año entero, el cliente recibe un mes gratuito</span>
-                    </div>
+    <Modal v-if="showModal" :client="client" :clients="clients" :mode="2" @verifyPromocion="verifyPromocion" @close="showModal = false">
 
-                  </slot>
-                </div>
-
-                <div class="modal-body">
-                  <slot name="body">
-                    <div class="ui form">
-                      <div class="field">
-                        <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-                        <select v-model="indexCliente"class="ui dropdown" id="clientdropdown">
-                          <option value="">Nombre del Cliente</option>
-                          <option v-for="(client, index) in clients" :value="index">{{client.firstname}} {{client.lastname}}</option>
-                        </select>
-                      </div>
-                      <br>
-                      <div class="ui horizontal segments">
-                        <div class="ui segment">
-                          <h3>Monto Anual:</h3>
-                        </div>
-                        <div class="ui segment">
-                          <h3>{{total}}</h3>
-                        </div>
-                      </div>
-                      <br>
-                      <div class="two fields">
-                        <div class="field">
-                          <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
-                          <input type="number" v-model="amount" placeholder="Ej: 1000.00">
-                        </div>
-                      </div>
-                      <br>
-                      <button class="ui button yellow" v-on:click="verify">
-                        <i class="handshake file word outline icon"></i>
-                        Generar Factura
-                      </button>
-                    </div>
-                  </slot>
-                </div>
-
-                <div class="modal-footer">
-                  <slot name="footer">
-                    <div class="right aligned ui basic segment">
-                      <button class="ui button red" @click="modalFuncion()">
-                        Cancelar
-                      </button>
-                    </div>
-                  </slot>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </transition>
-    </modal>
+    </Modal>
     <br><br>
   </div>
 
@@ -143,6 +76,7 @@
 <script>
   const { ipcRenderer } = require('electron');
   const moment = require('moment');
+  import Modal from './Modal';
 
   export default {
 
@@ -174,6 +108,9 @@
         }
       }
     },
+    components: {
+      Modal: Modal
+    },
     computed : {
       total: function () {
         return this.amount != '' ? parseInt(this.fine) + parseInt(this.amount) : parseInt(this.fine);
@@ -187,16 +124,12 @@
         return parseInt(this.fine) + parseInt(this.service.cost);
       }
     },
-    components: {  },
     props: ['test'],
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
       },
-      modalFuncion(){
-        this.showModal = false
 
-      },
       verify() {
         console.log('Fine: ', this.fine);
         console.log('Amount: ', this.amount);
@@ -230,6 +163,12 @@
           alert('Factura ingresada con exito');
         }else{
           alert('Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion');
+        }
+      },
+      verifyPromocion(values) {
+        for (let i = 0; i < values.length; i++) {
+          // body...
+          console.log(values[i]);
         }
       }
     },

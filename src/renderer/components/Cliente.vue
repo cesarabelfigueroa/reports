@@ -123,6 +123,9 @@
       </div>
 
     </div>
+    <Modal v-if="showModal" :client="client" :mode="1" @close="showModal = false">
+
+    </Modal>
   </div>
 
 </template>
@@ -130,6 +133,7 @@
 <script>
 
   const { ipcRenderer } = require('electron');
+  import Modal from './Modal';
 
   export default {
     name: 'cliente',
@@ -151,7 +155,7 @@
       }
     },
     components: {
-
+      Modal: Modal
     },
     methods: {
       open (link) {
@@ -305,86 +309,7 @@
 
   /* *********************** MODAL*********************** */
 
-    .modal-mask {
-      position: fixed;
-      z-index: 9998;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, .5);
-      display: table;
-      transition: opacity 1s ease;
-    }
 
-    .modal-wrapper {
-      display: table-cell;
-      vertical-align: middle;
-    }
-
-    .modal-footer{
-      align-items: flex-end;
-      align-content: flex-end;
-    }
-
-    .modal-container {
-      width: 800px;
-      margin: 0px auto;
-      padding: 20px 30px;
-      background-color: gray;
-      box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75)!important;
-      border-radius: 2px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-      transition: all 1s ease;
-      font-family: Roboto !important;
-      font-size: 18px;
-    }
-
-    .modal-header {
-      margin-top: 0;
-      color: black;
-    }
-    .modal-header span{
-      font-size: 15px!important;
-      color: white;
-      font-family: Roboto !important;
-    }
-
-    .modal-body label{
-      font-family: Roboto !important;
-    }
-
-    .modal-body {
-      margin: 20px 0;
-    }
-
-    .modal-default-button {
-      float: right;
-    }
-
-
-    /*
-     * The following styles are auto-applied to elements with
-     * transition="modal" when their visibility is toggled
-     * by Vue.js.
-     *
-     * You can easily play with the modal transition by editing
-     * these styles.
-     */
-
-    .modal-enter {
-      opacity: 0;
-    }
-
-    .modal-leave-active {
-      opacity: 0;
-    }
-
-    .modal-enter .modal-container,
-    .modal-leave-active .modal-container {
-      -webkit-transform: scale(1.1);
-      transform: scale(1.1);
-    }
 
 
 </style>
