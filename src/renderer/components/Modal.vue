@@ -71,7 +71,7 @@
             <div class="modal-footer">
               <slot name="footer">
                 <div class="right aligned ui basic segment">
-                  <button class="ui button olive" v-on:click="$emite('close')">
+                  <button class="ui button olive" v-on:click="modifyClient()">
                     Guardar
                   </button>
                   <button class="ui button red" v-on:click="$emit('close')">
@@ -102,8 +102,8 @@
                 <div class="ui form">
                   <div class="field">
                     <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-                    <select v-model="indexCliente"class="ui dropdown" id="clientdropdown">
-                      <option value="">Nombre del Cliente</option>
+                    <select v-model="indexCliente" class="ui dropdown" id="clientdropdown">
+                      <option :value="-1">Nombre del Cliente</option>
                       <option v-for="(client, index) in clients" :value="index">{{client.firstname}} {{client.lastname}}</option>
                     </select>
                   </div>
@@ -124,14 +124,13 @@
                     </div>
                   </div>
                   <br>
-                  <button class="ui button yellow" v-on:click="$emit('verifyPromocion',[mode, client, clients])">
+                  <button class="ui button yellow" v-on:click="verifyPromocion()">
                     <i class="handshake file word outline icon"></i>
                     Generar Factura
                   </button>
                 </div>
               </slot>
             </div>
-
             <div class="modal-footer">
               <slot name="footer">
                 <div class="right aligned ui basic segment">
@@ -141,7 +140,6 @@
                 </div>
               </slot>
             </div>
-
           </div>
         </div>
       </div>
@@ -151,17 +149,32 @@
 
 
 <script>
+  const { ipcRenderer } = require('electron');
+
   export default {
     name: 'modal',
     data() {
       return {
-        showModal: false,
         amount: 0,
         indexCliente: -1,
         total: 0
       }
     },
-    props: ['mode', 'client', 'clients']
+    methods: {
+      verifyPromocion() {
+        console.log('Promocion');
+      },
+      modifyClient() {
+        ipcRenderer.send('update-client', this.client);
+        this.$emit('finish', this.client, this.index);
+      }
+    },
+    props: ['mode', 'client', 'clients', 'zones', 'index'],
+    beforeMount() {
+      this.amount = 0;
+      this.total = 0;
+      this.indexCliente = 0;
+    }
   }
 </script>
 

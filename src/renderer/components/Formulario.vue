@@ -65,7 +65,7 @@
       </div>
     </div>
     <!-- ************************MODAL PROMOCION************************ -->
-    <Modal v-if="showModal" :client="client" :clients="clients" :mode="2" @verifyPromocion="verifyPromocion" @close="showModal = false">
+    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :mode="2" @close="showModal = false">
 
     </Modal>
     <br><br>
@@ -163,12 +163,6 @@
           alert('Factura ingresada con exito');
         }else{
           alert('Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion');
-        }
-      },
-      verifyPromocion(values) {
-        for (let i = 0; i < values.length; i++) {
-          // body...
-          console.log(values[i]);
         }
       }
     },

@@ -123,7 +123,7 @@
       </div>
 
     </div>
-    <Modal v-if="showModal" :client="client" :mode="1" @close="showModal = false">
+    <Modal v-if="showModal" :client="client" :zones="zones" :index="clientIndex" :mode="1" @close="showModal = false" @finish="handleClose()">
 
     </Modal>
   </div>
@@ -151,7 +151,8 @@
         clients: [],
         zones: [],
         ids: [],
-        showModal:false
+        showModal:false,
+        clientIndex: -1
       }
     },
     components: {
@@ -199,13 +200,12 @@
         }
       },
       modifyContent(_id, index) {
-        this.client = this.clients[index];
+        this.clientIndex = index;
+        this.client = Object.assign({}, this.clients[index]);
         this.showModal = true
       },
-      modify(){
-
-      },
       remove(_id, index) {
+
         this.clients.splice(index, 1);
         ipcRenderer.send('remove-client', _id);
       },
@@ -216,6 +216,10 @@
           lastname: '',
           email: ''
         }
+      },
+      handleClose(cli, ind) {
+        this.clients[ind] = cli;
+        this.showModal = false;
       }
 
     },

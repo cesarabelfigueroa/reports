@@ -71,6 +71,17 @@ ipcMain.on('get-clients', (event) => {
     event.sender.send('fetch-clients', docs);
   });
 });
+
+ipcMain.on('update-client', (event, client) => {
+  clients.update({ _id : client._id},client, (err, numAffected) => {
+    if(!err) {
+      console.log('Client updated succesfuly!');
+    }else{
+      console.log('Error updating client', err);
+      console.log('numAffected: ', numAffected);
+    }
+  });
+});
 // ****************BILLS****************
 
 ipcMain.on('get-bills', (event) => {
