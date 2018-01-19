@@ -110,27 +110,10 @@
                </tbody>
              </table>
            </div>
-           <!-- <form class="ui form">
-             <div class="field">
-               <label>Nombre:  <i class="asterisk blue icon"></i></label>
-               <div class="ui left icon input">
-                 <input type="text"  v-model="zone.name" placeholder="Nombre">
-                 <i class="home icon"></i>
-               </div>
-             </div>
-             <div class="field">
-               <label>Descripción: </label>
-               <div>
-                 <textarea v-model="zone.description" placeholder="Descripción" rows="3"></textarea>
-               </div>
-             </div>
-           </form>
-           <br>
-           <button class="ui yellow button" id="nuevaZona" v-on:click="submitZone()" ><i class="plus icon"></i>Modificar</button> -->
          </div>
        </div>
      </div>
-     <Modal v-if="showModal" :zones="zones" :service="service" :zone="zone" :index="modalIndex" :mode="tabNumber" @close="showModal = false" @finish="handleClose()">
+     <Modal v-if="showModal" :title="title" :message="message" :mode="modeIndex" :zones="zones" :service="service" :zone="zone" :index="modalIndex" @close="showModal = false" @finish="handleClose()">
 
      </Modal>
   </div>
@@ -161,7 +144,10 @@
         zones: [],
         services: [],
         modalIndex: -1,
-        showModal: false
+        showModal: false,
+        message:'',
+        modeIndex:3,
+        title:''
       }
     },
     components: {
@@ -184,18 +170,26 @@
               description
             }
             ipcRenderer.send('create-zone', this.zone);
-            alert('Zona creada exitosamente');
+            this.message = 'Zona creada exitosamente';
+            this.title = 'Nueva Zona';
+            this.modalType(5);
           }else{
-            alert('Error, tiene que escoger un nombre');
+            this.message = 'Error, tiene que escoger un nombre';
+            this.title = 'Error';
+            this.modalType(5);
           }
       },
       deleteZone(_id, index) {
         this.clients.splice(index, 1);
         ipcRenderer.on('delete-zone-ret', (event, err) => {
           if(!err) {
-            alert('Removido con exito!');
+            this.message = 'Removido con exito!';
+            this.title = 'Eliminar Zona';
+            this.modalType(5);
           } else {
-            alert('Error al eliminar', err); //err solo para debbugging
+            this.message = 'Error al eliminar';
+            this.title = 'Eliminar Zona';
+            this.modalType(5);
           }
         });
         ipcRenderer.send('delete-zone', _id);
@@ -204,7 +198,7 @@
       modifyZone(_id, index){
         this.modalIndex = index;
         this.zone = Object.assign({}, this.zones[index]);
-        this.showModal = true
+        this.modalType(this.tabNumber);
       },
       submitService(){
           let name = this.service.name.trim();
@@ -223,9 +217,13 @@
         this.services.splice(index,1);
         ipcRenderer.on('delete-service-ret', (event, err) => {
           if(!err) {
-            alert('Removido con exito!');
+            this.message = 'Removido con exito!';
+            this.title = 'Eliminar Servicio';
+            this.modalType(5);
           } else {
-            alert('Error al eliminar', err); //err solo para debbugging
+            this.message = 'Error al eliminar'+err;
+            this.title = 'Eliminar Servicio';
+            this.modalType(5);
           }
         });
         ipcRenderer.send('delete-service',_id);
@@ -234,11 +232,25 @@
         this.modalIndex = index;
         this.service = Object.assign({}, this.services[index]);
         this.zone = this.service.zone;
-        this.showModal = true
+        this.modalType(this.tabNumber);
       },
       handleClose(service, ind) {
         this.services[ind] = service;
         this.showModal = false;
+        ipcRenderer.on('return-services',(event,arg)=>{
+          this.services = arg;
+        });
+
+        ipcRenderer.on('return-zones',(event,arg)=>{
+          this.zones = arg;
+        });
+        //Llamado a eventos que retornaran info del backend
+        ipcRenderer.send('get-zones');
+        ipcRenderer.send('get-services');
+      },
+      modalType(index){
+        this.modeIndex = index;
+        this.showModal = true;
       }
     },
     beforeMount(){
@@ -250,15 +262,6 @@
       ipcRenderer.on('return-zones',(event,arg)=>{
         this.zones = arg;
       });
-
-      // ipcRenderer.on('delete-ret', (event, err) => {
-      //   if(!err) {
-      //     alert('Removido con exito!');
-      //   } else {
-      //     alert('Error al eliminar', err); //err solo para debbugging
-      //   }
-      // });
-
       //Llamado a eventos que retornaran info del backend
       ipcRenderer.send('get-zones');
       ipcRenderer.send('get-services');

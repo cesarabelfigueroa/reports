@@ -108,6 +108,18 @@ ipcMain.on('get-bills-year', (event,year) => {
   });
 });
 
+
+ipcMain.on('get-bills-yearSync', (event, year) => {
+  bills.find({'dateYear': year}, (err, docs) => {
+    // Print 3
+    console.log('-'+year+'-');
+    // Send value synchronously back to renderer process
+    //event.returnValue = docs;
+    // Send async message to renderer process
+    mainWindow.webContents.send('return-bills-yearSync', docs);
+  });
+});
+
 ipcMain.on('create-bill', (event, bill) => {
   bills.insert(bill, (err, doc) => {
     console.log('Inserted with id', doc._id);

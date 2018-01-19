@@ -49,7 +49,7 @@
         </div>
         <!-- *********** SEGUNDA TAB *********** -->
         <div v-else-if="tabNumber==2">
-          <div class="ui yellow inverted segment"><h1> <i class="remove from calendar icon"></i>Transacciones del dia {{dayActive}}</h1></div>
+          <div class="ui yellow inverted segment"><h1> <i class="remove from calendar icon"></i>Transacciones del día {{dayActive}}</h1></div>
           <div class="ui black segment">
             <div class="ui left aligned container">
               <h3 > <i class="checked calendar icon"></i>Escoger fecha:  </h3>
@@ -86,7 +86,7 @@
             </table>
           </div>
           <div class="ui inverted red segment" v-if="bills.length===0">
-            <h5>No hay facturas del dia seleccionado.</h5>
+            <h5>No hay facturas del día seleccionado.</h5>
           </div>
         </div>
         <!-- *********** TERCERA TAB *********** -->
@@ -170,7 +170,27 @@
         </div>
         <!-- *********** CUARTA TAB *********** -->
         <div v-else="tabNumber==4">
-          <div class="ui black inverted segment"><h1> <i class="calendar icon"></i>Ingreso Anual {{yearActive}}</h1></div>
+          <div class="ui black inverted segment">
+            <h1>
+              <div class="ui grid">
+                <div class="three column row">
+                  <div class="column">
+                    <button v-bind:class="{disabled:lastYear}" class="ui circular olive icon button">
+                      <i class="arrow left icon"></i>
+                    </button>
+                  </div>
+                  <div class="column">
+                    <i class="calendar icon"></i>Ingreso Anual {{yearActive}}
+                  </div>
+                  <div class="column">
+                    <button v-bind:class="{disabled:nextYear}" class="ui circular olive icon button">
+                      <i class="arrow right icon"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              </h1>
+          </div>
           <table class="ui celled padded inverted table">
             <col width="50%">
             <col width="50%">
@@ -237,7 +257,9 @@ const moment = require('moment');
           {mes: 'Octubre', monto:0},
           {mes: 'Noviembre', monto:0},
           {mes: 'Diciembre', monto:0}
-        ]
+        ],
+        lastYear: false,
+        nextYear: false
       }
     },
     methods: {
@@ -254,10 +276,11 @@ const moment = require('moment');
           this.cambioMes('ENERO');
         }else if (numero === 4) {
           this.yearActive = moment().format("YYYY");
+          this.arrows();
           this.ingresoAnual();
         }
-
         this.tabNumber = numero;
+
       },
       cambioMes(monthActive){
         this.monthActive = monthActive;
@@ -296,38 +319,62 @@ const moment = require('moment');
         for (var i = 0; i < this.mensualidad.length; i++) {
           this.mensualidad[i].monto = 0;
         }
+
         ipcRenderer.on('return-bills-year', (event,arg)=>{
           this.bills = arg;
         });
         ipcRenderer.send('get-bills-year',this.yearActive);
         for (var i = 0; i < this.bills.length; i++){
-          this.bill = this.bills[i];
-          if(this.bill.dateMonth == '01'){
-            this.mensualidad[0].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '02') {
-            this.mensualidad[1].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '03') {
-            this.mensualidad[2].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '04') {
-            this.mensualidad[3].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '05') {
-            this.mensualidad[4].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '06') {
-            this.mensualidad[5].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '07') {
-            this.mensualidad[6].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '08') {
-            this.mensualidad[7].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '09') {
-            this.mensualidad[8].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '10') {
-            this.mensualidad[9].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '11') {
-            this.mensualidad[10].monto += parseInt(this.bill.amount);
-          }else if (this.bill.dateMonth == '12') {
-            this.mensualidad[11].monto += parseInt(this.bill.amount);
+          if(this.bills[i].dateMonth == '01'){
+            this.mensualidad[0].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '02') {
+            this.mensualidad[1].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '03') {
+            this.mensualidad[2].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '04') {
+            this.mensualidad[3].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '05') {
+            this.mensualidad[4].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '06') {
+            this.mensualidad[5].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '07') {
+            this.mensualidad[6].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '08') {
+            this.mensualidad[7].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '09') {
+            this.mensualidad[8].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '10') {
+            this.mensualidad[9].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '11') {
+            this.mensualidad[10].monto += parseInt(this.bills[i].amount);
+          }else if (this.bills[i].dateMonth == '12') {
+            this.mensualidad[11].monto += parseInt(this.bills[i].amount);
           }
         }
+      },
+      arrows(){
+        // var lastYear = (parseInt(this.yearActive)-1)+'';
+        // var bills= this.bills;
+        // ipcRenderer.on('return-bills-yearSync', (event,arg)=>{
+        //   bills = arg;
+        // });
+        // ipcRenderer.send('get-bills-yearSync',lastYear);
+        // this.lastYear = true;
+        // if (bills[0].dateYear === lastYear) {
+        //   this.lastYear = false ;
+        // }
+        // console.log(bills[0].dateYear +' - '+ lastYear);
+        // var nextYear = parseInt(this.yearActive)+1;
+        // ipcRenderer.send('get-bills-year', nextYear);
+        // ipcRenderer.on('return-bills-year', (event,arg)=>{
+        //   this.bills = arg;
+        // });
+        //
+        // console.log(this.bills[0].dateYear +' - '+ nextYear);
+        // this.nextYear = true;
+        // if (this.bills[0].dateYear === (nextYear+'')) {
+        //   this.nextYear =false;
+        // }
       },
       cambioFecha(){
         this.dayActive = this.reporteDia;

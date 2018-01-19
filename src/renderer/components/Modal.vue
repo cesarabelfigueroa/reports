@@ -60,7 +60,6 @@
                       <br>
                       <input type="checkbox" id="agua" value="Agua" v-model="client.services">
                       <label for="agua">Agua</label>
-
                     </div>
                   </div>
 
@@ -187,8 +186,12 @@
               </slot>
             </div>
 
+
             <div class="modal-footer">
               <slot name="footer">
+                <div v-if="botonHabilitado"class="ui small red inverted segment">
+                  <h5><i class="remove red icon"></i> Error! Llenar los campos obligatorios</h5>
+                </div>
                 <div class="right aligned ui basic segment">
                   <button class="ui button olive" v-on:click="modifyService()">
                     Guardar
@@ -217,9 +220,8 @@
                 <form class="ui form">
                   <div class="field">
                     <label>Nombre:  <i class="asterisk blue icon"></i></label>
-                    <div class="ui left icon input">
-                      <input type="text"  v-model="zone.name" placeholder="Nombre">
-                      <i class="home icon"></i>
+                    <div class="ui left icon input" id="zonaLabel">
+                      <h4><i class="home icon"></i>{{zone.name}}</h4>
                     </div>
                   </div>
                   <div class="field">
@@ -287,7 +289,8 @@
       return {
         amount: 0,
         indexCliente: -1,
-        total: 0
+        total: 0,
+        botonHabilitado:false
       }
     },
     methods: {
@@ -299,8 +302,17 @@
         this.$emit('finish', this.client, this.index);
       },
       modifyService() {
-        ipcRenderer.send('update-service', this.service);
-        this.$emit('finish', this.service, this.index);
+        console.log('aqui si');
+        let name = this.service.name.trim();
+        let zone = this.service.zone.trim();
+        let cost = this.service.cost.trim();
+        console.log(name+ ' '+zone+ ' '+cost);
+        if (name!='' && zone!='' && cost!='') {
+          ipcRenderer.send('update-service', this.service);
+          this.$emit('finish', this.service, this.index);
+        }else{
+          this.botonHabilitado = true;
+        }
       },
       modifyZone() {
         ipcRenderer.send('update-zone', this.zone);
@@ -350,7 +362,9 @@
 #bodyModal h3{
   color: white!important;
 }
-
+#zonaLabel h4{
+  color: white!important;
+}
 .modal-container {
   width: 800px;
   margin: 0px auto;

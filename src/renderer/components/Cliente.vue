@@ -74,10 +74,11 @@
             </ol> -->
             <div id="tableContainer" v-if="clients.length>0">
               <table class="ui celled padded table">
-                <col width="26%">
-                <col width="17%">
-                <col width="17%">
-                <col width="20%">
+                <col width="30%">
+                <col width="15%">
+                <col width="15%">
+                <col width="10%">
+                <col width="10%">
                 <col width="10%">
                 <col width="5%">
                 <col width="5%">
@@ -101,7 +102,11 @@
                     <td>{{cli.lastname}}</td>
                     <td>{{cli.email}}</td>
                     <td>{{cli.zone}}</td>
-                    <td>{{cli.services}}</td>
+                    <td>
+                      <div v-for="(servicio, index) in cli.services">
+                        <p>{{servicio}} </p>
+                      </div>
+                    </td>
                     <td class="center aligned">
                       <button  v-on:click="modifyContent(cli._id, index)" class="circular ui teal icon button">
                         <i class="icon write"></i>
@@ -121,7 +126,7 @@
         </div>
       </div>
     </div>
-    <Modal v-if="showModal" :client="client" :zones="zones" :index="clientIndex" :mode="1" @close="showModal = false" @finish="handleClose()">
+    <Modal v-if="showModal" :title="title" :message="message" :mode="modeIndex" :client="client" :zones="zones" :index="clientIndex" @close="showModal = false" @finish="handleClose()">
 
     </Modal>
   </div>
@@ -150,7 +155,10 @@
         zones: [],
         ids: [],
         showModal:false,
-        clientIndex: -1
+        clientIndex: -1,
+        message:'',
+        modeIndex:1,
+        title:''
       }
     },
     components: {
@@ -169,25 +177,40 @@
           let email = this.client.email.trim();
           let zone = this.client.zone;
           let services = this.client.services;
-          if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && zone!=='' && services.length>0 && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)){
-            this.client = {
-              idnumber,
-              firstname,
-              lastname,
-              email,
-              zone,
-              services
+          if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && zone!==''){
+            if (services.length>0 && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)) {
+              this.client = {
+                idnumber,
+                firstname,
+                lastname,
+                email,
+                zone,
+                services
+              }
+              ipcRenderer.send('create-client', this.client);
+              this.message = 'Cliente agregado exitosamente!';
+              this.title = 'Nuevo Cliente';
+              this.modalType(5);
+              this.resetClient();
+            }else {
+              this.message = 'El número de identidad ingresado no es válido. [Ej: 1234-1234-12345]';
+              this.title = 'Error';
+              this.modalType(5);
             }
-            ipcRenderer.send('create-client', this.client);
-            alert('Cliente agregado exitosamente!');
-            this.resetClient();
-
           }else{
-            alert('Debe llenar todos los campos y asegurarse que sean validos');
+            this.message = 'Debe llenar todos los campos';
+            this.title = 'Error';
+            this.modalType(5);
           }
         }else{
-          alert('Ya existe un cliente con ese numero de identidad.');
+          this.message = 'Ya existe un cliente con ese numero de identidad.';
+          this.title = 'Error';
+          this.modalType(5);
         }
+      },
+      modalType(index){
+        this.modeIndex = index;
+        this.showModal = true;
       },
       change(activetab) {
         this.activeTab = activetab;
@@ -200,7 +223,7 @@
       modifyContent(_id, index) {
         this.clientIndex = index;
         this.client = Object.assign({}, this.clients[index]);
-        this.showModal = true
+        this.modalType(1);
       },
       remove(_id, index) {
         this.clients.splice(index, 1);
@@ -217,6 +240,10 @@
       handleClose(cli, ind) {
         this.clients[ind] = cli;
         this.showModal = false;
+        ipcRenderer.send('get-clients');
+        ipcRenderer.on('return-zones',(event,args)=>{
+          this.zones = args;
+        });
       }
 
     },
@@ -239,9 +266,13 @@
 
       ipcRenderer.on('remove-client-ret', (event, err) => {
         if(!err){
-          alert('Cliente eliminado con exito!');
+          this.message = 'Cliente eliminado con exito!';
+          this.title = 'Eliminar Cliente';
+          this.modalType(5);
         }else{
-          alert('Error al eliminar cliente', err); //err solo para debugging
+          this.message = 'Error al eliminar cliente';
+          this.title = 'Error';
+          this.modalType(5);
         }
       });
     }

@@ -3,5 +3,5 @@
 {"_id":"EFziGyns7EPskIK5","email":"cesarfig@yahoo.com","firstname":"Cesar","idnumber":"0801-1997-54321","lastname":"Figueroa","services":["Cable","Agua"],"zone":"Residencial Urbana"}
 {"_id":"PL4FwwMb4jeWF1Pi","email":"mariom@gmail.com","firstname":"Mario","idnumber":"0801-1960-02532","lastname":"Maldonado","services":["Cable","Agua"],"zone":"Comercial"}
 {"_id":"Xp5agXQa9LG3ero7","email":"mariaffff@yahoo.com","firstname":"Maria","idnumber":"0801-1980-06325","lastname":"Fiallos","services":["Cable","Agua"],"zone":"Comercial"}
-{"email":"humberto@gmail.com","firstname":"Humberto","idnumber":"0801-1996-06352","lastname":"Aragon","services":["Cable","Agua"],"zone":"Rural","_id":"5pMDFaCFGNeFUG13"}
-{"$$deleted":true,"_id":"5pMDFaCFGNeFUG13"}
+{"_id":"14sHrLj3Vns51uJ5","email":"intiv@yahoo.com","firstname":"Inti","idnumber":"0801-1996-12345","lastname":"Velásquez","services":["Cable"],"zone":"Residencial Urbana"}
+{"_id":"14sHrLj3Vns51uJ5","email":"intiv@yahoo.com","firstname":"Inti","idnumber":"0801-1996-12345","lastname":"Velásquez","services":["Cable","Agua"],"zone":"Residencial Urbana"}
