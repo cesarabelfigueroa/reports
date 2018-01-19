@@ -19,41 +19,41 @@
               <slot name="body">
                 <form class="ui form">
                   <div class="field">
-                    <label>Numero de Identidad:  <i class="asterisk blue icon"></i></label>
+                    <label>Numero de Identidad:  <i class="asterisk olive icon"></i></label>
                     <div class="ui left icon input">
                       <input type="text"  v-model="client.idnumber" placeholder="Ej: 0801-1900-00000">
                       <i class="id card icon"></i>
                     </div>
                   </div>
                   <div class="field">
-                    <label>Nombres:  <i class="asterisk blue icon"></i></label>
+                    <label>Nombres:  <i class="asterisk olive icon"></i></label>
                     <div class="ui left icon input">
                       <input type="text" v-model="client.firstname" placeholder="Nombres">
                       <i class="user icon"></i>
                     </div>
                   </div>
                   <div class="field">
-                    <label>Apellidos:  <i class="asterisk blue icon"></i></label>
+                    <label>Apellidos:  <i class="asterisk olive icon"></i></label>
                     <div class="ui left icon input">
                       <input type="text" v-model="client.lastname" placeholder="Apellidos">
                       <i class="user outline icon"></i>
                     </div>
                   </div>
                   <div class="field">
-                    <label>Correo: <i class="asterisk blue icon"></i></label>
+                    <label>Correo: <i class="asterisk olive icon"></i></label>
                     <div class="ui left icon input">
                       <input type="text" v-model="client.email" placeholder="Correo">
                       <i class="mail icon"></i>
                     </div>
                   </div>
                   <div class="field">
-                    <label>Zona: <i class="asterisk blue icon"></i></label>
+                    <label>Zona: <i class="asterisk olive icon"></i></label>
                     <select v-model="client.zone" class="ui dropdown" id="zoneDropdown">
                       <option v-for="(zona, index) in zones" :value="zona.name">{{zona.name}}</option>
                     </select>
                   </div>
                   <div class="field">
-                    <label>Servicios {{ client.services }}:  <i class="asterisk blue icon"></i></label>
+                    <label>Servicios {{ client.services }}:  <i class="asterisk olive icon"></i></label>
                     <div id='serviciosId'>
                       <input type="checkbox" id="cable" value="Cable" v-model="client.services">
                       <label for="cable">Cable</label>
@@ -141,6 +141,111 @@
               </slot>
             </div>
           </div>
+          <!-- Servicio -->
+          <div v-if="mode==3" class="">
+            <div class="modal-header">
+              <slot name="header">
+                <div class="ui inverted segment">
+                  <h1><i class="write olive icon"></i> Modificar datos de Servicio</h1>
+                </div>
+                <hr>
+              </slot>
+            </div>
+
+            <div class="modal-body">
+              <slot name="body">
+                <form class="ui form">
+                  <div class="field">
+                    <label><i class="suitcase icon"></i>Nombre: <i class="asterisk olive icon"></i></label>
+                    <select v-model="service.name" class="ui dropdown" id="servicioDropdown">
+                      <option value="">Servicio</option>
+                      <option value="Agua">Agua</option>
+                      <option value="Cable">Cable</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Descripción: </label>
+                    <div>
+                      <textarea v-model="service.description" placeholder="Descripción" name="name" rows="3"></textarea>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Zona: <i class="asterisk olive icon"></i></label>
+                    <select v-model="service.zone" class="ui dropdown" id="zonadropdown">
+                      <option value="">Tipo de Zona</option>
+                      <option v-for="(zona, index) in zones" :value="zona.name">{{zona.name}}</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Monto: <i class="asterisk olive icon"></i></label>
+                    <div class="ui left icon input">
+                      <input type="number" v-model="service.cost" placeholder="Monto">
+                      <i class="payment icon"></i>
+                    </div>
+                  </div>
+                </form>
+              </slot>
+            </div>
+
+            <div class="modal-footer">
+              <slot name="footer">
+                <div class="right aligned ui basic segment">
+                  <button class="ui button olive" v-on:click="modifyService()">
+                    Guardar
+                  </button>
+                  <button class="ui button red" v-on:click="$emit('close')">
+                    Cancelar
+                  </button>
+                </div>
+              </slot>
+            </div>
+
+          </div>
+          <!-- Zona -->
+          <div v-if="mode==4" class="">
+            <div class="modal-header">
+              <slot name="header">
+                <div class="ui inverted segment">
+                  <h1><i class="write olive icon"></i> Modificar datos de Zona</h1>
+                </div>
+                <hr>
+              </slot>
+            </div>
+
+            <div class="modal-body">
+              <slot name="body">
+                <form class="ui form">
+                  <div class="field">
+                    <label>Nombre:  <i class="asterisk blue icon"></i></label>
+                    <div class="ui left icon input">
+                      <input type="text"  v-model="zone.name" placeholder="Nombre">
+                      <i class="home icon"></i>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Descripción: </label>
+                    <div>
+                      <textarea v-model="zone.description" placeholder="Descripción" rows="3"></textarea>
+                    </div>
+                  </div>
+                </form>
+              </slot>
+            </div>
+
+            <div class="modal-footer">
+              <slot name="footer">
+                <div class="right aligned ui basic segment">
+                  <button class="ui button olive" v-on:click="modifyZone()">
+                    Guardar
+                  </button>
+                  <button class="ui button red" v-on:click="$emit('close')">
+                    Cancelar
+                  </button>
+                </div>
+              </slot>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
@@ -167,9 +272,17 @@
       modifyClient() {
         ipcRenderer.send('update-client', this.client);
         this.$emit('finish', this.client, this.index);
+      },
+      modifyService() {
+        ipcRenderer.send('update-service', this.service);
+        this.$emit('finish', this.service, this.index);
+      },
+      modifyZone() {
+        ipcRenderer.send('update-zone', this.zone);
+        this.$emit('finish', this.zone, this.index);
       }
     },
-    props: ['mode', 'client', 'clients', 'zones', 'index'],
+    props: ['mode', 'client', 'clients', 'zones', 'index', 'zone', 'service'],
     beforeMount() {
       this.amount = 0;
       this.total = 0;
@@ -188,7 +301,7 @@
   height: 100%;
   background-color: rgba(0, 0, 0, .5);
   display: table;
-  transition: opacity 1s ease;
+  transition: opacity 0.5s ease;
 }
 
 .modal-wrapper {
@@ -209,7 +322,7 @@
   box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75)!important;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-  transition: all 1s ease;
+  transition: all 0.5s ease;
   font-family: Roboto !important;
   font-size: 18px;
 }

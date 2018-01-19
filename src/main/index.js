@@ -128,6 +128,17 @@ ipcMain.on('get-zones', (event)=>{
   });
 });
 
+ipcMain.on('update-zone', (event, zone) => {
+  zones.update({ _id : zone._id},zone, (err, numAffected) => {
+    if(!err) {
+      console.log('Zone updated succesfuly!');
+    }else{
+      console.log('Error updating zone', err);
+      console.log('numAffected: ', numAffected);
+    }
+  });
+});
+
 ipcMain.on('delete-zone', (event, _id) => {
     zones.remove({ _id }, (err, numRemoved) => {
       if(!err && numRemoved===1){
@@ -149,7 +160,7 @@ ipcMain.on('get-services', (event)=>{
 });
 
 ipcMain.on('get-services-cost', (event,service,zone) => {
-  bills.find({'name':service,'zone': zone}, (err, docs) => {
+  services.findOne({'name':service,'zone': zone}, (err, docs) => {
     event.sender.send('return-services-cost', docs);
   });
 });
@@ -158,6 +169,17 @@ ipcMain.on('create-service', (event,service)=>{
     services.insert(service, (err, doc)=>{
       console.log('Inserted with id', doc._id);
     });
+});
+
+ipcMain.on('update-service', (event, service) => {
+  services.update({ _id : service._id},service, (err, numAffected) => {
+    if(!err) {
+      console.log('Service updated succesfuly!');
+    }else{
+      console.log('Error updating service', err);
+      console.log('numAffected: ', numAffected);
+    }
+  });
 });
 
 ipcMain.on('delete-service', (event, _id) => {

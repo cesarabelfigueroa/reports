@@ -117,11 +117,9 @@
               </table>
             </div>
             <p v-if="clients.length===0">No hay clientes registrados.</p>
-
           </div>
         </div>
       </div>
-
     </div>
     <Modal v-if="showModal" :client="client" :zones="zones" :index="clientIndex" :mode="1" @close="showModal = false" @finish="handleClose()">
 
@@ -205,7 +203,6 @@
         this.showModal = true
       },
       remove(_id, index) {
-
         this.clients.splice(index, 1);
         ipcRenderer.send('remove-client', _id);
       },

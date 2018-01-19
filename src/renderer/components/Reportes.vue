@@ -2,67 +2,15 @@
   <div class="principal">
     <div class="fondo"></div>
       <div class="ui center aligned container" id="contenedor">
-        <div class="ui three item menu">
+        <div class="ui four item menu">
           <a class="item" v-bind:class="{active: tabNumber===1}" v-on:click="tabSelected(1)">Clientes en Mora</a>
           <a class="item" v-bind:class="{active: tabNumber===2}" v-on:click="tabSelected(2)">Ingreso diario</a>
           <a class="item" v-bind:class="{active: tabNumber===3}" v-on:click="tabSelected(3)">Ingreso Mensual</a>
+          <a class="item" v-bind:class="{active: tabNumber===4}" v-on:click="tabSelected(4)">Ingreso Anual</a>
         </div>
         <!-- *********** PRIMERA TAB *********** -->
         <div v-if="tabNumber==1">
           <div class="ui yellow inverted segment"><h1><i class="history icon"></i> En Mora pago de Cable</h1></div>
-          <div id="tableContainer" v-if="bills.length>0">
-            <table class="ui celled padded table">
-              <col width="20%">
-              <col width="30%">
-              <col width="20%">
-              <col width="10%">
-              <col width="20%">
-              <thead class="tableHeader">
-                <tr>
-                  <th>No. Identidad</th>
-                  <th>Servicio</th>
-                  <th>Monto</th>
-                  <th>Mora</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(factura, index) in bills">
-                  <td>{{factura.client_id}}</td>
-                  <td>{{factura.service}}</td>
-                  <td>{{factura.amount}}</td>
-                  <td>{{factura.fine}}</td>
-                  <td>[{{factura.dateDay}}-{{factura.dateMonth}}-{{factura.dateYear}}] {{factura.dateTime}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <br>
-          <div id="tableContainer" v-if="clients.length>0">
-            <table class="ui celled padded table">
-              <col width="30%">
-              <col width="25%">
-              <col width="25%">
-              <col width="15%">
-              <thead class="tableHeader">
-                <tr>
-                  <th>No. Identidad</th>
-                  <th>Nombres</th>
-                  <th>Apellidos</th>
-                  <th>Correo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(cli, index) in clients">
-                  <td>{{cli.idnumber}}</td>
-                  <td>{{cli.firstname}}</td>
-                  <td>{{cli.lastname}}</td>
-                  <td>{{cli.email}}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p v-if="clients.length===0">No hay facturas registradas.</p>
           <div class="ui segments">
             <div class="ui segment">
               <p>1. Top</p>
@@ -142,24 +90,8 @@
           </div>
         </div>
         <!-- *********** TERCERA TAB *********** -->
-        <div v-else="tabNumber==3">
+        <div v-else-if="tabNumber==3">
           <div class="ui black inverted segment"><h1> <i class="calendar icon"></i>Ingreso Mensual {{yearActive}}</h1></div>
-          <table class="ui celled padded inverted table">
-            <col width="50%">
-            <col width="50%">
-            <thead class="tableHeader">
-              <tr>
-                <th>Mes</th>
-                <th>Ingresos</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(montoMes, index) in mensualidad" >
-                <td> {{montoMes.mes}}</td>
-                <td> {{montoMes.monto}} Lps.</td>
-              </tr>
-            </tbody>
-          </table>
           <div class="ui four column grid">
             <div class="row">
               <div class="column">
@@ -236,6 +168,27 @@
             </div>
           </div>
         </div>
+        <!-- *********** CUARTA TAB *********** -->
+        <div v-else="tabNumber==4">
+          <div class="ui black inverted segment"><h1> <i class="calendar icon"></i>Ingreso Anual {{yearActive}}</h1></div>
+          <table class="ui celled padded inverted table">
+            <col width="50%">
+            <col width="50%">
+            <thead class="tableHeader">
+              <tr>
+                <th>Mes</th>
+                <th>Ingresos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(montoMes, index) in mensualidad" >
+                <td> {{montoMes.mes}}</td>
+                <td> {{montoMes.monto}} Lps.</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
 
       </div>
   </div>
@@ -298,9 +251,12 @@ const moment = require('moment');
           this.cambioFecha();
         }else if (numero === 3) {
           this.yearActive = moment().format("YYYY");
-          this.ingresoAnual();
           this.cambioMes('ENERO');
+        }else if (numero === 4) {
+          this.yearActive = moment().format("YYYY");
+          this.ingresoAnual();
         }
+
         this.tabNumber = numero;
       },
       cambioMes(monthActive){
@@ -337,6 +293,9 @@ const moment = require('moment');
         ipcRenderer.send('get-bills-month',month,this.yearActive);
       },
       ingresoAnual(){
+        for (var i = 0; i < this.mensualidad.length; i++) {
+          this.mensualidad[i].monto = 0;
+        }
         ipcRenderer.on('return-bills-year', (event,arg)=>{
           this.bills = arg;
         });

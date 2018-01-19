@@ -26,7 +26,7 @@
             <div class="field">
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
               <select v-model="indexCliente" class="ui dropdown" id="clientdropdown">
-                <option value="">Nombre del Cliente</option>
+                <option value="-1">Nombre del Cliente</option>
                 <option v-for="(client, index) in clients" :value="client.idnumber">{{client.firstname}} {{client.lastname}}</option>
               </select>
             </div>
@@ -117,11 +117,15 @@
 
       },
       monto: function () {
-        ipcRenderer.on('return-services-cost', (event,arg)=>{
-          this.service = arg;
-        });
-        ipcRenderer.send('get-services-cost',this.clients[this.indexCliente].name,this.clients[this.indexCliente].zone);
-        return parseInt(this.fine) + parseInt(this.service.cost);
+        if(this.indexCliente == -1){
+          return 0;
+        }else{
+          ipcRenderer.on('return-services-cost', (event,arg)=>{
+            this.service = arg;
+          });
+          ipcRenderer.send('get-services-cost',(this.test==1 ? "Agua" : "Cable"),this.clients[this.indexCliente].zone);
+          return parseInt(this.fine) + parseInt(this.service.cost);
+        }
       }
     },
     props: ['test'],
@@ -245,7 +249,7 @@
     height: 100%;
     background-color: rgba(0, 0, 0, .5);
     display: table;
-    transition: opacity 1s ease;
+    transition: opacity 0.5s ease;
   }
 
   .modal-wrapper {
@@ -266,7 +270,7 @@
     box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75)!important;
     border-radius: 2px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-    transition: all 1s ease;
+    transition: all 0.5s ease;
     font-family: Roboto !important;
     font-size: 18px;
   }

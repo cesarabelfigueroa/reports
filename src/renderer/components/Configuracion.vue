@@ -5,13 +5,13 @@
        <div class="ui black inverted segment"><h1> <i class="setting icon"></i>Administración</h1></div>
        <div class="ui center aligned container">
          <div class="ui two inverted olive item menu">
-           <a class="item" v-bind:class="{active: tabNumber===1}" v-on:click="tabSelected(1)"><h3><i class="suitcase icon"></i>Servicios</h3></a>
-           <a class="item" v-bind:class="{active: tabNumber===2}" v-on:click="tabSelected(2)"><h3><i class="home icon"></i>Zonas</h3></a>
+           <a class="item" v-bind:class="{active: tabNumber===3}" v-on:click="tabSelected(3)"><h3><i class="suitcase icon"></i>Servicios</h3></a>
+           <a class="item" v-bind:class="{active: tabNumber===4}" v-on:click="tabSelected(4)"><h3><i class="home icon"></i>Zonas</h3></a>
          </div>
        </div>
        <div class="tabContent">
          <!-- *********** SERVICE TAB *********** -->
-         <div v-if="tabNumber==1">
+         <div v-if="tabNumber==3">
            <div id="tableContainer">
              <table class="ui celled padded table">
                <col width="20%">
@@ -27,7 +27,6 @@
                    <th>Zona</th>
                    <th>Monto (Lps)</th>
                    <th>Modificar</th>
-                   <th>Eliminar</th>
                  </tr>
                </thead>
                <tbody>
@@ -38,13 +37,8 @@
                    <td>{{servicio.zone}}</td>
                    <td>{{servicio.cost}}</td>
                    <td class="center aligned">
-                     <button  v-on:click="modify(servicio._id)" class="circular ui teal icon button">
+                     <button  v-on:click="modifyService(servicio._id,index)" class="circular ui teal icon button">
                        <i class="icon write"></i>
-                     </button>
-                   </td>
-                   <td class="center aligned">
-                     <button  v-on:click="removeService(servicio._id, index)" class="circular ui red icon button">
-                       <i class="icon remove"></i>
                      </button>
                    </td>
                  </tr>
@@ -52,7 +46,7 @@
              </table>
            </div>
            <br>
-           <form class="ui form">
+           <!-- <form class="ui form">
              <div class="field">
                <label><i class="suitcase icon"></i>Nombre: <i class="asterisk blue icon"></i></label>
                <select v-model="service.name" class="ui dropdown" id="servicioDropdown">
@@ -83,10 +77,10 @@
              </div>
            </form>
            <br>
-           <button class="ui yellow button" id="nuevoServicio" v-on:click="submitService()"><i class="plus icon"></i>Modificar</button>
+           <button class="ui yellow button" id="nuevoServicio" v-on:click="submitService()"><i class="plus icon"></i>Modificar</button> -->
          </div>
          <!-- *********** ZONE TAB *********** -->
-         <div v-if="tabNumber==2">
+         <div v-if="tabNumber==4">
            <div id="tableContainer">
              <table class="ui celled padded table">
                <col width="20%">
@@ -100,7 +94,6 @@
                    <th>Nombre</th>
                    <th>Descripción</th>
                    <th>Modificar</th>
-                   <th>Eliminar</th>
                  </tr>
                </thead>
                <tbody>
@@ -109,20 +102,15 @@
                    <td>{{zona.name}}</td>
                    <td>{{zona.description}}</td>
                    <td class="center aligned">
-                     <button  v-on:click="modify(zona._id)" class="circular ui teal icon button">
+                     <button  v-on:click="modifyZone(zona._id, index)" class="circular ui teal icon button">
                        <i class="icon write"></i>
-                     </button>
-                   </td>
-                   <td class="center aligned">
-                     <button  v-on:click="deleteZone(zona._id, index)" class="circular ui red icon button">
-                       <i class="icon remove"></i>
                      </button>
                    </td>
                  </tr>
                </tbody>
              </table>
            </div>
-           <form class="ui form">
+           <!-- <form class="ui form">
              <div class="field">
                <label>Nombre:  <i class="asterisk blue icon"></i></label>
                <div class="ui left icon input">
@@ -138,10 +126,13 @@
              </div>
            </form>
            <br>
-           <button class="ui yellow button" id="nuevaZona" v-on:click="submitZone()" ><i class="plus icon"></i>Modificar</button>
+           <button class="ui yellow button" id="nuevaZona" v-on:click="submitZone()" ><i class="plus icon"></i>Modificar</button> -->
          </div>
        </div>
      </div>
+     <Modal v-if="showModal" :zones="zones" :service="service" :zone="zone" :index="modalIndex" :mode="tabNumber" @close="showModal = false" @finish="handleClose()">
+
+     </Modal>
   </div>
 </template>
 
@@ -149,13 +140,14 @@
 <script>
 
   const { ipcRenderer } = require('electron');
-
+  import Modal from './Modal';
 
   export default {
     name: 'configuracion',
+
     data(){
       return {
-        tabNumber: 1,
+        tabNumber: 3,
         service:{
           name: '',
           description: '',
@@ -167,8 +159,13 @@
           description:''
         },
         zones: [],
-        services: []
+        services: [],
+        modalIndex: -1,
+        showModal: false
       }
+    },
+    components: {
+      Modal: Modal
     },
     methods: {
       open (link) {
@@ -176,19 +173,6 @@
       },
       tabSelected(tabNumber){
         this.tabNumber = tabNumber;
-      },
-      submitService(){
-          let name = this.service.name.trim();
-          let description = this.service.description.trim();
-          let zone = this.service.zone.trim();
-          let cost = this.service.cost.trim();
-          this.service = {
-            name,
-            description,
-            zone,
-            cost
-          }
-          ipcRenderer.send('create-service', this.service);
       },
       submitZone(){
           let name = this.zone.name.trim();
@@ -217,6 +201,24 @@
         ipcRenderer.send('delete-zone', _id);
 
       },
+      modifyZone(_id, index){
+        this.modalIndex = index;
+        this.zone = Object.assign({}, this.zones[index]);
+        this.showModal = true
+      },
+      submitService(){
+          let name = this.service.name.trim();
+          let description = this.service.description.trim();
+          let zone = this.service.zone.trim();
+          let cost = this.service.cost.trim();
+          this.service = {
+            name,
+            description,
+            zone,
+            cost
+          }
+          ipcRenderer.send('create-service', this.service);
+      },
       removeService(_id, index){
         this.services.splice(index,1);
         ipcRenderer.on('delete-service-ret', (event, err) => {
@@ -227,9 +229,17 @@
           }
         });
         ipcRenderer.send('delete-service',_id);
-
+      },
+      modifyService(_id, index){
+        this.modalIndex = index;
+        this.service = Object.assign({}, this.services[index]);
+        this.zone = this.service.zone;
+        this.showModal = true
+      },
+      handleClose(service, ind) {
+        this.services[ind] = service;
+        this.showModal = false;
       }
-
     },
     beforeMount(){
       //Inicializacion de listeners para obtener info del backend
