@@ -231,7 +231,6 @@
                 </form>
               </slot>
             </div>
-
             <div class="modal-footer">
               <slot name="footer">
                 <div class="right aligned ui basic segment">
@@ -244,7 +243,33 @@
                 </div>
               </slot>
             </div>
-
+          </div>
+          <!-- Alerta -->
+          <div v-if="mode==5" class="alerta">
+            <div class="modal-header">
+              <slot name="header">
+                <div class="ui inverted segment">
+                  <h1><i class="info circle olive icon"></i> {{title}} </h1>
+                </div>
+                <hr>
+              </slot>
+            </div>
+            <div class="modal-body">
+              <slot name="body">
+                <div class="ui basic segment" id="bodyModal">
+                  <h3>{{message}}</h3>
+                </div>
+              </slot>
+            </div>
+            <div class="modal-footer">
+              <slot name="footer">
+                <div class="right aligned ui basic segment">
+                  <button class="ui button olive" v-on:click="$emit('close')">
+                    Ok
+                  </button>
+                </div>
+              </slot>
+            </div>
           </div>
         </div>
       </div>
@@ -282,7 +307,7 @@
         this.$emit('finish', this.zone, this.index);
       }
     },
-    props: ['mode', 'client', 'clients', 'zones', 'index', 'zone', 'service'],
+    props: ['mode', 'client', 'clients', 'zones', 'index', 'zone', 'service', 'message', 'title'],
     beforeMount() {
       this.amount = 0;
       this.total = 0;
@@ -314,13 +339,25 @@
   align-content: flex-end;
 }
 
+
+.modal-mask .alerta {
+  transition: opacity 0.3s ease !important;
+}
+.modal-container .alerta{
+  transition: all 0.3s ease !important;
+}
+
+#bodyModal h3{
+  color: white!important;
+}
+
 .modal-container {
   width: 800px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: gray;
-  box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75)!important;
-  border-radius: 2px;
+  box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75);
+  border-radius: 2px!important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all 0.5s ease;
   font-family: Roboto !important;

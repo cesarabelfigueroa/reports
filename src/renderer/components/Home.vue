@@ -13,7 +13,7 @@
               </div>
             </router-link>
             <h2 class="agua">--------------------------
-              <br>Informacion de Consumo</h2>
+              <br>Información de Consumo</h2>
           </div>
           <div class="column">
             <router-link to="/formulario/2">
@@ -25,7 +25,7 @@
               </div>
             </router-link>
             <h2 class="cable">--------------------------
-              <br>Informacion de Pago</h2>
+              <br>Información de Pago</h2>
           </div>
         </div>
       </div>

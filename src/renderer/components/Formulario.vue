@@ -26,7 +26,7 @@
             <div class="field">
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
               <select v-model="indexCliente" class="ui dropdown" id="clientdropdown">
-                <option value="-1">Nombre del Cliente</option>
+                <option value="">Nombre del Cliente</option>
                 <option v-for="(client, index) in clients" :value="client.idnumber">{{client.firstname}} {{client.lastname}}</option>
               </select>
             </div>
@@ -51,10 +51,12 @@
               <i class="handshake file word outline icon"></i>
               Generar Factura
             </button>
-            <div v-if="boolEnero==true" class="ui big yellow animated fade button" id="show-modal" v-on:click="showModal = true">
-              <div class="hidden content">Pago Anual</div>
-              <div class="visible content">
-                <i class="certificate icon"></i>Promoción
+            <div class="right aligned ui basic segment">
+              <div v-if="boolEnero==true" class="ui big yellow animated fade button" id="show-modal" v-on:click="modalType(2)">
+                <div class="hidden content">Pago Anual</div>
+                <div class="visible content">
+                  <i class="certificate icon"></i>Promoción
+                </div>
               </div>
             </div>
           </div>
@@ -65,7 +67,7 @@
       </div>
     </div>
     <!-- ************************MODAL PROMOCION************************ -->
-    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :mode="2" @close="showModal = false">
+    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :title="title" :message="message" :mode="modeIndex" @close="showModal = false">
 
     </Modal>
     <br><br>
@@ -105,7 +107,10 @@
           description: '',
           zone: '',
           cost: ''
-        }
+        },
+        message:'',
+        modeIndex:2,
+        title:''
       }
     },
     components: {
@@ -133,7 +138,10 @@
       open (link) {
         this.$electron.shell.openExternal(link)
       },
-
+      modalType(index){
+        this.modeIndex = index;
+        this.showModal = true;
+      },
       verify() {
         console.log('Fine: ', this.fine);
         console.log('Amount: ', this.amount);
@@ -164,9 +172,13 @@
           this.fine = 0;
           this.amount = 0;
           dd.selectedIndex = 0;
-          alert('Factura ingresada con exito');
+          this.message = 'Factura ingresada con exito';
+          this.title = 'Alerta';
+          this.modalType(5);
         }else{
-          alert('Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion');
+          this.message = 'Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion';
+          this.title = 'Error';
+          this.modalType(5);
         }
       }
     },
@@ -185,8 +197,6 @@
       ipcRenderer.send('get-clients');
     },
     mounted(){
-
-
     }
 
   }

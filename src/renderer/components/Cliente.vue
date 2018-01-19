@@ -15,7 +15,7 @@
             <br>
             <form class="ui form">
               <div class="field">
-                <label>Numero de Identidad:  <i class="asterisk blue icon"></i></label>
+                <label>Número de Identidad:  <i class="asterisk blue icon"></i></label>
                 <div class="ui left icon input">
                   <input type="text"  v-model="client.idnumber" placeholder="Ej: 0801-1900-00000">
                   <i class="id card icon"></i>
