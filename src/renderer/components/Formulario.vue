@@ -19,15 +19,15 @@
         </div>
       </div>
       <div class="franja"></div>
-      <div  id="formulario">
+      <div id="formulario">
         <div class="ui container">
           <br>
           <div class="ui form">
             <div class="field">
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-              <select v-model="indexCliente" class="ui dropdown" id="clientdropdown">
+              <select class="ui dropdown" id="clientdropdown" >
                 <option value="">Nombre del Cliente</option>
-                <option v-for="(client, index) in clients" :value="client.idnumber">{{client.firstname}} {{client.lastname}}</option>
+                <option v-for="(cliente, index) in clients" v-if="cliente.services.includes(test ==  1 ? 'Agua' : 'Cable')" :value="JSON.stringify(cliente)">{{cliente.firstname}} {{cliente.lastname}}</option>
               </select>
             </div>
             <br>
@@ -120,17 +120,6 @@
       total: function () {
         return this.amount != '' ? parseInt(this.fine) + parseInt(this.amount) : parseInt(this.fine);
 
-      },
-      monto: function () {
-        if(this.indexCliente == -1){
-          return 0;
-        }else{
-          ipcRenderer.on('return-services-cost', (event,arg)=>{
-            this.service = arg;
-          });
-          ipcRenderer.send('get-services-cost',(this.test==1 ? "Agua" : "Cable"),this.clients[this.indexCliente].zone);
-          return parseInt(this.fine) + parseInt(this.service.cost);
-        }
       }
     },
     props: ['test'],
@@ -180,11 +169,26 @@
           this.title = 'Error';
           this.modalType(5);
         }
+      },
+      selectClient() {
+        const dd = document.getElementById('clientdropdown');
+        if(dd.selectedIndex >= 0){
+          let value = JSON.parse(dd.value);
+          for (let i = 0; i < this.clients.length; i++) {
+            if(this.clients[i]._id === value._id){
+              this.indexCliente = i;
+              break;
+            }
+          }
+          this.service = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'),this.clients[this.indexCliente].zone);
+          console.log(this.service);
+          this.amount = parseInt(this.fine) + parseInt(this.service.cost);
+        }
       }
     },
     beforeMount(){
       this.day = parseInt(moment().format("DD"));
-      if(this.day>=7 && this.test===2) {
+      if(this.day>7 && this.test===2) {
         this.warning = 'Se aplicará cobro extra por mora (10Lps)';
         this.fine = 10;
       }
@@ -194,9 +198,14 @@
       ipcRenderer.on('fetch-clients', (event, arg) => {
         this.clients = arg;
       });
+      ipcRenderer.on('return-services-cost', (event,arg)=>{
+        this.service = arg;
+      });
       ipcRenderer.send('get-clients');
     },
     mounted(){
+      let dd = document.getElementById('clientdropdown');
+      dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
     }
 
   }

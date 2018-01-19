@@ -173,7 +173,7 @@ ipcMain.on('get-services', (event)=>{
 
 ipcMain.on('get-services-cost', (event,service,zone) => {
   services.findOne({'name':service,'zone': zone}, (err, docs) => {
-    event.sender.send('return-services-cost', docs);
+    event.returnValue = docs;
   });
 });
 
