@@ -40,13 +40,13 @@
               </div>
             </div>
             <br>
-            <div class="two fields">
+            <!-- <div class="two fields">
               <div class="field">
                 <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
                 <input type="number" v-model="amount" placeholder="Ej: 1000.00">
               </div>
             </div>
-            <br>
+            <br> -->
             <button class="big ui button blue" v-on:click="verify">
               <i class="handshake file word outline icon"></i>
               Generar Factura
@@ -181,7 +181,6 @@
             }
           }
           this.service = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'),this.clients[this.indexCliente].zone);
-          console.log(this.service);
           this.amount = parseInt(this.fine) + parseInt(this.service.cost);
         }
       }

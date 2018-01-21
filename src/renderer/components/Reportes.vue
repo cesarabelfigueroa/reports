@@ -175,7 +175,7 @@
               <div class="ui grid">
                 <div class="three column row">
                   <div class="column">
-                    <button v-bind:class="{disabled:lastYear}" class="ui circular olive icon button">
+                    <button v-bind:class="{disabled:lastYear}" class="ui circular olive icon button" v-on:click="arrows('left')">
                       <i class="arrow left icon"></i>
                     </button>
                   </div>
@@ -183,7 +183,7 @@
                     <i class="calendar icon"></i>Ingreso Anual {{yearActive}}
                   </div>
                   <div class="column">
-                    <button v-bind:class="{disabled:nextYear}" class="ui circular olive icon button">
+                    <button v-bind:class="{disabled:nextYear}" class="ui circular olive icon button" v-on:click="arrows('right')">
                       <i class="arrow right icon"></i>
                     </button>
                   </div>
@@ -276,7 +276,7 @@ const moment = require('moment');
           this.cambioMes('ENERO');
         }else if (numero === 4) {
           this.yearActive = moment().format("YYYY");
-          this.arrows();
+          // this.arrows();
           this.ingresoAnual();
         }
         this.tabNumber = numero;
@@ -310,20 +310,13 @@ const moment = require('moment');
         }else if (this.monthActive == 'DICIEMBRE') {
           month = '12';
         }
-        ipcRenderer.on('return-bills-month', (event,arg)=>{
-          this.bills = arg;
-        });
         ipcRenderer.send('get-bills-month',month,this.yearActive);
       },
       ingresoAnual(){
         for (var i = 0; i < this.mensualidad.length; i++) {
           this.mensualidad[i].monto = 0;
         }
-
-        ipcRenderer.on('return-bills-year', (event,arg)=>{
-          this.bills = arg;
-        });
-        ipcRenderer.send('get-bills-year',this.yearActive);
+        this.bills = ipcRenderer.sendSync('get-bills-yearSync',this.yearActive);
         for (var i = 0; i < this.bills.length; i++){
           if(this.bills[i].dateMonth == '01'){
             this.mensualidad[0].monto += parseInt(this.bills[i].amount);
@@ -352,13 +345,11 @@ const moment = require('moment');
           }
         }
       },
-      arrows(){
-        // var lastYear = (parseInt(this.yearActive)-1)+'';
-        // var bills= this.bills;
-        // ipcRenderer.on('return-bills-yearSync', (event,arg)=>{
-        //   bills = arg;
-        // });
-        // ipcRenderer.send('get-bills-yearSync',lastYear);
+      arrows(dir){
+        let Year = dir === 'left' ? (parseInt(this.yearActive)-1)+'': (parseInt(this.yearActive)+1)+'';
+        console.log(Year)
+        this.yearActive = Year;
+        this.ingresoAnual();
         // this.lastYear = true;
         // if (bills[0].dateYear === lastYear) {
         //   this.lastYear = false ;
@@ -386,15 +377,24 @@ const moment = require('moment');
       }
     },
     beforeMount(){
+
       ipcRenderer.on('return-clients', (event,arg)=>{
         this.clients = arg;
       });
       ipcRenderer.send('get-clients');
+
       ipcRenderer.on('return-bills', (event,arg)=>{
         this.bills = arg;
       });
+
       ipcRenderer.send('get-bills');
 
+      ipcRenderer.on('return-bills-month', (event,arg)=>{
+        this.bills = arg;
+      });
+      ipcRenderer.on('return-bills-year', (event,arg)=>{
+        this.bills = arg;
+      });
     }
   }
 </script>
