@@ -8,7 +8,6 @@
           <br>
           <h1><i class="big tv icon"></i>Pago Cable</h1>
           <h3>*Por mora se cobran L.10 extra. (Se aplica despues del 7mo dia de cada mes)</h3>
-          <h2>{{warning}}</h2>
           <br>
         </div>
         <div v-if="test==1" id="header-agua">
@@ -27,7 +26,7 @@
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
               <select class="ui dropdown" id="clientdropdown" >
                 <option value="">Nombre del Cliente</option>
-                <option v-for="(cliente, index) in clients" v-if="cliente.services.includes(test ==  1 ? 'Agua' : 'Cable')" :value="JSON.stringify(cliente)">{{cliente.firstname}} {{cliente.lastname}}</option>
+                <option v-for="(client, index) in clients" v-if="client.services.includes(test ==  1 ? 'Agua' : 'Cable')"  :value="JSON.stringify(client)">{{client.firstname}} {{client.lastname}}</option>
               </select>
             </div>
             <br>
@@ -36,8 +35,11 @@
                 <h3>Monto Total:</h3>
               </div>
               <div class="ui segment">
-                <h3>{{total}}</h3>
+                <h3>{{total}} Lps</h3>
               </div>
+            </div>
+            <div v-if="warning!=''"class="ui small orange inverted segment">
+              <h5><i class="circle info icon"></i> {{warning}}</h5>
             </div>
             <br>
             <!-- <div class="two fields">
@@ -67,7 +69,7 @@
       </div>
     </div>
     <!-- ************************MODAL PROMOCION************************ -->
-    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :title="title" :message="message" :mode="modeIndex" @close="showModal = false">
+    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :title="title" :message="message" :mode="modeIndex" :test="test" @close="showModal = false">
 
     </Modal>
     <br><br>
@@ -89,8 +91,8 @@
         amount : 0,
         clients: [],
         fine: 0,
-        day: 0,
-        warning: 'No hay mora',
+        day: '',
+        warning: '',
         showModal: false,
         boolEnero: false,
         indexCliente: 0,
@@ -119,7 +121,6 @@
     computed : {
       total: function () {
         return this.amount != '' ? parseInt(this.fine) + parseInt(this.amount) : parseInt(this.fine);
-
       }
     },
     props: ['test'],
@@ -132,21 +133,25 @@
         this.showModal = true;
       },
       verify() {
-        console.log('Fine: ', this.fine);
-        console.log('Amount: ', this.amount);
-        console.log('Total: ', this.total);
         const dd = document.getElementById('clientdropdown');
-        let client_id = dd.options[dd.selectedIndex].value;
-        if(client_id !== '' && this.amount > 0){
+        let client_id = '';
+        if (dd.selectedIndex>0) {
+          client_id = (JSON.parse(dd.options[dd.selectedIndex].value)).idnumber;
+        }
+        if(client_id !== '' && this.amount > 10){
           let service = this.test==1? 'agua' : 'cable';
-          let day = moment().format("DD");
-          if(parseInt(day) > 7 && this.test==2){
-            this.fine = 10;
-          }
           let dateYear = moment().format("YYYY");
           let dateMonth = moment().format("MM");
           let dateDay = moment().format("DD");
           let dateTime = moment().format("h:mm a");
+          if(parseInt(dateDay) > 7 && this.test==2){
+            this.fine = 10;
+          }
+          // **************** Factura ****************
+          console.log('Date: ', dateDay+' '+dateMonth+' '+dateYear );
+          console.log('Fine: ', this.fine);
+          console.log('Amount: ', this.amount);
+          console.log('Total: ', this.total);
           let bill = {
             client_id,
             service,
@@ -181,16 +186,11 @@
             }
           }
           this.service = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'),this.clients[this.indexCliente].zone);
-          this.amount = parseInt(this.fine) + parseInt(this.service.cost);
+          this.amount = parseInt(this.service.cost);
         }
       }
     },
     beforeMount(){
-      this.day = parseInt(moment().format("DD"));
-      if(this.day>7 && this.test===2) {
-        this.warning = 'Se aplicará cobro extra por mora (10Lps)';
-        this.fine = 10;
-      }
       if ((parseInt(moment().format("MM")))== 1 ) {
         this.boolEnero = true;
       }
@@ -205,8 +205,12 @@
     mounted(){
       let dd = document.getElementById('clientdropdown');
       dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
+      let dateDay = moment().format("DD");
+      if(parseInt(dateDay) > 7 && this.test==2){
+        this.warning = 'Se aplicará cobro extra por mora (10Lps)';
+        this.fine = 10;
+      }
     }
-
   }
 </script>
 <style scoped>

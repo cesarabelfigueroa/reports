@@ -101,32 +101,32 @@
                 <div class="ui form">
                   <div class="field">
                     <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-                    <select v-model="indexCliente" class="ui dropdown" id="clientdropdown">
-                      <option :value="-1">Nombre del Cliente</option>
-                      <option v-for="(client, index) in clients" :value="index">{{client.firstname}} {{client.lastname}}</option>
+                    <select class="ui dropdown" id="clientedropdown">
+                      <option value="">Nombre del Cliente</option>
+                      <option v-for="(client, index) in clients" v-if="client.services.includes(test ==  1 ? 'Agua' : 'Cable')"  :value="JSON.stringify(client)">{{client.firstname}} {{client.lastname}}</option>
                     </select>
                   </div>
                   <br>
+                  <div class="two fields">
+                    <div class="field">
+                      <h4><label>Monto mensual del cliente: {{amount}} Lps.</label></h4>
+                    </div>
+                  </div>
                   <div class="ui horizontal segments">
                     <div class="ui segment">
                       <h3>Monto Anual:</h3>
                     </div>
                     <div class="ui segment">
-                      <h3>{{total}}</h3>
+                      <h3>{{total}} Lps</h3>
                     </div>
                   </div>
-                  <br>
-                  <div class="two fields">
-                    <div class="field">
-                      <label>Monto a Pagar (Lps): <i class="asterisk blue icon"></i></label>
-                      <input type="number" v-model="amount" placeholder="Ej: 1000.00">
-                    </div>
-                  </div>
-                  <br>
                   <button class="ui button yellow" v-on:click="verifyPromocion()">
                     <i class="handshake file word outline icon"></i>
                     Generar Factura
                   </button>
+                  <div v-if="validacionBool"class="ui small red inverted segment">
+                    <h5><i class="remove icon"></i> Error! Seleccionar Cliente</h5>
+                  </div>
                 </div>
               </slot>
             </div>
@@ -189,8 +189,8 @@
 
             <div class="modal-footer">
               <slot name="footer">
-                <div v-if="botonHabilitado"class="ui small red inverted segment">
-                  <h5><i class="remove red icon"></i> Error! Llenar los campos obligatorios</h5>
+                <div v-if="validacionBool"class="ui small red inverted segment">
+                  <h5><i class="remove icon"></i> Error! Llenar los campos obligatorios</h5>
                 </div>
                 <div class="right aligned ui basic segment">
                   <button class="ui button olive" v-on:click="modifyService()">
@@ -282,21 +282,22 @@
 
 <script>
   const { ipcRenderer } = require('electron');
-
+  const moment = require('moment');
   export default {
     name: 'modal',
     data() {
       return {
         amount: 0,
         indexCliente: -1,
-        total: 0,
-        botonHabilitado:false
+        validacionBool:false
+      }
+    },
+    computed : {
+      total: function () {
+        return this.amount != '' ? (parseInt(this.amount)*11) : 0;
       }
     },
     methods: {
-      verifyPromocion() {
-        console.log('Promocion');
-      },
       modifyClient() {
         ipcRenderer.send('update-client', this.client);
         this.$emit('finish', this.client, this.index);
@@ -311,19 +312,80 @@
           ipcRenderer.send('update-service', this.service);
           this.$emit('finish', this.service, this.index);
         }else{
-          this.botonHabilitado = true;
+          this.validacionBool = true;
         }
       },
       modifyZone() {
         ipcRenderer.send('update-zone', this.zone);
         this.$emit('finish', this.zone, this.index);
+      },
+      verifyPromocion() {
+        const dd = document.getElementById('clientedropdown');
+        let client_id = '';
+        if (dd.selectedIndex>0) {
+          client_id = (JSON.parse(dd.options[dd.selectedIndex].value)).idnumber;
+        }
+        if(client_id !== '' && this.amount > 10){
+          this.validacionBool= false;
+          let service = this.test==1? 'agua' : 'cable';
+          let dateYear = moment().format("YYYY");
+          let dateMonth = moment().format("MM");
+          let dateDay = moment().format("DD");
+          let dateTime = moment().format("h:mm a");
+          let fine = 0;
+          let amount = parseInt(this.amount)*11;
+          if(parseInt(dateDay) > 7 && this.test==2){
+            fine = 10;
+          }
+          // **************** Factura ****************
+          console.log('Date: ', dateDay+' '+dateMonth+' '+dateYear );
+          console.log('Total: ', this.total);
+          console.log('Nombre: ', (JSON.parse(dd.options[dd.selectedIndex].value)).firstname, (JSON.parse(dd.options[dd.selectedIndex].value)).lastname);
+          // **************** Factura ****************
+          let bill = {
+            client_id,
+            service,
+            amount,
+            fine,
+            dateYear,
+            dateMonth,
+            dateDay,
+            dateTime
+          }
+          ipcRenderer.send('create-bill', bill);
+          this.amount = 0;
+          dd.selectedIndex = 0;
+          // this.mode = 5;
+          // this.message = 'Factura ingresada con exito';
+          // this.title = 'Alerta';
+        }else{
+          this.validacionBool= true;
+        }
+      },
+      selectClient() {
+        const dd = document.getElementById('clientedropdown');
+        let servicio;
+        if(dd.selectedIndex > 0){
+          let value = JSON.parse(dd.value);
+          for (let i = 0; i < this.clients.length; i++) {
+            if(this.clients[i]._id === value._id){
+              this.indexCliente = i;
+              break;
+            }
+          }
+          servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'),this.clients[this.indexCliente].zone);
+          this.amount = parseInt(servicio.cost);
+        }
       }
     },
-    props: ['mode', 'client', 'clients', 'zones', 'index', 'zone', 'service', 'message', 'title'],
+    props: ['mode', 'client', 'clients', 'zones', 'index', 'zone', 'service', 'message', 'title', 'test'],
     beforeMount() {
       this.amount = 0;
-      this.total = 0;
       this.indexCliente = 0;
+    },
+    mounted(){
+      let dd = document.getElementById('clientedropdown');
+      dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
     }
   }
 </script>

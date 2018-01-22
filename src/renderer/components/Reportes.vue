@@ -80,7 +80,7 @@
                   <td>{{factura.client_id}}</td>
                   <td>{{factura.service}}</td>
                   <td>[{{factura.dateDay}}-{{factura.dateMonth}}-{{factura.dateYear}}] {{factura.dateTime}}</td>
-                  <td>{{factura.amount}}</td>
+                  <td>{{factura.amount + factura.fine}} Lps.</td>
                 </tr>
               </tbody>
             </table>
@@ -158,7 +158,7 @@
                     <td>{{factura.client_id}}</td>
                     <td>{{factura.service}}</td>
                     <td>[{{factura.dateDay}}-{{factura.dateMonth}}-{{factura.dateYear}}] {{factura.dateTime}}</td>
-                    <td>{{factura.amount}}</td>
+                    <td>{{factura.amount + factura.fine}} Lps.</td>
                   </tr>
                 </tbody>
               </table>
@@ -209,7 +209,6 @@
           </table>
 
         </div>
-
       </div>
   </div>
 </template>
@@ -319,53 +318,36 @@ const moment = require('moment');
         this.bills = ipcRenderer.sendSync('get-bills-yearSync',this.yearActive);
         for (var i = 0; i < this.bills.length; i++){
           if(this.bills[i].dateMonth == '01'){
-            this.mensualidad[0].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[0].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '02') {
-            this.mensualidad[1].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[1].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '03') {
-            this.mensualidad[2].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[2].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '04') {
-            this.mensualidad[3].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[3].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '05') {
-            this.mensualidad[4].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[4].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '06') {
-            this.mensualidad[5].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[5].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '07') {
-            this.mensualidad[6].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[6].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '08') {
-            this.mensualidad[7].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[7].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '09') {
-            this.mensualidad[8].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[8].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '10') {
-            this.mensualidad[9].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[9].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '11') {
-            this.mensualidad[10].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[10].monto += (this.bills[i].amount+this.bills[i].fine);
           }else if (this.bills[i].dateMonth == '12') {
-            this.mensualidad[11].monto += parseInt(this.bills[i].amount);
+            this.mensualidad[11].monto += (this.bills[i].amount+this.bills[i].fine);
           }
         }
       },
       arrows(dir){
         let Year = dir === 'left' ? (parseInt(this.yearActive)-1)+'': (parseInt(this.yearActive)+1)+'';
-        console.log(Year)
         this.yearActive = Year;
         this.ingresoAnual();
-        // this.lastYear = true;
-        // if (bills[0].dateYear === lastYear) {
-        //   this.lastYear = false ;
-        // }
-        // console.log(bills[0].dateYear +' - '+ lastYear);
-        // var nextYear = parseInt(this.yearActive)+1;
-        // ipcRenderer.send('get-bills-year', nextYear);
-        // ipcRenderer.on('return-bills-year', (event,arg)=>{
-        //   this.bills = arg;
-        // });
-        //
-        // console.log(this.bills[0].dateYear +' - '+ nextYear);
-        // this.nextYear = true;
-        // if (this.bills[0].dateYear === (nextYear+'')) {
-        //   this.nextYear =false;
-        // }
       },
       cambioFecha(){
         this.dayActive = this.reporteDia;
