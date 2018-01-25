@@ -241,9 +241,7 @@
         this.clients[ind] = cli;
         this.showModal = false;
         ipcRenderer.send('get-clients');
-        ipcRenderer.on('return-zones',(event,args)=>{
-          this.zones = args;
-        });
+
       }
 
     },
@@ -257,6 +255,9 @@
                 this.ids.push(this.clients[key].idnumber);
             }
         }
+      });
+      ipcRenderer.on('return-zones',(event,args)=>{
+        this.zones = args;
       });
       ipcRenderer.send('get-clients');
       ipcRenderer.on('return-zones',(event,args)=>{

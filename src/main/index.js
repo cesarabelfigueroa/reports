@@ -72,6 +72,12 @@ ipcMain.on('get-clients', (event) => {
   });
 });
 
+ipcMain.on('get-clientsSync', (event) => {
+  clients.find({}, (err, docs) => {
+    event.returnValue = docs;
+  });
+});
+
 ipcMain.on('update-client', (event, client) => {
   clients.update({ _id : client._id},client, (err, numAffected) => {
     if(!err) {
@@ -99,6 +105,12 @@ ipcMain.on('get-bills-date', (event,date,month,year) => {
 ipcMain.on('get-bills-month', (event,month,year) => {
   bills.find({'dateMonth':month,'dateYear': year}, (err, docs) => {
     event.sender.send('return-bills-month', docs);
+  });
+});
+
+ipcMain.on('get-bills-monthSync', (event,month,year) => {
+  bills.find({'dateMonth':month,'dateYear': year}, (err, docs) => {
+    event.returnValue = docs;
   });
 });
 

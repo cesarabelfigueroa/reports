@@ -12,38 +12,20 @@
         <div v-if="tabNumber==1">
           <div class="ui yellow inverted segment"><h1><i class="history icon"></i> En Mora pago de Cable</h1></div>
           <div class="ui segments">
-            <div class="ui segment">
-              <p>1. Top</p>
+            <div v-for="cli in moraCable" class="ui segment">
+              <p>{{cli.idnumber}}  {{cli.firstname}} {{cli.lastname}}</p>
             </div>
-            <div class="ui segment">
-              <p>2. Middle</p>
-            </div>
-            <div class="ui segment">
-              <p>3. Middle</p>
-            </div>
-            <div class="ui segment">
-              <p>4. Middle</p>
-            </div>
-            <div class="ui segment">
-              <p>5. Bottom</p>
+            <div v-if="moraCable.length == 0" class="ui segment">
+              <p>No hay clientes en mora de pago de cable</p>
             </div>
           </div>
           <div class="ui blue inverted segment"><h1> <i class="history icon"></i>En Mora pago de Agua</h1></div>
           <div class="ui segments">
-            <div class="ui segment">
-              <p>1. Top</p>
+            <div v-for="cli in moraAgua" class="ui segment">
+              <p>{{cli.idnumber}}  {{cli.firstname}} {{cli.lastname}}</p>
             </div>
-            <div class="ui segment">
-              <p>2. Middle</p>
-            </div>
-            <div class="ui segment">
-              <p>3. Middle</p>
-            </div>
-            <div class="ui segment">
-              <p>4. Middle</p>
-            </div>
-            <div class="ui segment">
-              <p>5. Bottom</p>
+            <div v-if="moraAgua.length == 0" class="ui segment">
+              <p>No hay clientes en mora de pago de agua</p>
             </div>
           </div>
         </div>
@@ -225,6 +207,8 @@ const moment = require('moment');
         yearActive: '',
         monthActive: 'ENERO',
         clients: [],
+        moraAgua: [],
+        moraCable: [],
         client:{
           idnumber: '',
           firstname: '',
@@ -351,11 +335,40 @@ const moment = require('moment');
       },
       cambioFecha(){
         this.dayActive = this.reporteDia;
-        ipcRenderer.on('return-bills-date', (event,arg)=>{
-          this.bills = arg;
-        });
+
         let fecha = this.dayActive.split('-',3);
         ipcRenderer.send('get-bills-date',fecha[2],fecha[1],fecha[0]);
+      },
+      clientesMora() {
+        let month = moment().format("MM");
+        let year = moment().format("YYYY");
+
+        this.bills = ipcRenderer.sendSync('get-bills-monthSync', month, year);
+        this.clients = ipcRenderer.sendSync('get-clientsSync');
+
+        for (let i = 0; i < this.clients.length; i++) {
+          let agua = false;
+          let cable = false;
+          for (let j = 0; j < this.bills.length; j++) {
+
+            if(this.bills[j].client_id === this.clients[i].idnumber){
+              if(this.bills[j].service === 'agua') {
+                agua = true;
+              }else{
+                cable = true;
+              }
+            }
+          }
+          if(!agua && this.clients[i].services.includes('Agua')){
+            this.moraAgua.push(this.clients[i]);
+          }
+          if(!cable && this.clients[i].services.includes('Cable')){
+            this.moraCable.push(this.clients[i]);
+          }
+
+        }
+        console.log('Mora cable: ',this.moraCable);
+        console.log('Mora agua:', this.moraAgua);
       }
     },
     beforeMount(){
@@ -377,6 +390,11 @@ const moment = require('moment');
       ipcRenderer.on('return-bills-year', (event,arg)=>{
         this.bills = arg;
       });
+
+      ipcRenderer.on('return-bills-date', (event,arg)=>{
+        this.bills = arg;
+      });
+      this.clientesMora();
     }
   }
 </script>
