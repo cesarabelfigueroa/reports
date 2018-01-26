@@ -385,7 +385,8 @@
     },
     mounted(){
       let dd = document.getElementById('clientedropdown');
-      dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
+      if(dd)
+        dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
     }
   }
 </script>
