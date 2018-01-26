@@ -166,7 +166,7 @@
           this.fine = 0;
           this.amount = 0;
           dd.selectedIndex = 0;
-          this.message = 'Factura ingresada con exito';
+          this.message = 'Factura ingresada con éxito';
           this.title = 'Alerta';
           this.modalType(5);
         }else{
