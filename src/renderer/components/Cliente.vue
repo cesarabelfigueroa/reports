@@ -267,7 +267,7 @@
 
       ipcRenderer.on('remove-client-ret', (event, err) => {
         if(!err){
-          this.message = 'Cliente eliminado con exito!';
+          this.message = 'Cliente eliminado con éxito!';
           this.title = 'Eliminar Cliente';
           this.modalType(5);
         }else{

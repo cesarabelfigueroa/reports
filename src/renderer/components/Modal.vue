@@ -155,12 +155,10 @@
               <slot name="body">
                 <form class="ui form">
                   <div class="field">
-                    <label><i class="suitcase icon"></i>Nombre: <i class="asterisk olive icon"></i></label>
-                    <select v-model="service.name" class="ui dropdown" id="servicioDropdown">
-                      <option value="">Servicio</option>
-                      <option value="Agua">Agua</option>
-                      <option value="Cable">Cable</option>
-                    </select>
+                    <label>Nombre: </label>
+                    <div class="ui segment">
+                      <h5>{{service.name}}</h5>
+                    </div>
                   </div>
                   <div class="field">
                     <label>Descripción: </label>
@@ -169,11 +167,10 @@
                     </div>
                   </div>
                   <div class="field">
-                    <label>Zona: <i class="asterisk olive icon"></i></label>
-                    <select v-model="service.zone" class="ui dropdown" id="zonadropdown">
-                      <option value="">Tipo de Zona</option>
-                      <option v-for="(zona, index) in zones" :value="zona.name">{{zona.name}}</option>
-                    </select>
+                    <label>Zona: </label>
+                    <div class="ui segment">
+                      <h5>{{service.zone}}</h5>
+                    </div>
                   </div>
                   <div class="field">
                     <label>Monto: <i class="asterisk olive icon"></i></label>
@@ -185,8 +182,6 @@
                 </form>
               </slot>
             </div>
-
-
             <div class="modal-footer">
               <slot name="footer">
                 <div v-if="validacionBool"class="ui small red inverted segment">
