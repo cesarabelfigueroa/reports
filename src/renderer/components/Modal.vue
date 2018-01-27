@@ -209,7 +209,6 @@
                 <hr>
               </slot>
             </div>
-
             <div class="modal-body">
               <slot name="body">
                 <form class="ui form">
