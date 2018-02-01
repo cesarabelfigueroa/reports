@@ -114,6 +114,18 @@ ipcMain.on('get-bills-monthSync', (event,month,year) => {
   });
 });
 
+ipcMain.on('get-bills-water-clientSync', (event, client_id) => {
+  bills.find({ client_id, service: 'agua' }, (err, docs) => {
+    event.returnValue = docs;
+  });
+});
+
+ipcMain.on('get-bills-cable-clientSync', (event, client_id) => {
+  bills.find({ client_id, service: 'cable' }, (err, docs) => {
+    event.returnValue = docs;
+  });
+});
+
 ipcMain.on('get-bills-year', (event,year) => {
   bills.find({'dateYear': year}, (err, docs) => {
     event.sender.send('return-bills-year', docs);

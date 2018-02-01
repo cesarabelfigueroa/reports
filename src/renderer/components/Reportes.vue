@@ -13,7 +13,7 @@
           <div class="ui yellow inverted segment"><h1><i class="history icon"></i> En Mora pago de Cable</h1></div>
           <div class="ui segments">
             <div v-for="cli in moraCable" class="ui segment">
-              <p>{{cli.idnumber}}  {{cli.firstname}} {{cli.lastname}}</p>
+              <p>{{cli.client.idnumber}}  {{cli.client.firstname}} {{cli.client.lastname}} debe {{cli.moras}} pago {{cli.moras > 1 ? 's' : ''}}</p>
             </div>
             <div v-if="moraCable.length == 0" class="ui segment">
               <p>No hay clientes en mora de pago de cable</p>
@@ -22,7 +22,7 @@
           <div class="ui blue inverted segment"><h1> <i class="history icon"></i>En Mora pago de Agua</h1></div>
           <div class="ui segments">
             <div v-for="cli in moraAgua" class="ui segment">
-              <p>{{cli.idnumber}}  {{cli.firstname}} {{cli.lastname}}</p>
+              <p>{{cli.client.idnumber}}  {{cli.client.firstname}} {{cli.client.lastname}} debe {{cli.moras}} pago{{cli.moras > 1 ? 's' : ''}}</p>
             </div>
             <div v-if="moraAgua.length == 0" class="ui segment">
               <p>No hay clientes en mora de pago de agua</p>
@@ -340,37 +340,124 @@ const moment = require('moment');
         ipcRenderer.send('get-bills-date',fecha[2],fecha[1],fecha[0]);
       },
       clientesMora() {
+
         let month = moment().format("MM");
         let year = moment().format("YYYY");
-
-        this.bills = ipcRenderer.sendSync('get-bills-monthSync', month, year);
+        let monthInt = parseInt(month);
+        let yearInt = parseInt(year);
+        // this.bills = ipcRenderer.sendSync('get-bills-monthSync', month, year);
         this.clients = ipcRenderer.sendSync('get-clientsSync');
 
-        for (let i = 0; i < this.clients.length; i++) {
+        this.clients.forEach((client) => {
           let agua = false;
           let cable = false;
-          for (let j = 0; j < this.bills.length; j++) {
-
-            if(this.bills[j].client_id === this.clients[i].idnumber){
-              if(this.bills[j].service === 'agua') {
-                agua = true;
+          let isMora = true;
+            let billsAgua, latestAgua, billsCable, latestCable;
+            if(client.services.includes('Agua')){
+              billsAgua = ipcRenderer.sendSync('get-bills-water-clientSync', client.idnumber);
+              latestAgua = this.lastBill(billsAgua);
+            }
+            if(client.services.includes('Cable')){
+              billsCable = ipcRenderer.sendSync('get-bills-cable-clientSync', client.idnumber);
+              latestCable = this.lastBill(billsCable);
+            }
+            if(latestAgua) {
+              let currBillYear = parseInt(latestAgua.dateYear);
+              let currBillMonth = parseInt(latestAgua.dateMonth);
+              if(currBillMonth === monthInt && currBillYear === yearInt) {
+                isMora = false;
               }else{
-                cable = true;
+
+                let sameTime = false;
+                let moras = 0;
+                while(!sameTime) {
+                  if(currBillMonth === 12){
+                    currBillMonth = 1;
+                    currBillYear++;
+                  }else{
+                    currBillMonth++;
+                  }
+
+                  moras++;
+                  if(currBillMonth === monthInt && currBillYear === yearInt) {
+                    sameTime = true;
+                  }
+                }
+                this.moraAgua.push({client, moras});
+                // console.log(`Cliente debe ${moras} pagos de agua`);
+              }
+            }else if(client.services.includes('Agua')){
+              if(parseInt(moment().format("DD"))>7){
+                // console.log('No se encontro factura pero esta en mora de agua');
+                this.moraAgua.push({client, moras: 1});
               }
             }
-          }
-          if(!agua && this.clients[i].services.includes('Agua')){
-            this.moraAgua.push(this.clients[i]);
-          }
-          if(!cable && this.clients[i].services.includes('Cable')){
-            this.moraCable.push(this.clients[i]);
-          }
 
+            if(latestCable) {
+              let currBillYear = parseInt(latestCable.dateYear);
+              let currBillMonth = parseInt(latestCable.dateMonth);
+              if(currBillMonth === monthInt && currBillYear === yearInt) {
+                isMora = false;
+              }else{
+
+                let sameTime = false;
+                let moras = 0;
+                while(!sameTime) {
+                  if(currBillMonth === 12){
+                    currBillMonth = 1;
+                    currBillYear++;
+                  }else{
+                    currBillMonth++;
+                  }
+                  moras++;
+                  if(currBillMonth === monthInt && currBillYear === yearInt) {
+                    sameTime = true;
+                  }
+                }
+                this.moraCable.push({client, moras});
+                // console.log(`Cliente debe ${moras} pagos de agua`);
+              }
+            }else if(client.services.includes('Cable')) {
+              // console.log('No se encontro factura pero esta en mora de cable');
+              this.moraCable.push({client, moras: 1});
+            }
+          });
+          // for (let j = 0; j < this.bills.length; j++) {
+          //
+          //   if(this.bills[j].client_id === this.clients[i].idnumber){
+          //     if(this.bills[j].service === 'agua') {
+          //       agua = true;
+          //     }else{
+          //       cable = true;
+          //     }
+          //   }
+          // }
+          // if(!agua && this.clients[i].services.includes('Agua') && !this.moraAgua.includes(this.clients[i])){
+          //   this.moraAgua.push(this.clients[i]);
+          // }
+          // if(!cable && this.clients[i].services.includes('Cable') && !this.moraCable.includes(this.clients[i])){
+          //   this.moraCable.push(this.clients[i]);
+          // }
+
+      },
+      lastBill(bills) {
+        if(bills){
+          let mostRecent = bills[0];
+
+          bills.forEach((bill) => {
+            if(parseInt(bill.dateYear) >= parseInt(mostRecent.dateYear)
+            & parseInt(bill.dateMonth) >= parseInt(mostRecent.dateMonth)
+            & parseInt(bill.dateDay) >= parseInt(mostRecent.dateDay)){
+              // & parseInt(bills[i].dateTime) >= parseInt(mostRecent.dateTime)
+
+              mostRecent = bill;
+            }
+          });
+          return mostRecent;
         }
-        console.log('Mora cable: ',this.moraCable);
-        console.log('Mora agua:', this.moraAgua);
       }
     },
+
     beforeMount(){
 
       ipcRenderer.on('return-clients', (event,arg)=>{
