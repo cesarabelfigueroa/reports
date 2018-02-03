@@ -419,7 +419,13 @@ const moment = require('moment');
               }
             }else if(client.services.includes('Cable')) {
               // console.log('No se encontro factura pero esta en mora de cable');
-              this.moraCable.push({client, moras: 1});
+              let joinMonth = parseInt(client.joinMonth);
+              let joinYear = parseInt(client.joinYear);
+              
+              // if(joinDate  ) {
+                  this.moraCable.push({client, moras: 1});
+              // }
+
             }
           });
           // for (let j = 0; j < this.bills.length; j++) {

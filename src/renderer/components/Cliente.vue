@@ -179,15 +179,22 @@
           let email = this.client.email.trim();
           let zone = this.client.zone;
           let services = this.client.services;
+
           if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && zone!==''){
             if (services.length>0 && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)) {
+              let joinDay = moment().format("DD");
+              let joinMonth = moment().format("MM");
+              let joinYear = moment().format("YYYY");
               this.client = {
                 idnumber,
                 firstname,
                 lastname,
                 email,
                 zone,
-                services
+                services,
+                joinDay,
+                joinMonth,
+                joinYear
               }
               ipcRenderer.send('create-client', this.client);
               this.message = 'Cliente agregado exitosamente!';
@@ -293,6 +300,7 @@
           this.modalType(5);
         }
       });
+
     }
   }
 </script>

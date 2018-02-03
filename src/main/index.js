@@ -88,6 +88,20 @@ ipcMain.on('update-client', (event, client) => {
     }
   });
 });
+
+
+//Actualizar formato de clientes, usado para actualizar clientes viejos para que tengan fecha
+ipcMain.on('add-dates-clients', (event) =>{
+  let joinDay = moment().format("DD");
+  let joinMonth = moment().format("MM");
+  let joinYear = moment().format("YYYY");
+
+  clients.update({}, {$set: { joinDay, joinMonth, joinYear }}, {multi: true}, (err, numReplaced) => {
+    if(err){
+      console.log('Error adding dates to clients: ', err);
+    }
+  });
+});
 // ****************BILLS****************
 
 ipcMain.on('get-bills', (event) => {
