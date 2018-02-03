@@ -126,7 +126,7 @@
         </div>
       </div>
     </div>
-    <Modal v-if="showModal" :title="title" :message="message" :mode="modeIndex" :client="client" :zones="zones" :index="clientIndex" @close="showModal = false" @finish="handleClose()">
+    <Modal v-if="showModal" :title="title" :message="message" :mode="modeIndex" :client="client" :zones="zones" :index="clientIndex" @close="showModal = false" @finish="handleClose()" @answer="modalAnswer()">
 
     </Modal>
   </div>
@@ -153,6 +153,8 @@
         },
         clients: [],
         zones: [],
+        indexC:0,
+        identidad:'',
         ids: [],
         showModal:false,
         clientIndex: -1,
@@ -225,9 +227,24 @@
         this.client = Object.assign({}, this.clients[index]);
         this.modalType(1);
       },
+      closePromocion(){
+        this.showModal = false;
+        this.message = 'Factura ingresada con éxito';
+        this.title = 'Alerta';
+        this.modalType(5);
+      },
       remove(_id, index) {
-        this.clients.splice(index, 1);
-        ipcRenderer.send('remove-client', _id);
+        // this.clients.splice(index, 1);
+        // ipcRenderer.send('remove-client', _id);
+        this.identidad = _id;
+        this.indexC = index;
+        this.message = 'Esta seguro que desea eliminar este cliente?';
+        this.title = 'Alerta';
+        this.modalType(6);
+      },
+      modalAnswer(){
+        this.clients.splice(this.indexC, 1);
+        ipcRenderer.send('remove-client', this.identidad);
       },
       resetClient() {
         this.client = {

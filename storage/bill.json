@@ -1,5 +1,6 @@
 {"amount":150,"client_id":"0801-1960-02532","dateDay":"15","dateMonth":"01","dateTime":"6:17 pm","dateYear":"2018","fine":0,"service":"agua","_id":"0VJoOBIDS5Vsuk4k"}
 {"amount":500,"client_id":"0801-1991-45678","dateDay":"24","dateMonth":"01","dateTime":"11:38 pm","dateYear":"2018","fine":10,"service":"cable","_id":"29jdZugAW2iKpQ6t"}
+{"amount":500,"client_id":"0801-1997-85671","dateDay":"31","dateMonth":"01","dateTime":"9:28 pm","dateYear":"2018","fine":10,"service":"cable","_id":"7S80z7og1XyIMy2k"}
 {"amount":160,"client_id":"0801-1980-06325","dateDay":"11","dateMonth":"03","dateTime":"3:40 pm","dateYear":"2018","fine":0,"service":"agua","_id":"855gdcHYwP0LrIw9"}
 {"amount":152,"client_id":"0801-1980-06325","dateDay":"12","dateMonth":"03","dateTime":"3:40 pm","dateYear":"2018","fine":0,"service":"agua","_id":"DSAntythlhpb9ncL"}
 {"amount":500,"client_id":"0801-1997-12345","dateDay":"28","dateMonth":"01","dateTime":"7:54 pm","dateYear":"2018","fine":10,"service":"cable","_id":"DSCqx3famiUk9Yqq"}
@@ -17,4 +18,3 @@
 {"amount":99,"client_id":"0801-1960-02532","dateDay":"13","dateMonth":"02","dateTime":"9:55 am","dateYear":"2018","fine":0,"service":"agua","_id":"vSlEBXT49BeSN2zV"}
 {"amount":152,"client_id":"0801-1997-12345","dateDay":"14","dateMonth":"02","dateTime":"9:55 am","dateYear":"2017","fine":0,"service":"agua","_id":"wnaUCCZW7F3Twvb9"}
 {"amount":150,"client_id":"0801-1996-12345","dateDay":"15","dateMonth":"01","dateTime":"9:55 am","dateYear":"2018","fine":0,"service":"agua","_id":"ynDxcwiNcq5FWpx7"}
-{"amount":500,"client_id":"0801-1997-85671","dateDay":"31","dateMonth":"01","dateTime":"9:28 pm","dateYear":"2018","fine":10,"service":"cable","_id":"7S80z7og1XyIMy2k"}

@@ -69,7 +69,7 @@
       </div>
     </div>
     <!-- ************************MODAL PROMOCION************************ -->
-    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :title="title" :message="message" :mode="modeIndex" :test="test" @close="showModal = false">
+    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :title="title" :message="message" :mode="modeIndex" :test="test" @close="showModal = false" @finish="closePromocion()">
 
     </Modal>
     <br><br>
@@ -127,6 +127,12 @@
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      closePromocion(){
+        this.showModal = false;
+        this.message = 'Factura ingresada con éxito';
+        this.title = 'Alerta';
+        this.modalType(5);
       },
       modalType(index){
         this.modeIndex = index;

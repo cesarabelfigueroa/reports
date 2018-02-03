@@ -267,6 +267,36 @@
               </slot>
             </div>
           </div>
+          <!-- Response Alert (Yes/No) -->
+          <div v-if="mode==6" class="alerta">
+            <div class="modal-header">
+              <slot name="header">
+                <div class="ui inverted segment">
+                  <h1><i class="info circle olive icon"></i> {{title}} </h1>
+                </div>
+                <hr>
+              </slot>
+            </div>
+            <div class="modal-body">
+              <slot name="body">
+                <div class="ui basic segment" id="bodyModal">
+                  <h3>{{message}}</h3>
+                </div>
+              </slot>
+            </div>
+            <div class="modal-footer">
+              <slot name="footer">
+                <div class="right aligned ui basic segment">
+                  <button class="ui button olive" v-on:click="respuestaModal()">
+                    Si
+                  </button>
+                  <button class="ui button red" v-on:click="$emit('close')">
+                    Cancelar
+                  </button>
+                </div>
+              </slot>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -313,6 +343,11 @@
         ipcRenderer.send('update-zone', this.zone);
         this.$emit('finish', this.zone, this.index);
       },
+      respuestaModal(){
+        console.log('ENTRE');
+        this.$emit('answer');
+        this.$emit('close');
+      },
       verifyPromocion() {
         const dd = document.getElementById('clientedropdown');
         let client_id = '';
@@ -349,9 +384,7 @@
           ipcRenderer.send('create-bill', bill);
           this.amount = 0;
           dd.selectedIndex = 0;
-          // this.mode = 5;
-          // this.message = 'Factura ingresada con exito';
-          // this.title = 'Alerta';
+          this.$emit('finish');
         }else{
           this.validacionBool= true;
         }
