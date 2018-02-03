@@ -343,8 +343,10 @@ const moment = require('moment');
 
         let month = moment().format("MM");
         let year = moment().format("YYYY");
+        let day = moment().format("DD");
         let monthInt = parseInt(month);
         let yearInt = parseInt(year);
+        let dayInt = parseInt(day);
         // this.bills = ipcRenderer.sendSync('get-bills-monthSync', month, year);
         this.clients = ipcRenderer.sendSync('get-clientsSync');
 
@@ -387,7 +389,7 @@ const moment = require('moment');
                 // console.log(`Cliente debe ${moras} pagos de agua`);
               }
             }else if(client.services.includes('Agua')){
-              if(parseInt(moment().format("DD"))>7){
+              if(dayInt>7){
                 // console.log('No se encontro factura pero esta en mora de agua');
                 this.moraAgua.push({client, moras: 1});
               }
@@ -421,10 +423,28 @@ const moment = require('moment');
               // console.log('No se encontro factura pero esta en mora de cable');
               let joinMonth = parseInt(client.joinMonth);
               let joinYear = parseInt(client.joinYear);
-              
-              // if(joinDate  ) {
+              if(joinMonth === monthInt && joinYear === yearInt) {
+                if(dayInt > 7) {
                   this.moraCable.push({client, moras: 1});
-              // }
+                }
+              }else{
+                let sameTime = false;
+                let moras = 0;
+                while(!sameTime){
+                  if(joinMonth === 12){
+                    joinMonth = 1;
+                    joinYear++;
+                  }else{
+                    joinMonth++;
+                  }
+                  moras++;
+                  if(joinMonth === monthInt && joinYear === yearInt){
+                    sameTime = true;
+                  }
+                }
+                this.moraCable.push({client, moras});
+
+              }
 
             }
           });
