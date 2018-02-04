@@ -26,7 +26,9 @@
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
               <select class="ui dropdown" id="clientdropdown" >
                 <option value="">Nombre del Cliente</option>
-                <option v-for="(client, index) in clients" v-if="client.services.includes(test ==  1 ? 'Agua' : 'Cable')"  :value="JSON.stringify(client)">{{client.firstname}} {{client.lastname}}</option>
+                <!-- <option v-for="(client, index) in clients" v-if="client.services.includes(test ==  1 ? 'Agua' : 'Cable')"  :value="JSON.stringify(client)">{{client.firstname}} {{client.lastname}}</option> -->
+                <option v-if="test == 1" v-for="(val, index) in moraAgua" :value="JSON.stringify(val)">{{val.idnumber}}  {{val.client.firstname}} {{val.client.lastname}}</option>
+                <option v-if="test == 2" v-for="(val, index) in moraCable" :value="JSON.stringify(val)">{{val.idnumber}}  {{val.client.firstname}} {{val.client.lastname}}</option>
               </select>
             </div>
             <br>
@@ -38,7 +40,7 @@
                 <h3>{{total}} Lps</h3>
               </div>
             </div>
-            <div v-if="warning!=''"class="ui small orange inverted segment">
+            <div v-if="warning!=''" class="ui small orange inverted segment">
               <h5><i class="circle info icon"></i> {{warning}}</h5>
             </div>
             <br>
@@ -49,6 +51,8 @@
               </div>
             </div>
             <br> -->
+            <p v-if="breakdown!=''" class="breakdown">{{breakdown}}</p>
+            <p v-if="test==2" class="breakdown">{{mensajeMora}}</p>
             <button class="big ui button blue" v-on:click="verify">
               <i class="handshake file word outline icon"></i>
               Generar Factura
@@ -90,7 +94,11 @@
         mode : false,
         amount : 0,
         clients: [],
+        moraAgua: [],
+        moraCable: [],
+        moras: 0,
         fine: 0,
+        totalFine: 0,
         day: '',
         warning: '',
         showModal: false,
@@ -110,9 +118,11 @@
           zone: '',
           cost: ''
         },
-        message:'',
-        modeIndex:2,
-        title:''
+        message: '',
+        modeIndex: 2,
+        title: '',
+        breakdown: '',
+        mensajeMora: ''
       }
     },
     components: {
@@ -120,7 +130,24 @@
     },
     computed : {
       total: function () {
-        return this.amount != '' ? parseInt(this.fine) + parseInt(this.amount) : parseInt(this.fine);
+
+        // const dd = document.getElementById('clientdropdown');
+        // let cli = JSON.parse(dd.options[dd.selectedIndex]).client;
+        // let moras = JSON.parse(dd.options[dd.selectedIndex]).moras;
+        let day = parseInt(moment().format("DD"));
+        let mult = this.moras;
+        if(day <= 7){
+          mult = this.moras - 1;
+        }
+        if(mult < 0){
+          mult = 0;
+        }
+        if(this.test == 1) {
+          mult = 0;
+        }
+        this.mensajeMora = this.breakdown !='' ? `${mult} moras: ${mult*10} Lps`: '';
+        this.totalFine = this.moras > 0 ? 10*mult : parseInt(this.fine);
+        return this.moras > 0 ? ((10*mult) + (parseInt(this.amount)*this.moras)) :  parseInt(this.fine) + parseInt(this.amount);
       }
     },
     props: ['test'],
@@ -142,39 +169,40 @@
         const dd = document.getElementById('clientdropdown');
         let client_id = '';
         if (dd.selectedIndex>0) {
-          client_id = (JSON.parse(dd.options[dd.selectedIndex].value)).idnumber;
+          client_id = (JSON.parse(dd.options[dd.selectedIndex].value).client).idnumber;
         }
-        if(client_id !== '' && this.amount > 10){
+        if(client_id !== '' && this.amount > 0){
           let service = this.test==1? 'agua' : 'cable';
           let dateYear = moment().format("YYYY");
           let dateMonth = moment().format("MM");
           let dateDay = moment().format("DD");
           let dateTime = moment().format("h:mm a");
-          if(parseInt(dateDay) > 7 && this.test==2){
-            this.fine = 10;
-          }
+
           // **************** Factura ****************
-          console.log('Date: ', dateDay+' '+dateMonth+' '+dateYear );
-          console.log('Fine: ', this.fine);
-          console.log('Amount: ', this.amount);
-          console.log('Total: ', this.total);
+          // console.log('Date: ', dateDay+' '+dateMonth+' '+dateYear );
+          // console.log('Fine: ', this.fine);
+          // console.log('Amount: ', this.amount);
+          // console.log('Total: ', this.total);
           let bill = {
             client_id,
             service,
-            amount: this.amount,
-            fine: this.fine,
+            amount: this.total - this.totalFine,
+            fine: this.totalFine,
             dateYear,
             dateMonth,
             dateDay,
             dateTime
           }
           ipcRenderer.send('create-bill', bill);
-          this.fine = 0;
+          // this.fine = 0;
           this.amount = 0;
           dd.selectedIndex = 0;
           this.message = 'Factura ingresada con éxito';
           this.title = 'Alerta';
           this.modalType(5);
+          this.breakdown = '';
+
+          this.clientesMora();
         }else{
           this.message = 'Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion';
           this.title = 'Error';
@@ -182,17 +210,174 @@
         }
       },
       selectClient() {
+
         const dd = document.getElementById('clientdropdown');
         if(dd.selectedIndex >= 0){
-          let value = JSON.parse(dd.value);
+          let value = JSON.parse(dd.value).client;
           for (let i = 0; i < this.clients.length; i++) {
             if(this.clients[i]._id === value._id){
               this.indexCliente = i;
               break;
             }
           }
+          if(parseInt(moment().format("DD")) > 7 && this.test==2){
+            this.fine = 10;
+          }
           this.service = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'),this.clients[this.indexCliente].zone);
           this.amount = parseInt(this.service.cost);
+          this.moras = JSON.parse(dd.value).moras;
+          this.breakdown = this.moras > 0 ? `${this.moras} Pago(s): ${this.moras*this.amount} Lps` : `1 Pago(s): ${this.amount} Lps`;
+
+        }
+      },
+      clientesMora() {
+        this.moraAgua = [];
+        this.moraCable = [];
+        let dateYear = moment().format("YYYY");
+        let dateMonth = moment().format("MM");
+        let dateDay = moment().format("DD");
+        let yearInt = parseInt(dateYear);
+        let monthInt = parseInt(dateMonth);
+        let dayInt = parseInt(dateDay);
+        // this.clients = ipcRenderer.sendSync('get-clientsSync');
+        // let bills = ipcRenderer.sendSync('get-bills-monthSync', dateMonth, dateYear);
+        // this.clients.forEach((client) => {
+        //
+        // });
+        this.clients = ipcRenderer.sendSync('get-clientsSync');
+        this.clients.forEach((client) => {
+          let agua = false;
+          let cable = false;
+          let isMora = true;
+            let billsAgua, latestAgua, billsCable, latestCable;
+            if(client.services.includes('Agua')){
+              billsAgua = ipcRenderer.sendSync('get-bills-water-clientSync', client.idnumber);
+              latestAgua = this.lastBill(billsAgua);
+              // if(client.idnumber === '0801-1960-02532'){
+              //   console.log('Todas:', billsAgua);
+              //   console.log('Latest:',latestAgua);
+              // }
+            }
+            if(client.services.includes('Cable')){
+              billsCable = ipcRenderer.sendSync('get-bills-cable-clientSync', client.idnumber);
+              latestCable = this.lastBill(billsCable);
+            }
+            if(latestAgua) {
+              let currBillYear = parseInt(latestAgua.dateYear);
+              let currBillMonth = parseInt(latestAgua.dateMonth);
+              if(currBillMonth === monthInt && currBillYear === yearInt) {
+                isMora = false;
+              }else{
+                let sameTime = false;
+                let moras = 0;
+                while(!sameTime) {
+                  if(currBillMonth === 12){
+                    currBillMonth = 1;
+                    currBillYear++;
+                  }else{
+                    currBillMonth++;
+                  }
+                  moras++;
+                  if(currBillMonth === monthInt && currBillYear === yearInt) {
+                    sameTime = true;
+                  }
+                }
+                this.moraAgua.push({client, moras});
+                // console.log(`Cliente debe ${moras} pagos de agua`);
+              }
+            }else if(client.services.includes('Agua')){
+              let joinMonth = parseInt(client.joinMonth);
+              let joinYear = parseInt(client.joinYear);
+              if(joinMonth === monthInt && joinYear === yearInt) {
+                  this.moraAgua.push({client, moras: 1});
+              }else{
+                let sameTime = false;
+                let moras = 0;
+                while(!sameTime){
+                  if(joinMonth === 12){
+                    joinMonth = 1;
+                    joinYear++;
+                  }else{
+                    joinMonth++;
+                  }
+                  moras++;
+                  if(joinMonth === monthInt && joinYear === yearInt){
+                    sameTime = true;
+                  }
+                }
+                this.moraAgua.push({client, moras});
+              }
+            }
+
+            if(latestCable) {
+
+              let currBillYear = parseInt(latestCable.dateYear);
+              let currBillMonth = parseInt(latestCable.dateMonth);
+              if(currBillMonth === monthInt && currBillYear === yearInt) {
+                isMora = false;
+              }else{
+                let sameTime = false;
+                let moras = 0;
+                while(!sameTime) {
+                  if(currBillMonth === 12){
+                    currBillMonth = 1;
+                    currBillYear++;
+                  }else{
+                    currBillMonth++;
+                  }
+                  moras++;
+                  if(currBillMonth === monthInt && currBillYear === yearInt) {
+                    sameTime = true;
+                  }
+                }
+                this.moraCable.push({client, moras});
+                // console.log(`Cliente debe ${moras} pagos de agua`);
+              }
+            }else if(client.services.includes('Cable')) {
+              // console.log('No se encontro factura pero esta en mora de cable');
+              let joinMonth = parseInt(client.joinMonth);
+              let joinYear = parseInt(client.joinYear);
+              if(joinMonth === monthInt && joinYear === yearInt) {
+                if(dayInt > 7) {
+                  this.moraCable.push({client, moras: 1});
+                }else{
+                  this.moraCable.push({client, moras: 0});
+                }
+              }else{
+                let sameTime = false;
+                let moras = 0;
+                while(!sameTime){
+                  if(joinMonth === 12){
+                    joinMonth = 1;
+                    joinYear++;
+                  }else{
+                    joinMonth++;
+                  }
+                  moras++;
+                  if(joinMonth === monthInt && joinYear === yearInt){
+                    sameTime = true;
+                  }
+                }
+                this.moraCable.push({client, moras});
+              }
+            }
+          });
+      },
+      lastBill(bills) {
+        if(bills){
+          let mostRecent = bills[0];
+
+          bills.forEach((bill) => {
+            if(parseInt(bill.dateYear) > parseInt(mostRecent.dateYear)){
+              mostRecent = bill;
+            }else if(parseInt(bill.dateYear) === parseInt(mostRecent.dateYear)) {
+              if(parseInt(bill.dateMonth) > parseInt(mostRecent.dateMonth)){
+                mostRecent = bill;
+              }
+            }
+          });
+
+          return mostRecent;
         }
       }
     },
@@ -200,13 +385,15 @@
       if ((parseInt(moment().format("MM")))== 1 ) {
         this.boolEnero = true;
       }
+
       ipcRenderer.on('fetch-clients', (event, arg) => {
         this.clients = arg;
       });
+
       ipcRenderer.on('return-services-cost', (event,arg)=>{
         this.service = arg;
       });
-      ipcRenderer.send('get-clients');
+      this.clientesMora();
     },
     mounted(){
       let dd = document.getElementById('clientdropdown');
@@ -214,7 +401,6 @@
       let dateDay = moment().format("DD");
       if(parseInt(dateDay) > 7 && this.test==2){
         this.warning = 'Se aplicará cobro extra por mora (10Lps)';
-        this.fine = 10;
       }
     }
   }
@@ -265,6 +451,10 @@
   label{
     color: white !important;
     font-size: 15px !important;
+  }
+
+  .breakdown {
+    color: white;
   }
 /* *********************** MODAL*********************** */
 
@@ -348,6 +538,7 @@
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
   }
+
 
 
 

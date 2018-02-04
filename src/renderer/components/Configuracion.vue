@@ -14,14 +14,14 @@
          <div v-if="tabNumber==3">
            <div id="tableContainer">
              <table class="ui celled padded table">
+               <!-- <col width="20%"> -->
+               <col width="10%">
+               <col width="50%">
                <col width="20%">
-               <col width="10%">
-               <col width="40%">
-               <col width="10%">
                <col width="20%">
                <thead class="tableHeader">
                  <tr>
-                   <th>Identidad</th>
+                   <!-- <th>Identidad</th> -->
                    <th>Nombre</th>
                    <th>Descripción</th>
                    <th>Zona</th>
@@ -31,7 +31,7 @@
                </thead>
                <tbody>
                  <tr v-for="(servicio, index) in services">
-                   <td>{{servicio._id}}</td>
+                   <!-- <td>{{servicio._id}}</td> -->
                    <td>{{servicio.name}}</td>
                    <td>{{servicio.description}}</td>
                    <td>{{servicio.zone}}</td>

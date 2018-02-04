@@ -84,7 +84,7 @@ ipcMain.on('update-client', (event, client) => {
       console.log('Client updated succesfuly!');
     }else{
       console.log('Error updating client', err);
-      console.log('numAffected: ', numAffected);
+      // console.log('numAffected: ', numAffected);
     }
   });
 });
