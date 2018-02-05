@@ -12,7 +12,7 @@
         <div v-if="tabNumber==1">
 
           <div class="ui blue inverted segment"><h1> <i class="history icon"></i>En Mora pago de Agua</h1></div>
-          <div class="ui segments">
+          <div class="ui segments reporteMora">
             <div v-for="cli in moraAgua" class="ui segment">
               <p>{{cli.client.idnumber}}  {{cli.client.firstname}} {{cli.client.lastname}} debe {{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}} </p>
             </div>
@@ -21,7 +21,7 @@
             </div>
           </div>
           <div class="ui yellow inverted segment"><h1><i class="history icon"></i> En Mora pago de Cable</h1></div>
-          <div class="ui segments">
+          <div class="ui segments reporteMora">
             <div v-for="cli in moraCable" class="ui segment">
               <p>{{cli.client.idnumber}}  {{cli.client.firstname}} {{cli.client.lastname}} debe {{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}}</p>
             </div>
@@ -514,9 +514,17 @@ const moment = require('moment');
     z-index: -1;
     padding-top: 100px;
   }
+
   .principal{
     padding-top: 9%;
     padding-bottom: 4%;
+  }
+
+  .reporteMora {
+    height: 30vh;
+    max-height: 400px;
+    overflow-y: scroll;
+    overflow-x: scroll;
   }
 
 </style>
