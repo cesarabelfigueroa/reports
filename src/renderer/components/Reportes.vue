@@ -44,7 +44,7 @@
             </div>
           </div>
           <br>
-          <div id="tableContainer">
+          <div id="tableContainer" class="reportaMora">
             <table class="ui celled padded table">
               <col width="25%">
               <col width="30%">
@@ -122,7 +122,7 @@
           <br>
           <div class="ui segment"><h2> {{monthActive}}</h2></div>
           <div id="tableContainer">
-            <div id="tableContainer">
+            <div class="reporteMora">
               <table class="ui celled padded table">
                 <col width="25%">
                 <col width="30%">
@@ -302,7 +302,7 @@ const moment = require('moment');
         }
         this.bills = ipcRenderer.sendSync('get-bills-yearSync',this.yearActive);
         this.bills.forEach((bill) => {
-          this.mensualidad[parseInt(bill.dateMonth)-1].monto += (this.bills[i].amount+this.bills[i].fine);
+          this.mensualidad[parseInt(bill.dateMonth)-1].monto += (bill.amount+bill.fine);
         });
       },
       arrows(dir){
@@ -522,7 +522,7 @@ const moment = require('moment');
 
   .reporteMora {
     height: 30vh;
-    max-height: 400px;
+    max-height: 500px;
     overflow-y: scroll;
     overflow-x: scroll;
   }
