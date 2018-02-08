@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron'
+import { app, BrowserWindow, ipcMain, ipcRenderer, Menu } from 'electron'
 import Datastore from 'nedb';
 import moment from 'moment';
 
@@ -7,8 +7,53 @@ import moment from 'moment';
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
 if (process.env.NODE_ENV !== 'development') {
-  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
+
 }
+
+const template = [
+  {
+    label: 'Edit',
+    submenu: [
+      {role: 'minimize'},
+      {role: 'close'}
+      // {type: 'separator'},
+      // {role: 'cut'},
+      // {role: 'copy'},
+      // {role: 'paste'},
+      // {role: 'pasteandmatchstyle'},
+      // {role: 'delete'},
+      // {role: 'selectall'}
+    ]
+  },
+  {
+    label: 'View',
+    submenu: [
+      {role: 'reload'},
+      {role: 'forcereload'},
+      // {role: 'toggledevtools'},
+      // {type: 'separator'},
+      // {role: 'resetzoom'},
+      // {role: 'zoomin'},
+      // {role: 'zoomout'},
+      // {type: 'separator'},
+      {role: 'togglefullscreen'}
+    ]
+  }
+  // ,
+  // {
+  //   role: 'help',
+  //   submenu: [
+  //     {
+  //       label: 'Learn More',
+  //       click () { require('electron').shell.openExternal('https://electronjs.org') }
+  //     }
+  //   ]
+  // }
+];
+
+const menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
