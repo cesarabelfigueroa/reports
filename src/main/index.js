@@ -8,54 +8,29 @@ import moment from 'moment';
  */
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
-
+  const template = [
+    {
+      label: 'Edit',
+      submenu: [
+        {role: 'minimize'},
+        {role: 'close'}
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        {role: 'reload'},
+        {role: 'forcereload'},
+        {role: 'togglefullscreen'}
+      ]
+    }
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 }
 
-const template = [
-  {
-    label: 'Edit',
-    submenu: [
-      {role: 'minimize'},
-      {role: 'close'}
-      // {type: 'separator'},
-      // {role: 'cut'},
-      // {role: 'copy'},
-      // {role: 'paste'},
-      // {role: 'pasteandmatchstyle'},
-      // {role: 'delete'},
-      // {role: 'selectall'}
-    ]
-  },
-  {
-    label: 'View',
-    submenu: [
-      {role: 'reload'},
-      {role: 'forcereload'},
-      // {role: 'toggledevtools'},
-      // {type: 'separator'},
-      // {role: 'resetzoom'},
-      // {role: 'zoomin'},
-      // {role: 'zoomout'},
-      // {type: 'separator'},
-      {role: 'togglefullscreen'}
-    ]
-  }
-  // ,
-  // {
-  //   role: 'help',
-  //   submenu: [
-  //     {
-  //       label: 'Learn More',
-  //       click () { require('electron').shell.openExternal('https://electronjs.org') }
-  //     }
-  //   ]
-  // }
-];
 
-const menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
-
-let mainWindow
+let mainWindow;
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
@@ -68,16 +43,16 @@ function createWindow () {
     height: 563,
     useContentSize: true,
     width: 1000
-  })
+  });
 
-  mainWindow.loadURL(winURL)
+  mainWindow.loadURL(winURL);
 
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
