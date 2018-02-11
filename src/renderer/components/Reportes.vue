@@ -12,21 +12,27 @@
         <div v-if="tabNumber==1">
 
           <div class="ui blue inverted segment"><h1> <i class="history icon"></i>En Mora pago de Agua</h1></div>
-          <div class="ui segments reporteMora">
-            <div v-for="cli in moraAgua" class="ui segment">
+          <div id="reporteMoraAgua" class="ui segments reporteMora">
+            <div v-for="cli in aguaPagina" class="ui segment">
               <p>{{cli.client.idnumber}}  {{cli.client.firstname}} {{cli.client.lastname}} debe {{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}} </p>
             </div>
             <div v-if="moraAgua.length == 0" class="ui segment">
               <p>No hay clientes en mora de pago de agua</p>
             </div>
+            <div>
+              <span class="ui button" v-on:click="paginar(1, n.i)" v-for="n in pag2">{{n.i}}</span>
+            </div>
           </div>
           <div class="ui yellow inverted segment"><h1><i class="history icon"></i> En Mora pago de Cable</h1></div>
-          <div class="ui segments reporteMora">
-            <div v-for="cli in moraCable" class="ui segment">
+          <div id="reporteMoraCable" class="ui segments reporteMora">
+            <div v-for="cli in cablePagina" class="ui segment">
               <p>{{cli.client.idnumber}}  {{cli.client.firstname}} {{cli.client.lastname}} debe {{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}}</p>
             </div>
             <div v-if="moraCable.length == 0" class="ui segment">
               <p>No hay clientes en mora de pago de cable</p>
+            </div>
+            <div>
+              <span class="ui button" v-on:click="paginar(2, n.i)" v-for="n in pag">{{n.i}}</span>
             </div>
           </div>
         </div>
@@ -199,6 +205,8 @@
 <script>
 const { ipcRenderer } = require('electron');
 const moment = require('moment');
+const $ = require('jquery');
+
   export default {
     name: 'reportes',
     data(){
@@ -210,6 +218,12 @@ const moment = require('moment');
         clients: [],
         moraAgua: [],
         moraCable: [],
+        aguaPagina: [],
+        cablePagina: [],
+        pagina: 1,
+        pagina2: 1,
+        pag: [],
+        pag2: [],
         client:{
           idnumber: '',
           firstname: '',
@@ -456,6 +470,33 @@ const moment = require('moment');
           });
 
       },
+      paginar(service, pagina) {
+        if(service===1){
+          this.pagina = pagina;
+          this.aguaPagina = [];
+
+        }else{
+          this.pagina2 = pagina;
+          this.cablePagina = [];
+        }
+
+
+        let totalRows = service === 1 ? this.moraAgua.length : this.moraCable.length;
+        let totalPages = Math.ceil(totalRows / 2);
+        let begin = service === 1 ? (this.pagina-1)*2 : (this.pagina2-1) * 2;
+        let end;
+        if(service === 1 ){
+          end = (this.pagina*2) >= totalRows ? totalRows : (this.pagina*2);
+          for (let i = begin; i < end; i++) {
+            this.aguaPagina.push(this.moraAgua[i]);
+          }
+        }else{
+          end = (this.pagina2*2) >= totalRows ? totalRows : (this.pagina2*2);
+          for (let i = begin; i < end; i++) {
+            this.cablePagina.push(this.moraCable[i]);
+          }
+        }
+      },
       lastBill(bills) {
         if(bills){
           let mostRecent = bills[0];
@@ -471,6 +512,72 @@ const moment = require('moment');
           });
           return mostRecent;
         }
+      },
+      page(service, reports) {
+        $(document).ready(() => {
+          let totalRows = reports;
+          let recordPerPage = 5;
+          let totalPages = Math.ceil(totalRows / recordPerPage);
+          let $pages = $('<div></div>');
+          for (let i = 0; i < totalPages; i++) {
+            $(`<span class="pageNumber span${service}  ui button">&nbsp;` + (i + 1) + '</span>').appendTo($pages);
+          }
+          $pages.appendTo(`#reporteMora${service}`);
+          $('.pageNumber').hover(
+            function () {
+              $(this).css({
+                "background-color": "#333333",
+                "color": "#fff",
+                "cursor": "pointer",
+                "font-weight": "bold"
+              });
+
+            },
+            function () {
+              if(!$(this).hasClass("chosen")){
+                $(this).css({
+                  "background-color": "#ffffff",
+                  "color": "#000",
+                  "cursor": "default",
+                  "font-weight": "normal"
+                });
+              }
+
+            }
+          );
+
+          $(`#reporteMora${service}`).find('div:has(p)').hide();
+          var tr = $(`#reporteMora${service} div:has(p)`);
+          for (var i = 0; i <= recordPerPage - 1; i++) {
+            $(tr[i]).show();
+          }
+          $(`.span${service}`).click(function(event) {
+            if($(this).hasClass("chosen")){
+              $(this).removeClass("chosen");
+            }else{
+              let ch = $('.chosen');
+              if(ch.length > 0 ){
+                for (let i = 0; i < ch.length; i++) {
+                  $(ch[i]).removeClass("chosen");
+                  $(ch[i]).css({
+                    "background-color": "#ffffff",
+                    "color": "#000",
+                    "cursor": "default",
+                    "font-weight": "normal"
+                  });
+                }
+              }
+              $(this).addClass("chosen");
+            }
+            $(`#reporteMora${service}`).find('div:has(p)').hide();
+            var nBegin = ($(this).text() - 1) * recordPerPage;
+            var nEnd = $(this).text() * recordPerPage - 1;
+            for (var i = nBegin; i <= nEnd; i++) {
+              $(tr[i]).show();
+            }
+          });
+
+        });
       }
     },
 
@@ -498,6 +605,21 @@ const moment = require('moment');
         this.bills = arg;
       });
       this.clientesMora();
+
+      this.paginar(1, 1);
+      this.paginar(2, 1);
+
+      for (let i = 0; i < Math.ceil(this.moraCable.length/2); i++) {
+        this.pag.push({i: i+1});
+      }
+      for (let i = 0; i < Math.ceil(this.moraAgua.length/2); i++) {
+        this.pag2.push({i: i+1});
+      }
+    },
+    mounted() {
+      // this.paginar('Cable', this.moraCable.length);
+      //
+      // this.paginar('Agua', this.moraAgua.length);
     }
   }
 </script>
@@ -525,6 +647,10 @@ const moment = require('moment');
     max-height: 500px;
     overflow-y: scroll;
     overflow-x: scroll;
+  }
+
+  #reporteMoraCable, #reporteMoraAgua {
+    height: 100%;
   }
 
 </style>

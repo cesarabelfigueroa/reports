@@ -69,11 +69,13 @@
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
           <div class="contentHeader">
             <h1><i class="user circle outline icon"></i>Lista de Clientes</h1>
+          </div>
             <!-- <ol>
               <li v-for="cli in clients">{{cli.idnumber}} - {{cli.firstname}} {{cli.lastname}} - {{cli.email}}</li>
             </ol> -->
+          <div class="contentContainer">
             <div id="tableContainer" v-if="clients.length>0">
-              <table class="ui celled padded table">
+              <table id="tblData" class="ui celled padded table">
                 <col width="30%">
                 <col width="15%">
                 <col width="15%">
@@ -96,14 +98,14 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(cli, index) in clients">
+                  <tr v-for="(cli, index) in clientesPagina">
                     <td>{{cli.idnumber}}</td>
                     <td>{{cli.firstname}}</td>
                     <td>{{cli.lastname}}</td>
                     <td>{{cli.email}}</td>
                     <td>{{cli.zone}}</td>
                     <td>
-                      <div v-for="(servicio, index) in cli.services">
+                      <div v-for="servicio in cli.services">
                         <p>{{servicio}} </p>
                       </div>
                     </td>
@@ -120,9 +122,15 @@
                   </tr>
                 </tbody>
               </table>
+              <div>
+                <span class="ui button" v-for="n in pag" v-on:click="paginar(n.i)">{{n.i}}</span>
+              </div>
             </div>
+
             <p v-if="clients.length===0">No hay clientes registrados.</p>
           </div>
+
+
         </div>
       </div>
     </div>
@@ -136,7 +144,9 @@
 <script>
 
   const { ipcRenderer } = require('electron');
+  const moment = require('moment');
   import Modal from './Modal';
+  let $ = require('jquery');
 
   export default {
     name: 'cliente',
@@ -153,6 +163,9 @@
         },
         clients: [],
         zones: [],
+        pagina: 1,
+        clientesPagina: [],
+        pag: [],
         indexC:0,
         identidad:'',
         ids: [],
@@ -200,7 +213,9 @@
               this.message = 'Cliente agregado exitosamente!';
               this.title = 'Nuevo Cliente';
               this.modalType(5);
+              this.clients = ipcRenderer.sendSync('get-clientsSync');
               this.resetClient();
+              this.paginar(1);
             }else {
               this.message = 'El número de identidad ingresado no es válido. [Ej: 1234-1234-12345]';
               this.title = 'Error';
@@ -258,7 +273,9 @@
           idnumber: '',
           firstname: '',
           lastname: '',
-          email: ''
+          email: '',
+          services: [],
+          zone: ''
         }
       },
       handleClose(cli, ind) {
@@ -266,6 +283,23 @@
         this.showModal = false;
         ipcRenderer.send('get-clients');
 
+      },
+      paginar(pagina) {
+        this.pagina = pagina;
+        this.clientesPagina = [];
+        let totalRows = this.clients.length;
+        let totalPages = Math.ceil(totalRows/15);
+        let begin = (this.pagina-1)*15;
+        let end = this.pagina*15 >= totalRows ? totalRows : this.pagina*15;
+        for (let i = begin; i < end; i++) {
+          this.clientesPagina.push(this.clients[i]);
+        }
+        if(totalPages != this.pag.length){
+          this.pag = [];
+          for (let i = 0; i < totalPages; i++) {
+            this.pag.push({i: i+1});
+          }
+        }
       }
 
     },
@@ -283,7 +317,7 @@
       ipcRenderer.on('return-zones',(event,args)=>{
         this.zones = args;
       });
-      ipcRenderer.send('get-clients');
+      this.clients = ipcRenderer.sendSync('get-clientsSync');
       ipcRenderer.on('return-zones',(event,args)=>{
         this.zones = args;
       });
@@ -300,6 +334,8 @@
           this.modalType(5);
         }
       });
+      this.paginar(1);
+
 
     }
   }
@@ -319,7 +355,7 @@
     box-shadow: 0px 0px 23px 4px rgba(0,0,0,0.97);
   }
   .contentHeader {
-      padding-top: 2rem;
+    padding-top: 2rem;
   }
 
   #serviciosId label{
@@ -363,8 +399,19 @@
 
   table {
     width: 100%;
+    height: 100%;
   }
 
+  .focus {
+    background-color: #333333;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .pageNumber {
+    padding: 2px;
+  }
   /* *********************** MODAL*********************** */
 
 

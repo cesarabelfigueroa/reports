@@ -367,9 +367,9 @@
             fine = 10;
           }
           // **************** Factura ****************
-          console.log('Date: ', dateDay+' '+dateMonth+' '+dateYear );
-          console.log('Total: ', this.total);
-          console.log('Nombre: ', (JSON.parse(dd.options[dd.selectedIndex].value)).firstname, (JSON.parse(dd.options[dd.selectedIndex].value)).lastname);
+          // console.log('Date: ', dateDay+' '+dateMonth+' '+dateYear );
+          // console.log('Total: ', this.total);
+          // console.log('Nombre: ', (JSON.parse(dd.options[dd.selectedIndex].value)).firstname, (JSON.parse(dd.options[dd.selectedIndex].value)).lastname);
           // **************** Factura ****************
           let bill = {
             client_id,

@@ -98,6 +98,12 @@ ipcMain.on('get-clientsSync', (event) => {
   });
 });
 
+ipcMain.on('paginar', (event) => {
+    clients.find({}).skip(3).limit(3).exec((err, docs) => {
+      console.log(docs);
+    });
+});
+
 ipcMain.on('update-client', (event, client) => {
   clients.update({ _id : client._id},client, (err, numAffected) => {
     if(!err) {
