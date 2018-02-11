@@ -455,6 +455,10 @@
 #zonaLabel h4{
   color: white!important;
 }
+div .modal-container{
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
 .modal-container {
   width: 800px;
   margin: 0px auto;
