@@ -12,28 +12,68 @@
         <div v-if="tabNumber==1">
 
           <div class="ui blue inverted segment"><h1> <i class="history icon"></i>En Mora pago de Agua</h1></div>
-          <div id="reporteMoraAgua" class="ui segments reporteMora">
-            <div v-for="cli in aguaPagina" class="ui segment">
-              <p>{{cli.client.idnumber}}  {{cli.client.firstname}} {{cli.client.lastname}} debe {{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}} </p>
-            </div>
-            <div v-if="moraAgua.length == 0" class="ui segment">
-              <p>No hay clientes en mora de pago de agua</p>
-            </div>
+          <div v-if="moraAgua.length != 0" id="reporteMoraAgua" class="ui segments reporteMora">
+            <table class="ui celled padded table">
+              <col width="25%">
+              <col width="30%">
+              <col width="25%">
+              <col width="15%">
+              <thead class="tableHeader">
+                <tr>
+                  <th>No. Identidad</th>
+                  <th>Nombre</th>
+                  <th>Apellidos</th>
+                  <th>Deuda</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="cli in aguaPagina">
+                  <td>{{cli.client.idnumber}}</td>
+                  <td> {{cli.client.firstname}}</td>
+                  <td>{{cli.client.lastname}}</td>
+                  <td>{{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}} Lps.</td>
+                </tr>
+              </tbody>
+            </table>
             <div>
               <span class="ui button" v-on:click="paginar(1, n.i)" v-for="n in pag2">{{n.i}}</span>
             </div>
+            <br>
+          </div>
+          <div v-if="moraAgua.length == 0" class="ui segment">
+            <p>No hay clientes en mora de pago de agua</p>
           </div>
           <div class="ui yellow inverted segment"><h1><i class="history icon"></i> En Mora pago de Cable</h1></div>
-          <div id="reporteMoraCable" class="ui segments reporteMora">
-            <div v-for="cli in cablePagina" class="ui segment">
-              <p>{{cli.client.idnumber}}  {{cli.client.firstname}} {{cli.client.lastname}} debe {{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}}</p>
-            </div>
-            <div v-if="moraCable.length == 0" class="ui segment">
-              <p>No hay clientes en mora de pago de cable</p>
-            </div>
+          <div v-if="moraCable.length != 0" id="reporteMoraCable" class="ui segments reporteMora">
+            <table class="ui celled padded table">
+              <col width="25%">
+              <col width="30%">
+              <col width="25%">
+              <col width="15%">
+              <thead class="tableHeader">
+                <tr>
+                  <th>No. Identidad</th>
+                  <th>Nombre</th>
+                  <th>Apellidos</th>
+                  <th>Deuda</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="cli in cablePagina" >
+                  <td>{{cli.client.idnumber}}</td>
+                  <td> {{cli.client.firstname}}</td>
+                  <td>{{cli.client.lastname}}</td>
+                  <td>{{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}} Lps.</td>
+                </tr>
+              </tbody>
+            </table>
             <div>
               <span class="ui button" v-on:click="paginar(2, n.i)" v-for="n in pag">{{n.i}}</span>
             </div>
+            <br>
+          </div>
+          <div v-if="moraCable.length == 0" class="ui segment">
+            <p>No hay clientes en mora de pago de cable</p>
           </div>
         </div>
         <!-- *********** SEGUNDA TAB *********** -->
@@ -50,7 +90,7 @@
             </div>
           </div>
           <br>
-          <div id="tableContainer" class="reportaMora">
+          <div v-if="bills.length!=0" id="tableContainer" class="reportaMora">
             <table class="ui celled padded table">
               <col width="25%">
               <col width="30%">
@@ -127,7 +167,7 @@
           </div>
           <br>
           <div class="ui segment"><h2> {{monthActive}}</h2></div>
-          <div id="tableContainer">
+          <div v-if="bills.length!=0" id="tableContainer">
             <div class="reporteMora">
               <table class="ui celled padded table">
                 <col width="25%">
@@ -152,9 +192,9 @@
                 </tbody>
               </table>
             </div>
-            <div class="ui inverted red segment" v-if="bills.length==0">
-              <h5>No hay facturas del mes seleccionado.</h5>
-            </div>
+          </div>
+          <div class="ui inverted red segment" v-if="bills.length==0">
+            <h5>No hay facturas del mes seleccionado.</h5>
           </div>
         </div>
         <!-- *********** CUARTA TAB *********** -->
@@ -180,22 +220,30 @@
               </div>
               </h1>
           </div>
-          <table class="ui celled padded inverted table">
-            <col width="50%">
-            <col width="50%">
-            <thead class="tableHeader">
-              <tr>
-                <th>Mes</th>
-                <th>Ingresos</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(montoMes, index) in mensualidad" >
-                <td> {{montoMes.mes}}</td>
-                <td> {{montoMes.monto}} Lps.</td>
-              </tr>
-            </tbody>
-          </table>
+          <br>
+          <div class="ui centered grid">
+            <table id="tablaAnual" class="ui celled padded inverted table">
+              <col width="50%">
+              <col width="50%">
+              <thead class="tableHeader">
+                <tr>
+                  <th>Mes</th>
+                  <th>Ingresos</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(montoMes, index) in mensualidad" >
+                  <td> {{montoMes.mes}}</td>
+                  <td> {{montoMes.monto}} Lps.</td>
+                </tr>
+                <tr>
+                  <td> Total </td>
+                  <td> {{totalAnual}} Lps.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
 
         </div>
       </div>
@@ -257,7 +305,8 @@ const $ = require('jquery');
           {mes: 'Diciembre', monto:0}
         ],
         lastYear: false,
-        nextYear: false
+        nextYear: false,
+        totalAnual: 0
       }
     },
     methods: {
@@ -311,12 +360,14 @@ const $ = require('jquery');
         ipcRenderer.send('get-bills-month',month,this.yearActive);
       },
       ingresoAnual(){
+        this.totalAnual =0;
         for (var i = 0; i < this.mensualidad.length; i++) {
           this.mensualidad[i].monto = 0;
         }
         this.bills = ipcRenderer.sendSync('get-bills-yearSync',this.yearActive);
         this.bills.forEach((bill) => {
           this.mensualidad[parseInt(bill.dateMonth)-1].monto += (bill.amount+bill.fine);
+          this.totalAnual += (bill.amount+bill.fine);
         });
       },
       arrows(dir){
@@ -482,16 +533,16 @@ const $ = require('jquery');
 
 
         let totalRows = service === 1 ? this.moraAgua.length : this.moraCable.length;
-        let totalPages = Math.ceil(totalRows / 2);
-        let begin = service === 1 ? (this.pagina-1)*2 : (this.pagina2-1) * 2;
+        let totalPages = Math.ceil(totalRows / 15);
+        let begin = service === 1 ? (this.pagina-1)*15 : (this.pagina2-1) * 15;
         let end;
         if(service === 1 ){
-          end = (this.pagina*2) >= totalRows ? totalRows : (this.pagina*2);
+          end = (this.pagina*15) >= totalRows ? totalRows : (this.pagina*15);
           for (let i = begin; i < end; i++) {
             this.aguaPagina.push(this.moraAgua[i]);
           }
         }else{
-          end = (this.pagina2*2) >= totalRows ? totalRows : (this.pagina2*2);
+          end = (this.pagina2*15) >= totalRows ? totalRows : (this.pagina2*15);
           for (let i = begin; i < end; i++) {
             this.cablePagina.push(this.moraCable[i]);
           }
@@ -609,10 +660,10 @@ const $ = require('jquery');
       this.paginar(1, 1);
       this.paginar(2, 1);
 
-      for (let i = 0; i < Math.ceil(this.moraCable.length/2); i++) {
+      for (let i = 0; i < Math.ceil(this.moraCable.length/15); i++) {
         this.pag.push({i: i+1});
       }
-      for (let i = 0; i < Math.ceil(this.moraAgua.length/2); i++) {
+      for (let i = 0; i < Math.ceil(this.moraAgua.length/15); i++) {
         this.pag2.push({i: i+1});
       }
     },
@@ -642,11 +693,14 @@ const $ = require('jquery');
     padding-bottom: 4%;
   }
 
+  #tablaAnual{
+    width: 400px;
+  }
+
   .reporteMora {
     height: 30vh;
-    max-height: 500px;
-    overflow-y: scroll;
-    overflow-x: scroll;
+    max-height: 500px !important;
+    overflow-y: auto;
   }
 
   #reporteMoraCable, #reporteMoraAgua {
