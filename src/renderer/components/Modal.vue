@@ -101,7 +101,7 @@
                 <div class="ui form">
                   <div class="field">
                     <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-                    <select class="ui dropdown" id="clientedropdown">
+                    <select class="ui dropdown" id="clientedropdownModal">
                       <option value="">Nombre del Cliente</option>
                       <option v-for="(client, index) in clients" v-if="client.services.includes(test ==  1 ? 'Agua' : 'Cable')"  :value="JSON.stringify(client)">{{client.firstname}} {{client.lastname}}</option>
                     </select>
@@ -349,7 +349,7 @@
         this.$emit('close');
       },
       verifyPromocion() {
-        const dd = document.getElementById('clientedropdown');
+        const dd = document.getElementById('clientedropdownModal');
         let client_id = '';
         if (dd.selectedIndex>0) {
           client_id = (JSON.parse(dd.options[dd.selectedIndex].value)).idnumber;
@@ -390,7 +390,7 @@
         }
       },
       selectClient() {
-        const dd = document.getElementById('clientedropdown');
+        const dd = document.getElementById('clientedropdownModal');
         let servicio;
         if(dd.selectedIndex > 0){
           let value = JSON.parse(dd.value);
@@ -402,6 +402,8 @@
           }
           servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'),this.clients[this.indexCliente].zone);
           this.amount = parseInt(servicio.cost);
+
+
         }
       }
     },
@@ -411,7 +413,7 @@
       this.indexCliente = 0;
     },
     mounted(){
-      let dd = document.getElementById('clientedropdown');
+      let dd = document.getElementById('clientedropdownModal');
       if(dd)
         dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
     }

@@ -73,7 +73,7 @@
       </div>
     </div>
     <!-- ************************MODAL PROMOCION************************ -->
-    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :title="title" :message="message" :mode="modeIndex" :test="test" @close="showModal = false" @finish="closePromocion()">
+    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :service="service" :title="title" :message="message" :mode="modeIndex" :test="test" @close="showModal = false" @finish="closePromocion()">
 
     </Modal>
     <br><br>
@@ -97,6 +97,7 @@
         moraAgua: [],
         moraCable: [],
         moras: 0,
+        debts: 0,
         fine: 0,
         totalFine: 0,
         day: '',
@@ -145,9 +146,9 @@
         if(this.test == 1) {
           mult = 0;
         }
-        this.mensajeMora = this.breakdown !='' ? `${mult} moras: ${mult*10} Lps`: '';
-        this.totalFine = this.moras > 0 ? 10*mult : parseInt(this.fine);
-        return this.moras > 0 ? ((10*mult) + (parseInt(this.amount)*this.moras)) :  parseInt(this.fine) + parseInt(this.amount);
+        this.mensajeMora = this.breakdown !='' ? `${this.debts} moras: ${this.debts*10} Lps`: '';
+        this.totalFine = this.debts > 0 ? 10*this.debts : 0;
+        return this.totalFine + (parseInt(this.amount)*this.moras);
       }
     },
     props: ['test'],
@@ -212,6 +213,7 @@
       selectClient() {
 
         const dd = document.getElementById('clientdropdown');
+
         if(dd.selectedIndex >= 0){
           let value = JSON.parse(dd.value).client;
           for (let i = 0; i < this.clients.length; i++) {
@@ -223,10 +225,11 @@
           if(parseInt(moment().format("DD")) > 7 && this.test==2){
             this.fine = 10;
           }
-          this.service = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'),this.clients[this.indexCliente].zone);
+          this.service = ipcRenderer.sendSync('get-services-cost', (this.test==1 ? 'Agua' : 'Cable'), this.clients[this.indexCliente].zone);
           this.amount = parseInt(this.service.cost);
           this.moras = JSON.parse(dd.value).moras;
-          this.breakdown = this.moras > 0 ? `${this.moras} Pago(s): ${this.moras*this.amount} Lps` : `1 Pago(s): ${this.amount} Lps`;
+          this.debts = JSON.parse(dd.value).debts;
+          this.breakdown = this.moras > 0 ? `${this.moras} Pago(s): ${this.moras*this.amount} Lps` : `0 Pago(s): 0 Lps`;
 
         }
       },
@@ -318,6 +321,7 @@
               }else{
                 let sameTime = false;
                 let moras = 0;
+                let debts = 0;
                 while(!sameTime) {
                   if(currBillMonth === 12){
                     currBillMonth = 1;
@@ -325,12 +329,31 @@
                   }else{
                     currBillMonth++;
                   }
-                  moras++;
+                  if(currBillMonth === monthInt && currBillYear === yearInt){
+                    if(dayInt >= 30 || (monthInt === 2 && dayInt >= 28)){
+                      moras++;
+                    }
+                  }else{
+                    moras++;
+                  }
+                  if((currBillMonth === monthInt-1 && currBillYear === yearInt)||(currBillMonth===12 && monthInt===1 && currBillYear === yearInt-1)){
+                    if(dayInt > 7){
+                      debts++;
+                    }
+                  }else if(!(currBillMonth === monthInt && currBillYear === yearInt)){
+                    debts++;
+                  }
+
                   if(currBillMonth === monthInt && currBillYear === yearInt) {
                     sameTime = true;
                   }
                 }
-                this.moraCable.push({client, moras});
+                if(client.idnumber === '0801-1996-12345'){
+                  console.log('Debts: '+debts);
+                }
+                if(moras > 0){
+                  this.moraCable.push({client, moras, debts});
+                }
                 // console.log(`Cliente debe ${moras} pagos de agua`);
               }
             }else if(client.services.includes('Cable')) {
@@ -338,14 +361,11 @@
               let joinMonth = parseInt(client.joinMonth);
               let joinYear = parseInt(client.joinYear);
               if(joinMonth === monthInt && joinYear === yearInt) {
-                if(dayInt > 7) {
-                  this.moraCable.push({client, moras: 1});
-                }else{
-                  this.moraCable.push({client, moras: 0});
-                }
+                  this.moraCable.push({client, moras: 1, debts: 0});
               }else{
                 let sameTime = false;
                 let moras = 0;
+                let debts = 0;
                 while(!sameTime){
                   if(joinMonth === 12){
                     joinMonth = 1;
@@ -353,12 +373,25 @@
                   }else{
                     joinMonth++;
                   }
-                  moras++;
+                  if(joinMonth === monthInt && joinYear === yearInt){
+                    if(dayInt >= 30 || (monthInt === 2 && day >= 28)){
+                      moras++;
+                    }
+                  }else{
+                    moras++;
+                  }
+                  if((joinMonth === monthInt-1 && joinYear === yearInt)||(joinMonth===12 && monthInt===1 && joinYear === yearInt-1)){
+                    if(dayInt > 7){
+                      debts++;
+                    }
+                  }else if(!(joinMonth === monthInt && joinYear === yearInt)){
+                    debts++;
+                  }
                   if(joinMonth === monthInt && joinYear === yearInt){
                     sameTime = true;
                   }
                 }
-                this.moraCable.push({client, moras});
+                this.moraCable.push({client, moras, debts});
               }
             }
           });
