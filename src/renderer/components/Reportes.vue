@@ -8,7 +8,7 @@
           <a class="item" v-bind:class="{active: tabNumber === 3}" v-on:click="tabSelected(3)">Ingreso Mensual</a>
           <a class="item" v-bind:class="{active: tabNumber === 4}" v-on:click="tabSelected(4)">Ingreso Anual</a>
         </div>
-        <button v-if="tabNumber != 1" v-on:click="generate('tableContainer',true)" class="fluid ui basic blue button"><i class="file alternate outline icon"></i> PDF de Todas las Facturas</button>
+        <button v-if="tabNumber != 1" v-on:click="generate(1)" class="fluid ui basic blue button"><i class="file alternate outline icon"></i> PDF de Todos los Pagos</button>
         <br>
         <!-- *********** PRIMERA TAB *********** -->
         <div v-if="tabNumber==1">
@@ -91,9 +91,9 @@
             </div>
           </div>
           <br>
-          <div v-if="bills.length!=0" id="tableContainer" class="reportaMora">
-            <!-- <button class="ui black basic button" v-on:click="generate('tableContainer',false)">Generate PDF</button> -->
-            <table class="ui celled padded table">
+          <div v-if="bills.length!=0" class="reportaMora">
+            <button class="ui black basic button" v-on:click="generate(2)">Generar PDF de Ingresos {{dayActive}}</button>
+            <table id="tableContainerDay" class="ui celled padded table">
               <col width="25%">
               <col width="30%">
               <col width="25%">
@@ -168,9 +168,9 @@
             </div>
           </div>
           <br>
-           <button v-if="bills.length>0" class="ui black button" v-on:click="generate('monthDetail',false)">Generar PDF de {{monthActive}}</button>
+           <button v-if="bills.length>0" class="ui black button" v-on:click="generate(3)">Generar PDF de de Ingresos de {{monthActive}}</button>
           <div class="ui segment"><h2> {{monthActive}}</h2></div>
-          <div v-if="bills.length!=0" id="tableContainer">
+          <div v-if="bills.length!=0" id="tableContainerMonth">
             <div class="reporteMora">
               <table class="ui celled padded table" id="monthDetail">
                 <col width="25%">
@@ -223,7 +223,8 @@
               </div>
               </h1>
           </div>
-          <br>
+          <button v-if="bills.length>0" class="ui olive button" v-on:click="generate(4)">Generar PDF de Ingresos {{yearActive}}</button>
+          <br><br><br>
           <div class="ui centered grid">
             <table id="tablaAnual" class="ui celled padded inverted table">
               <col width="50%">
@@ -343,23 +344,43 @@ const $ = require('jquery');
         this.tabNumber = numero;
 
       },
-      generate(id, totalBills) {
-        if(totalBills){
-              let ass = ipcRenderer.sendSync('get-billsSync');
+      generate(pdfContent) {
+        if(pdfContent === 1){
+              let facturas = ipcRenderer.sendSync('get-billsSync');
               let doc = new jsPDF('p', 'pt');
-              //let res = doc.autoTableHtmlToJson(document.getElementById(id));
-              let titulos= ["Id del cliente","Servicio","Cantidad","Adicional","Dia","Mes","Hora","Año"];
-              doc.autoTable(titulos, ass, {
+              let titulos= [
+                {title:"Id del cliente", dataKey:"client_id"},
+                {title:"Servicio", dataKey: "service"},
+                {title:"Cantidad", dataKey: "amount"},
+                {title:"Multa", dataKey: "fine"},
+                {title:"Dia", dataKey: "dateDay"},
+                {title:"Mes", dataKey: "dateMonth"},
+                {title:"Año", dataKey: "dateYear"},
+                {title:"Hora", dataKey: "dateTime"}
+              ];
+              doc.autoTable(titulos, facturas, {
                   theme: 'striped', 
                   margin: {top: 60},
                   addPageContent: function(data) {
-                    doc.text("Reporte Unicredit ", 40, 30);
+                    doc.text("Reporte Completo de transacciones Unicredit ", 40, 30);
                   }
               });
-              doc.save("reporte_Unicredit.pdf");
-            }else{
+              doc.save("reporte_Completo_Unicredit.pdf");
+            }else if(pdfContent === 2){
               let doc = new jsPDF('p', 'pt');
-              let res = doc.autoTableHtmlToJson(document.getElementById(id));
+              let res = doc.autoTableHtmlToJson(document.getElementById('tableContainerDay'));
+              let day = this.dayActive;
+              doc.autoTable(res.columns, res.data, {
+                  theme: 'striped', 
+                  margin: {top: 60},
+                  addPageContent: function(data) {
+                    doc.text("Reporte Unicredit ["+day+"]", 40, 30);
+                  }
+              });
+              doc.save("reporte["+day+"]Unicredit.pdf");
+            }else if(pdfContent === 3){
+              let doc = new jsPDF('p', 'pt');
+              let res = doc.autoTableHtmlToJson(document.getElementById('monthDetail'));
               let month = this.monthActive;
               let year = this.yearActive;
               doc.autoTable(res.columns, res.data, {
@@ -369,7 +390,29 @@ const $ = require('jquery');
                     doc.text("Reporte Unicredit ["+month+" "+year+"]", 40, 30);
                   }
               });
-              doc.save("reporte_Unicredit.pdf");
+              doc.save("reporte["+month+" "+year+"]Unicredit.pdf");
+            }else{
+              let doc = new jsPDF('p', 'pt');
+              let year = this.yearActive;
+              let facturas = ipcRenderer.sendSync('get-billsSync');
+              let titulos= [
+                {title:"Id del cliente", dataKey:"client_id"},
+                {title:"Servicio", dataKey: "service"},
+                {title:"Cantidad", dataKey: "amount"},
+                {title:"Multa", dataKey: "fine"},
+                {title:"Dia", dataKey: "dateDay"},
+                {title:"Mes", dataKey: "dateMonth"},
+                {title:"Año", dataKey: "dateYear"},
+                {title:"Hora", dataKey: "dateTime"}
+              ];
+              doc.autoTable(titulos, this.bills, {
+                  theme: 'striped', 
+                  margin: {top: 60},
+                  addPageContent: function(data) {
+                    doc.text("Reporte Unicredit ["+year+"]", 40, 30);
+                  }
+              });
+              doc.save("reporte_"+year+"Unicredit.pdf");
             }
         try {
             
@@ -759,16 +802,13 @@ const $ = require('jquery');
   }
 
   .reporteMora {
-    
-    
+    height: 30vh;	 
+    max-height: 500px !important;
     overflow-y: auto;
   }
 
   #reporteMoraCable, #reporteMoraAgua {
     height: 100%;
-    padding-bottom: 20px;
-    max-height: 500px !important;
-    overflow:hidden !important;
   }
 
 </style>
