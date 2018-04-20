@@ -148,6 +148,12 @@ ipcMain.on('get-bills-month', (event,month,year) => {
   });
 });
 
+ipcMain.on('get-billsSync', (event,month,year) => {
+  bills.find({}, (err, docs) => {
+    event.returnValue = docs;
+  });
+});
+
 ipcMain.on('get-bills-monthSync', (event,month,year) => {
   bills.find({'dateMonth':month,'dateYear': year}, (err, docs) => {
     event.returnValue = docs;

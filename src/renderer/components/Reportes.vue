@@ -3,16 +3,17 @@
     <div class="fondo"></div>
       <div class="ui center aligned container" id="contenedor">
         <div class="ui four item menu">
-          <a class="item" v-bind:class="{active: tabNumber===1}" v-on:click="tabSelected(1)">Clientes en Mora</a>
-          <a class="item" v-bind:class="{active: tabNumber===2}" v-on:click="tabSelected(2)">Ingreso diario</a>
-          <a class="item" v-bind:class="{active: tabNumber===3}" v-on:click="tabSelected(3)">Ingreso Mensual</a>
-          <a class="item" v-bind:class="{active: tabNumber===4}" v-on:click="tabSelected(4)">Ingreso Anual</a>
+          <a class="item" v-bind:class="{active: tabNumber === 1}" v-on:click="tabSelected(1)">Clientes en Mora</a>
+          <a class="item" v-bind:class="{active: tabNumber === 2}" v-on:click="tabSelected(2)">Ingreso diario</a>
+          <a class="item" v-bind:class="{active: tabNumber === 3}" v-on:click="tabSelected(3)">Ingreso Mensual</a>
+          <a class="item" v-bind:class="{active: tabNumber === 4}" v-on:click="tabSelected(4)">Ingreso Anual</a>
         </div>
+        <button v-if="tabNumber != 1" v-on:click="generate('tableContainer',true)" class="fluid ui basic blue button"><i class="file alternate outline icon"></i> PDF de Todas las Facturas</button>
+        <br>
         <!-- *********** PRIMERA TAB *********** -->
         <div v-if="tabNumber==1">
-
           <div class="ui blue inverted segment"><h1> <i class="history icon"></i>En Mora pago de Agua</h1></div>
-          <div v-if="moraAgua.length != 0" id="reporteMoraAgua" class="ui segments reporteMora">
+          <div v-if="moraAgua.length != 0" id="reporteMoraAgua" class="ui container reporteMora">
             <table class="ui celled padded table">
               <col width="25%">
               <col width="30%">
@@ -44,7 +45,7 @@
             <p>No hay clientes en mora de pago de agua</p>
           </div>
           <div class="ui yellow inverted segment"><h1><i class="history icon"></i> En Mora pago de Cable</h1></div>
-          <div v-if="moraCable.length != 0" id="reporteMoraCable" class="ui segments reporteMora">
+          <div v-if="moraCable.length != 0" id="reporteMoraCable" class="container reporteMora">
             <table class="ui celled padded table">
               <col width="25%">
               <col width="30%">
@@ -91,6 +92,7 @@
           </div>
           <br>
           <div v-if="bills.length!=0" id="tableContainer" class="reportaMora">
+            <!-- <button class="ui black basic button" v-on:click="generate('tableContainer',false)">Generate PDF</button> -->
             <table class="ui celled padded table">
               <col width="25%">
               <col width="30%">
@@ -166,10 +168,11 @@
             </div>
           </div>
           <br>
+           <button v-if="bills.length>0" class="ui black button" v-on:click="generate('monthDetail',false)">Generar PDF de {{monthActive}}</button>
           <div class="ui segment"><h2> {{monthActive}}</h2></div>
           <div v-if="bills.length!=0" id="tableContainer">
             <div class="reporteMora">
-              <table class="ui celled padded table">
+              <table class="ui celled padded table" id="monthDetail">
                 <col width="25%">
                 <col width="30%">
                 <col width="25%">
@@ -198,7 +201,7 @@
           </div>
         </div>
         <!-- *********** CUARTA TAB *********** -->
-        <div v-else="tabNumber==4">
+        <div v-else>
           <div class="ui black inverted segment">
             <h1>
               <div class="ui grid">
@@ -243,17 +246,21 @@
               </tbody>
             </table>
           </div>
-
-
         </div>
       </div>
+      <Modal v-if="showModal" :title="title" :message="message" :mode="modeIndex" @close="showModal = false" @finish="handleClose()">
+      </Modal>
   </div>
 </template>
 
 <script>
+import Modal from './Modal';
 const { ipcRenderer } = require('electron');
 const moment = require('moment');
+let jsPDF = require('jspdf');
+require('jspdf-autotable');
 const $ = require('jquery');
+
 
   export default {
     name: 'reportes',
@@ -306,8 +313,15 @@ const $ = require('jquery');
         ],
         lastYear: false,
         nextYear: false,
-        totalAnual: 0
+        totalAnual: 0,
+        showModal: false,
+        message:'',
+        title:'',
+        modeIndex:1
       }
+    },
+    components: {
+      Modal: Modal
     },
     methods: {
       open(link){
@@ -328,6 +342,43 @@ const $ = require('jquery');
         }
         this.tabNumber = numero;
 
+      },
+      generate(id, totalBills) {
+        if(totalBills){
+              let ass = ipcRenderer.sendSync('get-billsSync');
+              let doc = new jsPDF('p', 'pt');
+              //let res = doc.autoTableHtmlToJson(document.getElementById(id));
+              let titulos= ["Id del cliente","Servicio","Cantidad","Adicional","Dia","Mes","Hora","Año"];
+              doc.autoTable(titulos, ass, {
+                  theme: 'striped', 
+                  margin: {top: 60},
+                  addPageContent: function(data) {
+                    doc.text("Reporte Unicredit ", 40, 30);
+                  }
+              });
+              doc.save("reporte_Unicredit.pdf");
+            }else{
+              let doc = new jsPDF('p', 'pt');
+              let res = doc.autoTableHtmlToJson(document.getElementById(id));
+              let month = this.monthActive;
+              let year = this.yearActive;
+              doc.autoTable(res.columns, res.data, {
+                  theme: 'striped', 
+                  margin: {top: 60},
+                  addPageContent: function(data) {
+                    doc.text("Reporte Unicredit ["+month+" "+year+"]", 40, 30);
+                  }
+              });
+              doc.save("reporte_Unicredit.pdf");
+            }
+        try {
+            
+        }
+        catch(err) {
+            this.emptyTableAlert();
+            //document.getElementById("demo").innerHTML = err.message;
+            console.log(err.message);
+        }
       },
       cambioMes(monthActive){
         this.monthActive = monthActive;
@@ -361,7 +412,7 @@ const $ = require('jquery');
       },
       ingresoAnual(){
         this.totalAnual =0;
-        for (var i = 0; i < this.mensualidad.length; i++) {
+        for (let i = 0; i < this.mensualidad.length; i++) {
           this.mensualidad[i].monto = 0;
         }
         this.bills = ipcRenderer.sendSync('get-bills-yearSync',this.yearActive);
@@ -374,6 +425,16 @@ const $ = require('jquery');
         let Year = dir === 'left' ? (parseInt(this.yearActive)-1)+'': (parseInt(this.yearActive)+1)+'';
         this.yearActive = Year;
         this.ingresoAnual();
+      },
+      modalType(index){
+        this.modeIndex = index;
+        this.showModal = true;
+      },
+      emptyTableAlert(){
+        this.showModal = false;
+        this.message = 'Oops! ha ocurrido un error';
+        this.title = 'Error';
+        this.modalType(5);
       },
       cambioFecha(){
         this.dayActive = this.reporteDia;
@@ -530,8 +591,6 @@ const $ = require('jquery');
           this.pagina2 = pagina;
           this.cablePagina = [];
         }
-
-
         let totalRows = service === 1 ? this.moraAgua.length : this.moraCable.length;
         let totalPages = Math.ceil(totalRows / 15);
         let begin = service === 1 ? (this.pagina-1)*15 : (this.pagina2-1) * 15;
@@ -598,8 +657,8 @@ const $ = require('jquery');
           );
 
           $(`#reporteMora${service}`).find('div:has(p)').hide();
-          var tr = $(`#reporteMora${service} div:has(p)`);
-          for (var i = 0; i <= recordPerPage - 1; i++) {
+          let tr = $(`#reporteMora${service} div:has(p)`);
+          for (let i = 0; i <= recordPerPage - 1; i++) {
             $(tr[i]).show();
           }
           $(`.span${service}`).click(function(event) {
@@ -621,9 +680,9 @@ const $ = require('jquery');
               $(this).addClass("chosen");
             }
             $(`#reporteMora${service}`).find('div:has(p)').hide();
-            var nBegin = ($(this).text() - 1) * recordPerPage;
-            var nEnd = $(this).text() * recordPerPage - 1;
-            for (var i = nBegin; i <= nEnd; i++) {
+            let nBegin = ($(this).text() - 1) * recordPerPage;
+            let nEnd = $(this).text() * recordPerPage - 1;
+            for (let i = nBegin; i <= nEnd; i++) {
               $(tr[i]).show();
             }
           });
@@ -648,6 +707,7 @@ const $ = require('jquery');
       ipcRenderer.on('return-bills-month', (event,arg)=>{
         this.bills = arg;
       });
+
       ipcRenderer.on('return-bills-year', (event,arg)=>{
         this.bills = arg;
       });
@@ -655,6 +715,7 @@ const $ = require('jquery');
       ipcRenderer.on('return-bills-date', (event,arg)=>{
         this.bills = arg;
       });
+      
       this.clientesMora();
 
       this.paginar(1, 1);
@@ -698,13 +759,16 @@ const $ = require('jquery');
   }
 
   .reporteMora {
-    height: 30vh;
-    max-height: 500px !important;
+    
+    
     overflow-y: auto;
   }
 
   #reporteMoraCable, #reporteMoraAgua {
     height: 100%;
+    padding-bottom: 20px;
+    max-height: 500px !important;
+    overflow:hidden !important;
   }
 
 </style>
