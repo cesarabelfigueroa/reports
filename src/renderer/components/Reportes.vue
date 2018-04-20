@@ -8,7 +8,7 @@
           <a class="item" v-bind:class="{active: tabNumber === 3}" v-on:click="tabSelected(3)">Ingreso Mensual</a>
           <a class="item" v-bind:class="{active: tabNumber === 4}" v-on:click="tabSelected(4)">Ingreso Anual</a>
         </div>
-        <button v-if="tabNumber != 1" v-on:click="generate(1)" class="fluid ui basic blue button"><i class="file alternate outline icon"></i> PDF de Todos los Pagos</button>
+        <button v-if="tabNumber != 1" v-on:click="generate(1)" class="large fluid ui inverted blue button"><i class="file alternate outline icon"></i> Generar PDF de Registro Completo de Pagos</button>
         <br>
         <!-- *********** PRIMERA TAB *********** -->
         <div v-if="tabNumber==1">
@@ -92,7 +92,7 @@
           </div>
           <br>
           <div v-if="bills.length!=0" class="reportaMora">
-            <button class="ui black basic button" v-on:click="generate(2)">Generar PDF de Ingresos {{dayActive}}</button>
+            <button class="huge ui inverted orange button" v-on:click="generate(2)"><i class="file alternate outline icon"></i>  Generar PDF de Ingresos {{dayActive}}</button>
             <table id="tableContainerDay" class="ui celled padded table">
               <col width="25%">
               <col width="30%">
@@ -116,7 +116,7 @@
               </tbody>
             </table>
           </div>
-          <div class="ui inverted red segment" v-if="bills.length===0">
+          <div class="ui secondary inverted red segment" v-if="bills.length===0">
             <h5>No hay facturas del día seleccionado.</h5>
           </div>
         </div>
@@ -168,7 +168,7 @@
             </div>
           </div>
           <br>
-           <button v-if="bills.length>0" class="ui black button" v-on:click="generate(3)">Generar PDF de de Ingresos de {{monthActive}}</button>
+           <button v-if="bills.length>0" class="huge ui inverted orange button" v-on:click="generate(3)"><i class="file alternate outline icon"></i> Generar PDF de de Ingresos de {{monthActive}}</button>
           <div class="ui segment"><h2> {{monthActive}}</h2></div>
           <div v-if="bills.length!=0" id="tableContainerMonth">
             <div class="reporteMora">
@@ -196,7 +196,7 @@
               </table>
             </div>
           </div>
-          <div class="ui inverted red segment" v-if="bills.length==0">
+          <div class="ui secondary inverted red segment" v-if="bills.length==0">
             <h5>No hay facturas del mes seleccionado.</h5>
           </div>
         </div>
@@ -223,7 +223,7 @@
               </div>
               </h1>
           </div>
-          <button v-if="bills.length>0" class="ui olive button" v-on:click="generate(4)">Generar PDF de Ingresos {{yearActive}}</button>
+          <button v-if="bills.length>0" class="huge ui inverted orange button" v-on:click="generate(4)"><i class="file alternate outline icon"></i> Generar PDF de Ingresos {{yearActive}}</button>
           <br><br><br>
           <div class="ui centered grid">
             <table id="tablaAnual" class="ui celled padded inverted table">
@@ -345,7 +345,8 @@ const $ = require('jquery');
 
       },
       generate(pdfContent) {
-        if(pdfContent === 1){
+        try {
+            if(pdfContent === 1){
               let facturas = ipcRenderer.sendSync('get-billsSync');
               let doc = new jsPDF('p', 'pt');
               let titulos= [
@@ -414,13 +415,9 @@ const $ = require('jquery');
               });
               doc.save("reporte_"+year+"Unicredit.pdf");
             }
-        try {
-            
         }
         catch(err) {
             this.emptyTableAlert();
-            //document.getElementById("demo").innerHTML = err.message;
-            console.log(err.message);
         }
       },
       cambioMes(monthActive){
