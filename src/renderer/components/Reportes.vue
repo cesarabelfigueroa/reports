@@ -223,7 +223,7 @@
               </div>
               </h1>
           </div>
-          <button v-if="bills.length>0" class="huge ui inverted orange button" v-on:click="generate(4)"><i class="file alternate outline icon"></i> Generar PDF de Ingresos {{yearActive}}</button>
+          <button v-if="bills.length>0" class="huge ui yellow button" v-on:click="generate(4)"><i class="file alternate outline icon"></i> Generar PDF de Ingresos {{yearActive}}</button>
           <br><br><br>
           <div class="ui centered grid">
             <table id="tablaAnual" class="ui celled padded inverted table">
@@ -632,16 +632,16 @@ const $ = require('jquery');
           this.cablePagina = [];
         }
         let totalRows = service === 1 ? this.moraAgua.length : this.moraCable.length;
-        let totalPages = Math.ceil(totalRows / 15);
-        let begin = service === 1 ? (this.pagina-1)*15 : (this.pagina2-1) * 15;
+        let totalPages = Math.ceil(totalRows / 5);
+        let begin = service === 1 ? (this.pagina-1)*5 : (this.pagina2-1) * 5;
         let end;
         if(service === 1 ){
-          end = (this.pagina*15) >= totalRows ? totalRows : (this.pagina*15);
+          end = (this.pagina*5) >= totalRows ? totalRows : (this.pagina*5);
           for (let i = begin; i < end; i++) {
             this.aguaPagina.push(this.moraAgua[i]);
           }
         }else{
-          end = (this.pagina2*15) >= totalRows ? totalRows : (this.pagina2*15);
+          end = (this.pagina2*5) >= totalRows ? totalRows : (this.pagina2*5);
           for (let i = begin; i < end; i++) {
             this.cablePagina.push(this.moraCable[i]);
           }
@@ -761,10 +761,10 @@ const $ = require('jquery');
       this.paginar(1, 1);
       this.paginar(2, 1);
 
-      for (let i = 0; i < Math.ceil(this.moraCable.length/15); i++) {
+      for (let i = 0; i < Math.ceil(this.moraCable.length/5); i++) {
         this.pag.push({i: i+1});
       }
-      for (let i = 0; i < Math.ceil(this.moraAgua.length/15); i++) {
+      for (let i = 0; i < Math.ceil(this.moraAgua.length/5); i++) {
         this.pag2.push({i: i+1});
       }
     },

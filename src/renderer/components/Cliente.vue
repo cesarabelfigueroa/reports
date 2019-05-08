@@ -69,7 +69,7 @@
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
           <div class="contentHeader">
             <h1><i class="user circle outline icon"></i>Lista de Clientes</h1>
-            <button class="ui olive button" id="nuevoCliente" v-on:click="JSONToXLSConvertor"><i class="plus icon"></i>Convertir a Excel</button>
+            <button class="ui olive button" id="nuevoCliente" v-on:click="JSONToXLSConvertor"><i class="plus icon"></i>Exportar Lista de Clientes a Excel</button>
             <br><br>
           </div>
             <!-- <ol>
@@ -191,11 +191,12 @@
         if(!this.ids.includes(idnumber)){
           this.ids.push(idnumber);
           let firstname = this.client.firstname.trim();
+          firstname = firstname.charAt(0).toUpperCase() + firstname.slice(1);
           let lastname = this.client.lastname.trim();
+          lastname = lastname.charAt(0).toUpperCase() + lastname.slice(1);
           let email = this.client.email.trim();
           let zone = this.client.zone;
           let services = this.client.services;
-
           if(idnumber !== '' && firstname !== '' && lastname!=='' && email !== '' && zone!==''){
             if (services.length>0 && /^\d{4}-?\d{4}-?\d{5}$/.test(idnumber)) {
               let joinDay = moment().format("DD");
@@ -291,9 +292,9 @@
         this.pagina = pagina;
         this.clientesPagina = [];
         let totalRows = this.clients.length;
-        let totalPages = Math.ceil(totalRows/15);
-        let begin = (this.pagina-1)*15;
-        let end = this.pagina*15 >= totalRows ? totalRows : this.pagina*15;
+        let totalPages = Math.ceil(totalRows/5);
+        let begin = (this.pagina-1)*5;
+        let end = this.pagina*5 >= totalRows ? totalRows : this.pagina*5;
         for (let i = begin; i < end; i++) {
           this.clientesPagina.push(this.clients[i]);
         }
@@ -351,6 +352,7 @@
                 this.ids.push(this.clients[key].idnumber);
             }
         }
+        this.paginar(1);
       });
       ipcRenderer.on('return-zones',(event,args)=>{
         this.zones = args;
@@ -372,7 +374,6 @@
           this.modalType(5);
         }
       });
-      this.paginar(1);
 
 
     }
@@ -406,7 +407,7 @@
   }
 
   .fondo{
-    background: url("~@/assets/mathParty.jpg") no-repeat center center;
+    background: linear-gradient(lightgray, white);
     background-size: cover;
     position: fixed;
     width: 100%;
@@ -427,17 +428,18 @@
 
   #tableContainer {
     position: absolute;
-    height: 500px;
+    height: 700px;
     width: 900px;
     max-width: 900px;
-    max-height: 500px;
-    overflow-y: scroll;
+    max-height: 700px;
+    overflow-y: hidden;
     overflow-x: auto;
   }
 
   table {
     width: 100%;
-    height: 100%;
+    height: auto;
+    overflow: hidden
   }
 
   .focus {

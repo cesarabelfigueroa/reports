@@ -91,13 +91,13 @@ ipcMain.on('remove-client', (event, _id) => {
 });
 
 ipcMain.on('get-clients', (event) => {
-  clients.find({}, (err, docs) => {
+  clients.find({}).sort({ firstname:1 }).exec( (err, docs) => {
     event.sender.send('fetch-clients', docs);
   });
 });
 
 ipcMain.on('get-clientsSync', (event) => {
-  clients.find({}, (err, docs) => {
+  clients.find({}).sort({ firstname:1 }).exec( (err, docs) => {
     event.returnValue = docs;
   });
 });
