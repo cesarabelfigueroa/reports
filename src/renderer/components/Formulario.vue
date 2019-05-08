@@ -115,13 +115,18 @@
           lastname: '',
           email: '',
           services:[],
-          zone: ''
+          zone: 1
         },
         service:{
           name: '',
           description: '',
-          zone: '',
+          zone: 1,
           cost: ''
+        },
+        zone: {
+          numRate: 1,
+          description: '',
+          cost: 0
         },
         message: '',
         modeIndex: 2,
@@ -135,21 +140,6 @@
     },
     computed : {
       total: function () {
-
-        // const dd = document.getElementById('clientdropdown');
-        // let cli = JSON.parse(dd.options[dd.selectedIndex]).client;
-        // let moras = JSON.parse(dd.options[dd.selectedIndex]).moras;
-        let day = parseInt(moment().format("DD"));
-        let mult = this.moras;
-        if(day <= 7){
-          mult = this.moras - 1;
-        }
-        if(mult < 0){
-          mult = 0;
-        }
-        if(this.test == 1) {
-          mult = 0;
-        }
         this.mensajeMora = this.breakdown !='' ? `${this.debts} moras: ${this.debts*10} Lps`: '';
         this.totalFine = this.debts > 0 ? 10*this.debts : 0;
         return this.totalFine + (parseInt(this.amount)*this.moras);
@@ -161,6 +151,33 @@
         this.$electron.shell.openExternal(link)
       },
       closePromocion(){
+        let dd = document.getElementById('clientdropdown');
+        dd.selectedIndex = 0;
+        this.client = {
+          idnumber: '',
+          firstname: '',
+          lastname: '',
+          email: '',
+          services:[],
+          zone: 1
+        }
+        this.service = {
+          name: '',
+          description: '',
+          zone: 1,
+          cost: ''
+        }
+        this.zone = {
+          numRate: 1,
+          description: '',
+          cost: 0
+        }
+        this.debts = 0;
+        this.totalFine = 0;
+        this.amount = 0;
+        this.mensajeMora = '';
+        this.breakdown = '';
+        this.boolEnero = false;
         this.showModal = false;
         this.message = 'Factura ingresada con éxito';
         this.title = 'Alerta';
@@ -206,7 +223,6 @@
           this.title = 'Alerta';
           this.modalType(5);
           this.breakdown = '';
-
           this.clientesMora();
         }else{
           this.message = 'Seleccione un cliente e ingrese un monto a pagar para poder realizar la facturacion';
@@ -217,7 +233,6 @@
       selectClient() {
 
         const dd = document.getElementById('clientdropdown');
-
         if(dd.selectedIndex >= 0){
           let value = JSON.parse(dd.value).client;
           for (let i = 0; i < this.clients.length; i++) {
@@ -230,12 +245,12 @@
           if(parseInt(moment().format("DD")) > 7 && this.test==2){
             this.fine = 10;
           }
-          this.service = ipcRenderer.sendSync('get-services-cost', (this.test==1 ? 'Agua' : 'Cable'), this.clients[this.indexCliente].zone);
-          this.amount = parseInt(this.service.cost);
+          this.zone = ipcRenderer.sendSync('get-zoneSync', parseInt(this.client.zone));
+          this.service = ipcRenderer.sendSync('get-services-cost', (this.test==1 ? 'Agua' : 'Cable'), this.zone.numRate.toString());
+          this.amount = (parseInt(this.service.cost) + parseInt(this.zone.cost));
           this.moras = JSON.parse(dd.value).moras;
           this.debts = JSON.parse(dd.value).debts;
           this.breakdown = this.moras > 0 ? `${this.moras} Pago(s): ${this.moras*this.amount} Lps` : `0 Pago(s): 0 Lps`;
-          
           //Determinar si aplica la promocion
           if(moment().format("MM") === "05" && this.test == 2){
             this.boolEnero = parseInt(moment().format("DD")) > 7 ? this.debts < 2 : this.debts == 0;
@@ -252,11 +267,6 @@
       },
       clientesMora() {
         //1 = agua, 2 = cable
-        // let clientesEnMora = [];
-        // this.clients = ipcRenderer.sendSync('get-clientsSync');
-        
-
-        
         this.moraAgua = [];
         this.moraCable = [];
         let dateYear = moment().format("YYYY");
@@ -265,11 +275,6 @@
         let yearInt = parseInt(dateYear);
         let monthInt = parseInt(dateMonth);
         let dayInt = parseInt(dateDay);
-        // this.clients = ipcRenderer.sendSync('get-clientsSync');
-        // let bills = ipcRenderer.sendSync('get-bills-monthSync', dateMonth, dateYear);
-        // this.clients.forEach((client) => {
-        //
-        // });
         this.clients = ipcRenderer.sendSync('get-clientsSync');
         this.clients.forEach((client) => {
           let agua = false;
@@ -279,16 +284,10 @@
             if(client.services.includes('Agua')){
               billsAgua = ipcRenderer.sendSync('get-bills-water-clientSync', client.idnumber);
               latestAgua = this.lastBill(billsAgua);
-              // if(client.idnumber === '0801-1960-02532'){
-              //   console.log('Todas:', billsAgua);
-              //   console.log('Latest:',latestAgua);
-              // }
             }
             if(client.services.includes('Cable')){
               billsCable = ipcRenderer.sendSync('get-bills-cable-clientSync', client.idnumber);
               latestCable = this.lastBill(billsCable);
-              if(client.idnumber === "0801-9876-32323")
-                console.log('Latest cable ', JSON.stringify(latestCable));
             }
             if(latestAgua) {
               let currBillYear = parseInt(latestAgua.dateYear);
@@ -311,7 +310,6 @@
                   }
                 }
                 this.moraAgua.push({client, moras});
-                // console.log(`Cliente debe ${moras} pagos de agua`);
               }
             }else if(client.services.includes('Agua')){
               let joinMonth = parseInt(client.joinMonth);
@@ -379,7 +377,6 @@
                 }
               }
             }else if(client.services.includes('Cable')) {
-              // console.log('No se encontro factura pero esta en mora de cable');
               let joinMonth = parseInt(client.joinMonth);
               let joinYear = parseInt(client.joinYear);
               if(joinMonth === monthInt && joinYear === yearInt) {
@@ -438,6 +435,10 @@
       }
     },
     beforeMount(){
+      ipcRenderer.on('return-zone', (event, arg) => {
+        this.zone = arg;
+      });
+
       ipcRenderer.on('fetch-clients', (event, arg) => {
         this.clients = arg;
       });
