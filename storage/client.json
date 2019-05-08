@@ -7,5 +7,7 @@
 {"_id":"EFziGyns7EPskIK5","email":"cesarfig@yahoo.com","firstname":"Cesar","idnumber":"0801-1997-54321","lastname":"Figueroa","services":["Cable","Agua"],"zone":"Residencial Urbana","joinDay":"02","joinMonth":"02","joinYear":"2018"}
 {"_id":"PL4FwwMb4jeWF1Pi","email":"mariom@gmail.com","firstname":"Mario","idnumber":"0801-1960-02532","lastname":"Maldonado","services":["Agua"],"zone":"Rural","joinDay":"02","joinMonth":"02","joinYear":"2018"}
 {"email":"alexyc@gmail.com","firstname":"Alexy","idnumber":"0801-1994-44555","lastname":"Cruz","services":["Cable"],"zone":"Rural","_id":"QDXzBTl68hhzK4Tz","joinDay":"02","joinMonth":"02","joinYear":"2018"}
+{"email":"fulano@detal.com","firstname":"Fulanito","idnumber":"0801-9876-32323","joinDay":"07","joinMonth":"05","joinYear":"2019","lastname":"De Tal","services":["Cable","Agua"],"zone":"Residencial Urbana","_id":"V8FXxnPMOnb5JX7C"}
 {"email":"pato@lucas.com","firstname":"pato","idnumber":"0801-1231-22323","joinDay":"11","joinMonth":"02","joinYear":"2018","lastname":"lucas","services":["Cable","Agua"],"zone":"Rural","_id":"bGIyfgLTsEPQsODy"}
+{"email":"mmatamoros@gmail.com","firstname":"Mauricio","idnumber":"0801-1441-43431","joinDay":"07","joinMonth":"05","joinYear":"2019","lastname":"Matamoros","services":["Cable","Agua"],"zone":"Rural","_id":"mgygISSvhm9x0sRc"}
 {"_id":"r7jjSb8FR92B4rz9","email":"rgaldam@gmail.com","firstname":"Ricardo","idnumber":"0801-1997-85671","lastname":"Galdamez","services":["Cable"],"zone":"Residencial Urbana","joinDay":"02","joinMonth":"02","joinYear":"2018"}

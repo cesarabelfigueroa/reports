@@ -6,7 +6,7 @@ import moment from 'moment';
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (process.env.NODE_ENV !== 'development') {
+//if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
   const template = [
     {
@@ -27,7 +27,7 @@ if (process.env.NODE_ENV !== 'development') {
   ];
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
-}
+//}
 
 
 let mainWindow;
@@ -42,9 +42,11 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      devTools: process.env.NODE_ENV !== 'development'? false : true
+    }
   });
-
   mainWindow.loadURL(winURL);
 
   mainWindow.on('closed', () => {
@@ -97,6 +99,7 @@ ipcMain.on('get-clientsSync', (event) => {
     event.returnValue = docs;
   });
 });
+
 
 ipcMain.on('paginar', (event) => {
     clients.find({}).skip(3).limit(3).exec((err, docs) => {
@@ -188,6 +191,15 @@ ipcMain.on('get-bills-yearSync', (event, year) => {
 ipcMain.on('create-bill', (event, bill) => {
   bills.insert(bill, (err, doc) => {
     console.log('Inserted with id', doc._id);
+  });
+});
+
+ipcMain.on('create-promotion-bills', (event, newBills) => {
+  console.log(newBills);
+  bills.insert(newBills, (err, docs) => {
+    if(err){
+      throw err;
+    }
   });
 });
 
