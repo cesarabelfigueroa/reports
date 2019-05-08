@@ -47,6 +47,8 @@ function createWindow () {
       devTools: process.env.NODE_ENV !== 'development'? false : true
     }
   });
+
+  mainWindow.maximize();
   mainWindow.loadURL(winURL);
 
   mainWindow.on('closed', () => {

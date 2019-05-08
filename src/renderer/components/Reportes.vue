@@ -116,7 +116,7 @@
               </tbody>
             </table>
           </div>
-          <div class="ui secondary inverted red segment" v-if="bills.length===0">
+          <div class="ui secondary inverted grey segment" v-if="bills.length===0">
             <h5>No hay facturas del día seleccionado.</h5>
           </div>
         </div>
@@ -126,10 +126,10 @@
           <div class="ui four column grid">
             <div class="row">
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='ENERO'}" v-on:click="cambioMes('ENERO')" class="fluid ui olive button">ENERO</button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='ENERO'}" v-on:click="cambioMes('ENERO')" class="fluid ui teal button">ENERO</button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='FEBRERO'}" v-on:click="cambioMes('FEBRERO')" class="fluid ui green button">FEBRERO </button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='FEBRERO'}" v-on:click="cambioMes('FEBRERO')" class="fluid ui yellow button">FEBRERO </button>
               </div>
               <div class="column">
                 <button id="botonMes" v-bind:class="{active:monthActive==='MARZO'}" v-on:click="cambioMes('MARZO')" class="fluid ui teal button"> MARZO</button>
@@ -143,10 +143,10 @@
                 <button id="botonMes" v-bind:class="{active:monthActive==='MAYO'}" v-on:click="cambioMes('MAYO')" class="fluid ui yellow button"> MAYO</button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='JUNIO'}" v-on:click="cambioMes('JUNIO')" class="fluid ui olive button">JUNIO </button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='JUNIO'}" v-on:click="cambioMes('JUNIO')" class="fluid ui teal button">JUNIO </button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='JULIO'}" v-on:click="cambioMes('JULIO')" class="fluid ui green button">JULIO </button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='JULIO'}" v-on:click="cambioMes('JULIO')" class="fluid ui yellow button">JULIO </button>
               </div>
               <div class="column">
                 <button id="botonMes" v-bind:class="{active:monthActive==='AGOSTO'}" v-on:click="cambioMes('AGOSTO')" class="fluid ui teal button">AGOSTO </button>
@@ -154,13 +154,13 @@
             </div>
             <div class="row">
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='SEPTIEMBRE'}" v-on:click="cambioMes('SEPTIEMBRE')" class="fluid ui green button"> SEPTIEMBRE</button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='SEPTIEMBRE'}" v-on:click="cambioMes('SEPTIEMBRE')" class="fluid ui teal button"> SEPTIEMBRE</button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='OCTUBRE'}" v-on:click="cambioMes('OCTUBRE')" class="fluid ui teal  button">OCTUBRE </button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='OCTUBRE'}" v-on:click="cambioMes('OCTUBRE')" class="fluid ui yellow  button">OCTUBRE </button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='NOVIEMBRE'}" v-on:click="cambioMes('NOVIEMBRE')" class="fluid ui olive button">NOVIEMBRE </button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='NOVIEMBRE'}" v-on:click="cambioMes('NOVIEMBRE')" class="fluid ui teal button">NOVIEMBRE </button>
               </div>
               <div class="column">
                 <button id="botonMes" v-bind:class="{active:monthActive==='DICIEMBRE'}" v-on:click="cambioMes('DICIEMBRE')" class="fluid ui yellow button"> DICIEMBRE</button>
@@ -196,7 +196,7 @@
               </table>
             </div>
           </div>
-          <div class="ui secondary inverted red segment" v-if="bills.length==0">
+          <div class="ui secondary inverted grey segment" v-if="bills.length==0">
             <h5>No hay facturas del mes seleccionado.</h5>
           </div>
         </div>
