@@ -24,11 +24,10 @@
           <div class="ui form">
             <div class="field">
               <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-              <select class="ui dropdown" id="clientdropdown" >
-                <option value="">Nombre del Cliente</option>
-                <!-- <option v-for="(client, index) in clients" v-if="client.services.includes(test ==  1 ? 'Agua' : 'Cable')"  :value="JSON.stringify(client)">{{client.firstname}} {{client.lastname}}</option> -->
-                <option v-if="test == 1" v-for="(val, index) in moraAgua" :value="JSON.stringify(val)">{{val.idnumber}}  {{val.client.firstname}} {{val.client.lastname}}</option>
-                <option v-if="test == 2" v-for="(val, index) in moraCable" :value="JSON.stringify(val)">{{val.idnumber}}  {{val.client.firstname}} {{val.client.lastname}}</option>
+              <select class="ui dropdown" id="clientdropdown">
+                <option value="" selected disabled>Nombre del cliente</option>
+                <option v-if="test == 1" v-for="(val, index) in moraAgua" v-bind:key="index" :value="JSON.stringify(val)" >{{val.idnumber}}  {{val.client.firstname}} {{val.client.lastname}}</option>
+                <option v-if="test == 2" v-for="(val, index) in moraCable" v-bind:key="index" :value="JSON.stringify(val)">{{val.idnumber}}  {{val.client.firstname}} {{val.client.lastname}}</option>
               </select>
             </div>
             <br>
@@ -64,6 +63,7 @@
                   <i class="certificate icon"></i>Promoción
                 </div>
               </div>
+              <p class="warning-message">{{this.warnMessage}}</p>
             </div>
           </div>
 
@@ -73,7 +73,7 @@
       </div>
     </div>
     <!-- ************************MODAL PROMOCION************************ -->
-    <Modal v-if="showModal" :client="JSON.parse(JSON.stringify(client))" :clients="clients" :service="service" :title="title" :message="message" :mode="modeIndex" :test="test" @close="showModal = false" @finish="closePromocion()">
+    <Modal v-if="showModal" :client="client" :clients="clients" :service="service" :title="title" :message="message" :mode="modeIndex" :test="test" @close="showModal = false" @finish="closePromocion()">
 
     </Modal>
     <br><br>
@@ -104,6 +104,7 @@
         warning: '',
         showModal: false,
         boolEnero: false,
+        warnMessage: '',
         indexCliente: 0,
         client: {
           idnumber: '',
@@ -222,6 +223,7 @@
               break;
             }
           }
+          this.client = value;
           if(parseInt(moment().format("DD")) > 7 && this.test==2){
             this.fine = 10;
           }
@@ -230,10 +232,28 @@
           this.moras = JSON.parse(dd.value).moras;
           this.debts = JSON.parse(dd.value).debts;
           this.breakdown = this.moras > 0 ? `${this.moras} Pago(s): ${this.moras*this.amount} Lps` : `0 Pago(s): 0 Lps`;
-
+          
+          //Determinar si aplica la promocion
+          if(moment().format("MM") === "05" && this.test == 2){
+            this.boolEnero = parseInt(moment().format("DD")) > 7 ? this.debts < 2 : this.debts == 0;
+            if(this.boolEnero === false) {
+              this.warnMessage = 'Cliente tiene moras pendientes de meses anteriores, no aplica para la promocion';
+            }else{
+              this.warnMessage = '';
+            }
+          }else{
+            this.boolEnero = false;
+            this.warnMessage = '';
+          }
         }
       },
       clientesMora() {
+        //1 = agua, 2 = cable
+        // let clientesEnMora = [];
+        // this.clients = ipcRenderer.sendSync('get-clientsSync');
+        
+
+        
         this.moraAgua = [];
         this.moraCable = [];
         let dateYear = moment().format("YYYY");
@@ -264,6 +284,8 @@
             if(client.services.includes('Cable')){
               billsCable = ipcRenderer.sendSync('get-bills-cable-clientSync', client.idnumber);
               latestCable = this.lastBill(billsCable);
+              if(client.idnumber === "0801-9876-32323")
+                console.log('Latest cable ', JSON.stringify(latestCable));
             }
             if(latestAgua) {
               let currBillYear = parseInt(latestAgua.dateYear);
@@ -316,13 +338,14 @@
 
               let currBillYear = parseInt(latestCable.dateYear);
               let currBillMonth = parseInt(latestCable.dateMonth);
-              if(currBillMonth === monthInt && currBillYear === yearInt) {
+              if(currBillMonth >= monthInt && currBillYear === yearInt) {
                 isMora = false;
               }else{
                 let sameTime = false;
                 let moras = 0;
                 let debts = 0;
                 while(!sameTime) {
+                  
                   if(currBillMonth === 12){
                     currBillMonth = 1;
                     currBillYear++;
@@ -348,13 +371,9 @@
                     sameTime = true;
                   }
                 }
-                if(client.idnumber === '0801-1996-12345'){
-                  console.log('Debts: '+debts);
-                }
                 if(moras > 0){
                   this.moraCable.push({client, moras, debts});
                 }
-                // console.log(`Cliente debe ${moras} pagos de agua`);
               }
             }else if(client.services.includes('Cable')) {
               // console.log('No se encontro factura pero esta en mora de cable');
@@ -412,12 +431,10 @@
 
           return mostRecent;
         }
+        return null;
       }
     },
     beforeMount(){
-      if ((parseInt(moment().format("MM")))== 1 ) {
-        this.boolEnero = true;
-      }
 
       ipcRenderer.on('fetch-clients', (event, arg) => {
         this.clients = arg;
@@ -430,7 +447,7 @@
     },
     mounted(){
       let dd = document.getElementById('clientdropdown');
-      dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
+      dd.onchange = ()=> { if(dd.selectedIndex) this.selectClient(); };
       let dateDay = moment().format("DD");
       if(parseInt(dateDay) > 7 && this.test==2){
         this.warning = 'Se aplicará cobro extra por mora (10Lps)';
@@ -488,6 +505,11 @@
 
   .breakdown {
     color: white;
+  }
+
+  .warning-message {
+    color: red;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
   }
 /* *********************** MODAL*********************** */
 
