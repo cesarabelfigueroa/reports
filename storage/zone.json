@@ -1,3 +1,6 @@
-{"_id":"76gayXocWe5oGq3S","description":"Tiene costos adicionales de alcantarillados (15Lps).","name":"Residencial Urbana"}
-{"description":"No hay costo adicional de alcantarillado.","name":"Rural","_id":"iKplSFYHQkouIVcq"}
-{"description":"Tiene costos adicionales de alcantarillados (15Lps).","name":"Comercial","_id":"nadu6laUB5IXwNEg"}
+{"cost":10,"description":"Tarifa 3","numRate":3,"_id":"7WREdAG8QXaQjuZ1"}
+{"cost":10,"description":"Tarifa 4","numRate":4,"_id":"QJ73cswo4ChaGtpn"}
+{"cost":10,"description":"Tarifa 2","numRate":2,"_id":"QrkkS1sITq9MbjgJ"}
+{"cost":10,"description":"Tarifa 6","numRate":6,"_id":"vcNIzoe1cDhSNiCS"}
+{"cost":10,"description":"Tarifa 5","numRate":5,"_id":"wN5MqggkPftaX9ro"}
+{"_id":"wkHR094A1rvHDQW9","cost":"15","description":"Tarifa 1","numRate":1}

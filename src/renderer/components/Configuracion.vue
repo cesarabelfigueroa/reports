@@ -6,7 +6,7 @@
        <div class="ui center aligned container">
          <div class="ui two inverted olive item menu">
            <a class="item" v-bind:class="{active: tabNumber===3}" v-on:click="tabSelected(3)"><h3><i class="suitcase icon"></i>Servicios</h3></a>
-           <a class="item" v-bind:class="{active: tabNumber===4}" v-on:click="tabSelected(4)"><h3><i class="home icon"></i>Zonas</h3></a>
+           <a class="item" v-bind:class="{active: tabNumber===4}" v-on:click="tabSelected(4)"><h3><i class="home icon"></i>Tarifas</h3></a>
          </div>
        </div>
        <div class="tabContent">
@@ -15,27 +15,34 @@
            <div id="tableContainer">
              <table class="ui celled padded table">
                <!-- <col width="20%"> -->
-               <col width="10%">
-               <col width="50%">
-               <col width="20%">
-               <col width="20%">
+                <col width="10%">
+                <col width="40%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
                <thead class="tableHeader">
-                 <tr>
+                <tr>
                    <!-- <th>Identidad</th> -->
-                   <th>Nombre</th>
-                   <th>Descripción</th>
-                   <th>Zona</th>
-                   <th>Monto (Lps)</th>
-                   <th>Modificar</th>
-                 </tr>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Monto (Lps)</th>
+                  <th>Tarifa</th>
+                  <th>Monto Tarifa</th>
+                  <th>Monto Total</th>
+                  <th>Modificar</th>
+                </tr>
                </thead>
                <tbody>
-                 <tr v-for="(servicio, index) in services">
+                 <tr v-for="(servicio, index) in services" v-bind:key="index">
                    <!-- <td>{{servicio._id}}</td> -->
                    <td>{{servicio.name}}</td>
                    <td>{{servicio.description}}</td>
-                   <td>{{servicio.zone}}</td>
                    <td>{{servicio.cost}}</td>
+                   <td>{{servicio.zone}}</td>
+                   <td>{{zones[parseInt(servicio.zone)-1].cost}}</td>
+                   <td>{{parseInt(servicio.cost) + parseInt(zones[parseInt(servicio.zone)-1].cost)}} </td>
                    <td class="center aligned">
                      <button  v-on:click="modifyService(servicio._id,index)" class="circular ui teal icon button">
                        <i class="icon write"></i>
@@ -83,24 +90,23 @@
          <div v-if="tabNumber==4">
            <div id="tableContainer">
              <table class="ui celled padded table">
+               <col width="10%">
+               <col width="50%">
                <col width="20%">
                <col width="20%">
-               <col width="40%">
-               <col width="5%">
-               <col width="5%">
                <thead class="tableHeader">
                  <tr>
-                   <th>Identidad</th>
-                   <th>Nombre</th>
+                   <th>Tarifa</th>
                    <th>Descripción</th>
+                   <th>Monto (Lps)</th>
                    <th>Modificar</th>
                  </tr>
                </thead>
                <tbody>
-                 <tr v-for="(zona, index) in zones">
-                   <td>{{zona._id}}</td>
-                   <td>{{zona.name}}</td>
+                 <tr v-for="(zona, index) in zones" v-bind:key="index">
+                   <td>{{zona.numRate}}</td>
                    <td>{{zona.description}}</td>
+                   <td>{{zona.cost}}</td>
                    <td class="center aligned">
                      <button  v-on:click="modifyZone(zona._id, index)" class="circular ui teal icon button">
                        <i class="icon write"></i>
@@ -134,12 +140,13 @@
         service:{
           name: '',
           description: '',
-          zone: '',
+          zone: 1,
           cost: ''
         },
         zone:{
-          name:'',
-          description:''
+          numRate: 1,
+          description:'',
+          cost: 0
         },
         zones: [],
         services: [],
@@ -161,38 +168,37 @@
         this.tabNumber = tabNumber;
       },
       submitZone(){
-          let name = this.zone.name.trim();
-          let description = this.zone.description.trim();
-          if(name!=''){
-            const {ipcRenderer} = require('electron');
-            this.zone = {
-              name,
-              description
-            }
-            ipcRenderer.send('create-zone', this.zone);
-            this.message = 'Zona creada exitosamente';
-            this.title = 'Nueva Zona';
-            this.modalType(5);
-          }else{
-            this.message = 'Error, tiene que escoger un nombre';
-            this.title = 'Error';
-            this.modalType(5);
-          }
+          // let name = this.zone.name.trim();
+          // let description = this.zone.description.trim();
+          // if(name!=''){
+          //   this.zone = {
+          //     name,
+          //     description
+          //   }
+          //   ipcRenderer.send('create-zone', this.zone);
+          //   this.message = 'Zona creada exitosamente';
+          //   this.title = 'Nueva Zona';
+          //   this.modalType(5);
+          // }else{
+          //   this.message = 'Error, tiene que escoger un nombre';
+          //   this.title = 'Error';
+          //   this.modalType(5);
+          // }
       },
       deleteZone(_id, index) {
-        this.clients.splice(index, 1);
-        ipcRenderer.on('delete-zone-ret', (event, err) => {
-          if(!err) {
-            this.message = 'Removido con exito!';
-            this.title = 'Eliminar Zona';
-            this.modalType(5);
-          } else {
-            this.message = 'Error al eliminar';
-            this.title = 'Eliminar Zona';
-            this.modalType(5);
-          }
-        });
-        ipcRenderer.send('delete-zone', _id);
+        // this.clients.splice(index, 1);
+        // ipcRenderer.on('delete-zone-ret', (event, err) => {
+        //   if(!err) {
+        //     this.message = 'Removido con exito!';
+        //     this.title = 'Eliminar Zona';
+        //     this.modalType(5);
+        //   } else {
+        //     this.message = 'Error al eliminar';
+        //     this.title = 'Eliminar Zona';
+        //     this.modalType(5);
+        //   }
+        // });
+        // ipcRenderer.send('delete-zone', _id);
 
       },
       modifyZone(_id, index){
@@ -203,7 +209,7 @@
       submitService(){
           let name = this.service.name.trim();
           let description = this.service.description.trim();
-          let zone = this.service.zone.trim();
+          let zone = this.service.zone;
           let cost = this.service.cost.trim();
           this.service = {
             name,
@@ -237,13 +243,7 @@
       handleClose(service, ind) {
         this.services[ind] = service;
         this.showModal = false;
-        ipcRenderer.on('return-services',(event,arg)=>{
-          this.services = arg;
-        });
 
-        ipcRenderer.on('return-zones',(event,arg)=>{
-          this.zones = arg;
-        });
         //Llamado a eventos que retornaran info del backend
         ipcRenderer.send('get-zones');
         ipcRenderer.send('get-services');

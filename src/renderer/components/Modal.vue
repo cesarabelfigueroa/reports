@@ -47,9 +47,9 @@
                     </div>
                   </div>
                   <div class="field">
-                    <label>Zona: <i class="asterisk olive icon"></i></label>
+                    <label>Tarifa: <i class="asterisk olive icon"></i></label>
                     <select v-model="client.zone" class="ui dropdown" id="zoneDropdown">
-                      <option v-for="(zona, index) in zones" v-bind:key="index" :value="zona.name">{{zona.name}}</option>
+                      <option v-for="(zona, index) in zones" v-bind:key="index" :value="zona.numRate">{{zona.numRate}}</option>
                     </select>
                   </div>
                   <div class="field">
@@ -100,12 +100,8 @@
               <slot name="body">
                 <div class="ui form">
                   <div class="field">
-                    <!-- <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
-                    <select class="ui dropdown" id="clientedropdownModal">
-                      <option value="">Nombre del Cliente</option>
-                      <option v-for="(cliente, index) in currentClients" v-bind:key="index"  :value="JSON.stringify(cliente)">{{cliente.firstname}} {{cliente.lastname}}</option>
-                    </select> -->
-                    <h4><label>Nombre: {{client.firstname}} {{client.lastname}}   Identidad: {{client.idnumber}}</label></h4>
+                    <h4><label>Nombre: {{client.firstname}} {{client.lastname}}</label></h4>
+                    <h4><label>Identidad: {{client.idnumber}}</label></h4>
                   </div>
                   <br>
                   <div class="two fields">
@@ -168,7 +164,7 @@
                     </div>
                   </div>
                   <div class="field">
-                    <label>Zona: </label>
+                    <label>Tarifa: </label>
                     <div class="ui segment">
                       <h5>{{service.zone}}</h5>
                     </div>
@@ -200,12 +196,12 @@
             </div>
 
           </div>
-          <!-- Zona -->
+          <!-- Tarifa -->
           <div v-if="mode==4" class="">
             <div class="modal-header">
               <slot name="header">
                 <div class="ui inverted segment">
-                  <h1><i class="write olive icon"></i> Modificar datos de Zona</h1>
+                  <h1><i class="write olive icon"></i> Modificar datos de Tarifa</h1>
                 </div>
                 <hr>
               </slot>
@@ -213,16 +209,24 @@
             <div class="modal-body">
               <slot name="body">
                 <form class="ui form">
-                  <div class="field">
-                    <label>Nombre:  <i class="asterisk blue icon"></i></label>
-                    <div class="ui left icon input" id="zonaLabel">
-                      <h4><i class="home icon"></i>{{zone.name}}</h4>
+                  <div>
+                    <label>Numero de tarifa:  <i class="asterisk blue icon"></i></label>
+                    <div class="ui left icon" id="zonaLabel">
+                      <h4><i class="home icon"></i>{{zone.numRate}}</h4>
                     </div>
                   </div>
                   <div class="field">
                     <label>Descripción: </label>
                     <div>
                       <textarea v-model="zone.description" placeholder="Descripción" rows="3"></textarea>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Monto de tarifa</label>
+                    <div>
+                      <div class="ui left icon input" id="zonaCost">
+                        <input type="number" v-model="zone.cost">
+                      </div>
                     </div>
                   </div>
                 </form>
@@ -331,12 +335,10 @@
         this.$emit('finish', this.client, this.index);
       },
       modifyService() {
-        console.log('aqui si');
         let name = this.service.name.trim();
-        let zone = this.service.zone.trim();
+        let zone = this.service.zone;
         let cost = this.service.cost.trim();
-        console.log(name+ ' '+zone+ ' '+cost);
-        if (name!='' && zone!='' && cost!='') {
+        if (name!='' && cost!='') {
           ipcRenderer.send('update-service', this.service);
           this.$emit('finish', this.service, this.index);
         }else{
@@ -410,7 +412,8 @@
       this.indexCliente = 0;
       if(this.mode == 2) {
         let servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'), this.client.zone);
-        this.amount = parseInt(servicio.cost);
+        let zone = ipcRenderer.sendSync('get-zoneSync', parseInt(this.client.zone));
+        this.amount = parseInt(servicio.cost)+parseInt(zone.cost);
       }
     },
     mounted(){

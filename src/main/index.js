@@ -74,6 +74,7 @@ app.on('activate', () => {
 const clients = new Datastore({ filename: './storage/client.json', autoload: true });
 const bills = new Datastore({ filename: './storage/bill.json', autoload: true });
 const services = new Datastore({ filename: './storage/service.json', autoload: true });
+const rates = new Datastore({ filename: './storage/rates.json', autoload: true });
 const zones = new Datastore({ filename: './storage/zone.json', autoload: true });
 
 // ****************CLIENTS****************
@@ -197,7 +198,6 @@ ipcMain.on('create-bill', (event, bill) => {
 });
 
 ipcMain.on('create-promotion-bills', (event, newBills) => {
-  console.log(newBills);
   bills.insert(newBills, (err, docs) => {
     if(err){
       throw err;
@@ -214,8 +214,23 @@ ipcMain.on('create-zone', (event, zone) => {
 });
 
 ipcMain.on('get-zones', (event)=>{
-  zones.find({},(err,docs)=>{
+  zones.find({}).sort({ numRate: 1 }).exec((err,docs)=>{
      event.sender.send('return-zones',docs);
+  });
+});
+
+ipcMain.on('get-zone', (event, numRate) => {
+  zones.findOne({numRate}, (err, doc) => {
+    if(err){
+      throw err;
+    }
+    event.sender.send('return-zone', doc);
+  });
+});
+
+ipcMain.on('get-zoneSync', (event, numRate) => {
+  zones.findOne({numRate}, (err, doc) => {
+    event.returnValue = doc;
   });
 });
 
@@ -242,6 +257,37 @@ ipcMain.on('delete-zone', (event, _id) => {
     });
 });
 
+// *****************RATES******************
+
+ipcMain.on('update-rate', (event, rate) => {
+  rates.update({ _id : rate._id }, rate, (err, numAffected) => {
+    if(!err){
+      console.log('Rate updated succesfuly');
+    }else{
+      console.log('Rate could not be updated');
+      throw err;
+    }
+  });
+});
+
+ipcMain.on('get-rates', (event) => {
+  rates.find({}, (err, docs) => {
+    if(err){
+      throw err;
+    }
+    event.sender.send('return-rates', docs);
+  });
+});
+
+ipcMain.on('get-ratesSync', (event) => {
+  rates.find({}, (err, docs) => {
+    if(err){
+      throw err;
+    }
+    event.returnValue = docs;
+  });
+});
+
 // ****************SERVICES****************
 
 ipcMain.on('get-services', (event)=>{
@@ -251,7 +297,8 @@ ipcMain.on('get-services', (event)=>{
 });
 
 ipcMain.on('get-services-cost', (event,service,zone) => {
-  services.findOne({'name':service,'zone': zone}, (err, docs) => {
+  services.findOne({'name':service, zone}, (err, docs) => {
+    console.log('SERVICIO: ', docs);
     event.returnValue = docs;
   });
 });
