@@ -49,7 +49,7 @@
                   <div class="field">
                     <label>Zona: <i class="asterisk olive icon"></i></label>
                     <select v-model="client.zone" class="ui dropdown" id="zoneDropdown">
-                      <option v-for="(zona, index) in zones" :value="zona.name">{{zona.name}}</option>
+                      <option v-for="(zona, index) in zones" v-bind:key="index" :value="zona.name">{{zona.name}}</option>
                     </select>
                   </div>
                   <div class="field">
@@ -100,11 +100,12 @@
               <slot name="body">
                 <div class="ui form">
                   <div class="field">
-                    <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
+                    <!-- <label>Seleccionar Cliente: <i class="asterisk blue icon"></i></label>
                     <select class="ui dropdown" id="clientedropdownModal">
                       <option value="">Nombre del Cliente</option>
-                      <option v-for="(client, index) in clients" v-if="client.services.includes(test ==  1 ? 'Agua' : 'Cable')"  :value="JSON.stringify(client)">{{client.firstname}} {{client.lastname}}</option>
-                    </select>
+                      <option v-for="(cliente, index) in currentClients" v-bind:key="index"  :value="JSON.stringify(cliente)">{{cliente.firstname}} {{cliente.lastname}}</option>
+                    </select> -->
+                    <h4><label>Nombre: {{client.firstname}} {{client.lastname}}   Identidad: {{client.idnumber}}</label></h4>
                   </div>
                   <br>
                   <div class="two fields">
@@ -124,7 +125,7 @@
                     <i class="handshake file word outline icon"></i>
                     Generar Factura
                   </button>
-                  <div v-if="validacionBool"class="ui small red inverted segment">
+                  <div v-if="validacionBool" class="ui small red inverted segment">
                     <h5><i class="remove icon"></i> Error! Seleccionar Cliente</h5>
                   </div>
                 </div>
@@ -184,7 +185,7 @@
             </div>
             <div class="modal-footer">
               <slot name="footer">
-                <div v-if="validacionBool"class="ui small red inverted segment">
+                <div v-if="validacionBool" class="ui small red inverted segment">
                   <h5><i class="remove icon"></i> Error! Llenar los campos obligatorios</h5>
                 </div>
                 <div class="right aligned ui basic segment">
@@ -319,6 +320,9 @@
     computed : {
       total: function () {
         return this.amount != '' ? (parseInt(this.amount)*11) : 0;
+      },
+      currentClients: function () {
+        return this.clients.filter((cliente)=> cliente.services.includes(this.test ==  1 ? 'Agua' : 'Cable'))
       }
     },
     methods: {
@@ -344,25 +348,21 @@
         this.$emit('finish', this.zone, this.index);
       },
       respuestaModal(){
-        console.log('ENTRE');
         this.$emit('answer');
         this.$emit('close');
       },
       verifyPromocion() {
-        const dd = document.getElementById('clientedropdownModal');
-        let client_id = '';
-        if (dd.selectedIndex>0) {
-          client_id = (JSON.parse(dd.options[dd.selectedIndex].value)).idnumber;
-        }
+        let client_id = this.client.idnumber;
+        
         if(client_id !== '' && this.amount > 10){
           this.validacionBool= false;
           let service = this.test==1? 'agua' : 'cable';
           let dateYear = moment().format("YYYY");
-          let dateMonth = moment().format("MM");
+          let dateMonth = moment().month(0).format("MM");
           let dateDay = moment().format("DD");
           let dateTime = moment().format("h:mm a");
           let fine = 0;
-          let amount = parseInt(this.amount)*11;
+          let amount = parseInt(this.amount);
           if(parseInt(dateDay) > 7 && this.test==2){
             fine = 10;
           }
@@ -371,6 +371,7 @@
           // console.log('Total: ', this.total);
           // console.log('Nombre: ', (JSON.parse(dd.options[dd.selectedIndex].value)).firstname, (JSON.parse(dd.options[dd.selectedIndex].value)).lastname);
           // **************** Factura ****************
+          
           let bill = {
             client_id,
             service,
@@ -381,29 +382,25 @@
             dateDay,
             dateTime
           }
-          ipcRenderer.send('create-bill', bill);
+          let newBills = [ bill ];
+          for(let i = 0; i < 11; i++) {
+            let tempBill = {
+              client_id,
+              service,
+              amount: (i+1 === 11) ? 0 : amount,
+              fine: 0,
+              dateYear,
+              dateMonth: moment().month(i+1).format("MM"),
+              dateDay: moment().date(1).format("DD"),
+              dateTime
+            }
+            newBills.push(tempBill);
+          }
+          ipcRenderer.send('create-promotion-bills', newBills);
           this.amount = 0;
-          dd.selectedIndex = 0;
           this.$emit('finish');
         }else{
           this.validacionBool= true;
-        }
-      },
-      selectClient() {
-        const dd = document.getElementById('clientedropdownModal');
-        let servicio;
-        if(dd.selectedIndex > 0){
-          let value = JSON.parse(dd.value);
-          for (let i = 0; i < this.clients.length; i++) {
-            if(this.clients[i]._id === value._id){
-              this.indexCliente = i;
-              break;
-            }
-          }
-          servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'),this.clients[this.indexCliente].zone);
-          this.amount = parseInt(servicio.cost);
-
-
         }
       }
     },
@@ -411,11 +408,15 @@
     beforeMount() {
       this.amount = 0;
       this.indexCliente = 0;
+      if(this.mode == 2) {
+        let servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'), this.client.zone);
+        this.amount = parseInt(servicio.cost);
+      }
     },
     mounted(){
-      let dd = document.getElementById('clientedropdownModal');
-      if(dd)
-        dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
+      // let dd = document.getElementById('clientedropdownModal');
+      // if(dd)
+      //   dd.onchange =()=> { if(dd.selectedIndex) this.selectClient(); };
     }
   }
 </script>
