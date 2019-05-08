@@ -69,6 +69,8 @@
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
           <div class="contentHeader">
             <h1><i class="user circle outline icon"></i>Lista de Clientes</h1>
+            <button class="ui olive button" id="nuevoCliente" v-on:click="JSONToXLSConvertor"><i class="plus icon"></i>Convertir a Excel</button>
+            <br><br>
           </div>
             <!-- <ol>
               <li v-for="cli in clients">{{cli.idnumber}} - {{cli.firstname}} {{cli.lastname}} - {{cli.email}}</li>
@@ -147,6 +149,7 @@
   const moment = require('moment');
   import Modal from './Modal';
   let $ = require('jquery');
+  
 
   export default {
     name: 'cliente',
@@ -300,8 +303,43 @@
             this.pag.push({i: i+1});
           }
         }
+      },
+      JSONToXLSConvertor() {
+        const JSONData = this.clients, ReportTitle = 'Clientes_Unicredit', ShowLabel=true;
+        var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+        var CSV = 'Lista de Clientes' + '\r\n\n';
+        if (ShowLabel) {
+            var row = "";
+            for (var index in arrData[0]) {
+                row += index + ',';
+            }
+            row = row.slice(0, -1);
+            CSV += row + '\r\n';
+        }
+        for (var i = 0; i < arrData.length; i++) {
+            var row = "";
+            for (var index in arrData[i]) {
+                row += '"' + arrData[i][index] + '",';
+            }
+            row.slice(0, row.length - 1);
+            CSV += row + '\r\n';
+        }
+        if (CSV == '') {        
+            alert("Invalid data");
+            return;
+        }
+        var fileName = ReportTitle.replace(/ /g,"_");
+        var uri = 'data:text/xls;charset=utf-8,' + escape(CSV);
+        var link = document.createElement("a");    
+        link.href = uri;
+        
+        link.style = "visibility:hidden";
+        link.download = fileName + ".xls";
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
-
     },
     beforeMount(){
       this.clients = [];
