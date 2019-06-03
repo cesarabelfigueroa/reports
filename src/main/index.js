@@ -214,7 +214,10 @@ ipcMain.on('create-zone', (event, zone) => {
 });
 
 ipcMain.on('get-zones', (event)=>{
-  zones.find({},(err,docs)=>{
+  zones.find({}).sort({ numRate: 1 }).exec((err,docs)=>{
+    if(err){
+      throw err;
+    }
      event.sender.send('return-zones',docs);
   });
 });
@@ -242,6 +245,20 @@ ipcMain.on('delete-zone', (event, _id) => {
     });
 });
 
+ipcMain.on('get-zone', (event, numRate) => {
+  zones.findOne({numRate}, (err, doc) => {
+    if(err){
+      throw err;
+    }
+    event.sender.send('return-zone', doc);
+  });
+});
+
+ipcMain.on('get-zoneSync', (event, numRate) => {
+  zones.findOne({numRate}, (err, doc) => {
+    event.returnValue = doc;
+  });
+});
 // ****************SERVICES****************
 
 ipcMain.on('get-services', (event)=>{

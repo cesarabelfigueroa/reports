@@ -1,6 +1,13 @@
-{"_id":"8HGjgRHd8jUKFh8B","cost":"300","description":"Contiene 100 canales. No varia el precio dependiendo de la zona.","name":"Cable","zone":"Residencial Urbana"}
-{"cost":"450","description":"Contiene 100 canales. No varia el precio dependiendo de la zona.","name":"Cable","zone":"Comercial","_id":"BUU9HqlGi56ctlBa"}
-{"cost":"75","description":"60 Lps Agua + 15 Lps Alcantarillado.","name":"Agua","zone":"Residencial Urbana","_id":"Jz3prEFV6WqiWdP1"}
-{"cost":"500","description":"Contiene 100 canales. No varia el precio dependiendo de la zona.","name":"Cable","zone":"Rural","_id":"QNUQilCIVI77mMSQ"}
-{"cost":"155","description":"140 Lps Agua + 15 Lps Alcantarillado.","name":"Agua","zone":"Comercial","_id":"SzM4u6gGnEyqyLHp"}
-{"cost":"60","description":"60 Lps Agua + 0 Lps Alcantarillado.","name":"Agua","zone":"Rural","_id":"epUvbATamEYHw6TD"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":6,"_id":"FwNaXohLriJWohmf"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":5,"_id":"H0pHNQcBNpatOybx"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":2,"_id":"RcQnUo3TEm8ZzoiO"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":3,"_id":"Te9Fkyuhe9ZSOWcV"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":1,"_id":"VPJlQlNSaZ0NLBgY"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":6,"_id":"XBenlBD5jLeiVYJI"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":4,"_id":"cqXvTwWtQBm7cUlD"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":5,"_id":"h1G0SWS0ZAIcKWWj"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":4,"_id":"heCAf6F9PqplMKAi"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":1,"_id":"r2LFAeXlhKQSCTV2"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":2,"_id":"r8zjaJKVzs3e8i38"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":3,"_id":"slnBU5Y5CYuO1qL3"}
+{"_id":"H0pHNQcBNpatOybx","cost":"80","description":"Servicio de agua","name":"Agua","zone":5}
