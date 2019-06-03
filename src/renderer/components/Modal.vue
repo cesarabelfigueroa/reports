@@ -395,7 +395,7 @@
               fine: 0,
               dateYear,
               dateMonth: moment().month(i+1).format("MM"),
-              dateDay: moment().date(1).format("DD"),
+              dateDay,
               dateTime
             }
             newBills.push(tempBill);

@@ -564,7 +564,7 @@ const $ = require('jquery');
             if(latestCable) {
               let currBillYear = parseInt(latestCable.dateYear);
               let currBillMonth = parseInt(latestCable.dateMonth);
-              if(currBillMonth === monthInt && currBillYear === yearInt){
+              if(currBillMonth >= monthInt && currBillYear === yearInt){
                 isMora = false;
               }else if(currBillMonth + 1 === monthInt && currBillYear === yearInt){
                 if(dayInt <= 7) {
