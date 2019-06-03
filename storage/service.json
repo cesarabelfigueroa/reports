@@ -1,12 +1,36 @@
-{"cost":60,"description":"Servicio de agua","name":"Agua","zone":6,"_id":"FwNaXohLriJWohmf"}
-{"_id":"H0pHNQcBNpatOybx","cost":"80","description":"Servicio de agua","name":"Agua","zone":5}
-{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":2,"_id":"RcQnUo3TEm8ZzoiO"}
-{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":3,"_id":"Te9Fkyuhe9ZSOWcV"}
-{"cost":60,"description":"Servicio de agua","name":"Agua","zone":1,"_id":"VPJlQlNSaZ0NLBgY"}
-{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":6,"_id":"XBenlBD5jLeiVYJI"}
-{"cost":60,"description":"Servicio de agua","name":"Agua","zone":4,"_id":"cqXvTwWtQBm7cUlD"}
-{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":5,"_id":"h1G0SWS0ZAIcKWWj"}
-{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":4,"_id":"heCAf6F9PqplMKAi"}
-{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":1,"_id":"r2LFAeXlhKQSCTV2"}
-{"cost":60,"description":"Servicio de agua","name":"Agua","zone":2,"_id":"r8zjaJKVzs3e8i38"}
-{"cost":60,"description":"Servicio de agua","name":"Agua","zone":3,"_id":"slnBU5Y5CYuO1qL3"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":2,"_id":"1hBjp3j1DmfXWwSv"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":5,"_id":"1yeozUwZ9cv5kUwU"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":4,"_id":"FYHuTvlPCIJPsqhd"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":6,"_id":"Gs7hLElln2gvpuyt"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":3,"_id":"KHTjC7zWCkvzP2oQ"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":3,"_id":"KrySqe3TnafmlMcV"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":5,"_id":"LLgU3FYKS8NYN0qR"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":1,"_id":"Uk0OFdMrjYPuMamY"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":6,"_id":"ZVMZSkM9oPVCiFE6"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":2,"_id":"hFjukBlRWbiJ1uGq"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":4,"_id":"haTLq3ijRa3x7ys7"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":1,"_id":"rgnNJTdEG8CzvjuI"}
+{"$$deleted":true,"_id":"1hBjp3j1DmfXWwSv"}
+{"$$deleted":true,"_id":"1yeozUwZ9cv5kUwU"}
+{"$$deleted":true,"_id":"FYHuTvlPCIJPsqhd"}
+{"$$deleted":true,"_id":"Gs7hLElln2gvpuyt"}
+{"$$deleted":true,"_id":"KHTjC7zWCkvzP2oQ"}
+{"$$deleted":true,"_id":"KrySqe3TnafmlMcV"}
+{"$$deleted":true,"_id":"LLgU3FYKS8NYN0qR"}
+{"$$deleted":true,"_id":"Uk0OFdMrjYPuMamY"}
+{"$$deleted":true,"_id":"ZVMZSkM9oPVCiFE6"}
+{"$$deleted":true,"_id":"hFjukBlRWbiJ1uGq"}
+{"$$deleted":true,"_id":"haTLq3ijRa3x7ys7"}
+{"$$deleted":true,"_id":"rgnNJTdEG8CzvjuI"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":1,"_id":"yUtojTpDBLjSlBzy"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":2,"_id":"tWsNoyEwI0b7wL5r"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":3,"_id":"m0Y5TfAHxai5vuvl"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":4,"_id":"DEp0gtBzWDF3zjoa"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":5,"_id":"JE706ewQFvTuecef"}
+{"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":6,"_id":"tFWWatXIFs4mewS9"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":1,"_id":"70Iaika7qkKhqjct"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":2,"_id":"yFIXh811oS6bKH7j"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":3,"_id":"yZb2UgkxFbf4FCbE"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":4,"_id":"NIezeZE6prYAVyse"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":5,"_id":"NqB5zkq2f2FrgLJm"}
+{"cost":60,"description":"Servicio de agua","name":"Agua","zone":6,"_id":"fWVTuU1ImudRkWzI"}

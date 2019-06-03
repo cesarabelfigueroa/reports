@@ -253,7 +253,7 @@
           this.breakdown = this.moras > 0 ? `${this.moras} Pago(s): ${this.moras*this.amount} Lps` : `0 Pago(s): 0 Lps`;
           
           //Determinar si aplica la promocion
-          if(moment().format("MM") === "06" && this.test == 2){
+          if(moment().format("MM") === "01" && this.test == 2){
             this.boolEnero = parseInt(moment().format("DD")) > 7 ? this.debts < 2 : this.debts == 0;
             if(this.boolEnero === false) {
               this.warnMessage = 'Cliente tiene moras pendientes de meses anteriores, no aplica para la promocion';
