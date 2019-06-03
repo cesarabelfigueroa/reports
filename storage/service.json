@@ -1,5 +1,5 @@
 {"cost":60,"description":"Servicio de agua","name":"Agua","zone":6,"_id":"FwNaXohLriJWohmf"}
-{"cost":60,"description":"Servicio de agua","name":"Agua","zone":5,"_id":"H0pHNQcBNpatOybx"}
+{"_id":"H0pHNQcBNpatOybx","cost":"80","description":"Servicio de agua","name":"Agua","zone":5}
 {"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":2,"_id":"RcQnUo3TEm8ZzoiO"}
 {"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":3,"_id":"Te9Fkyuhe9ZSOWcV"}
 {"cost":60,"description":"Servicio de agua","name":"Agua","zone":1,"_id":"VPJlQlNSaZ0NLBgY"}
@@ -10,4 +10,3 @@
 {"cost":300,"description":"Contiene 100 canales","name":"Cable","zone":1,"_id":"r2LFAeXlhKQSCTV2"}
 {"cost":60,"description":"Servicio de agua","name":"Agua","zone":2,"_id":"r8zjaJKVzs3e8i38"}
 {"cost":60,"description":"Servicio de agua","name":"Agua","zone":3,"_id":"slnBU5Y5CYuO1qL3"}
-{"_id":"H0pHNQcBNpatOybx","cost":"80","description":"Servicio de agua","name":"Agua","zone":5}

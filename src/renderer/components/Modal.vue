@@ -115,7 +115,7 @@
                   </div>
                   <div class="ui horizontal segments">
                     <div class="ui segment">
-                      <h3>Monto Anual:</h3>
+                      <h3>Monto Anual (1 mes gratuito):</h3>
                     </div>
                     <div class="ui segment">
                       <h3>{{total}} Lps</h3>
@@ -413,8 +413,8 @@
       this.amount = 0;
       this.indexCliente = 0;
       if(this.mode == 2) {
-        let servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'), this.client.zone);
-        this.amount = parseInt(servicio.cost);
+        let servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'), parseInt(this.client.zone));
+        this.amount = parseInt(servicio.cost) + parseInt(this.zone.cost);
       }
     },
     mounted(){

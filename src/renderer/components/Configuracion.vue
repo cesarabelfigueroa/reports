@@ -139,12 +139,13 @@
         service:{
           name: '',
           description: '',
-          zone: '',
+          zone: 1,
           cost: ''
         },
         zone:{
-          name:'',
-          description:''
+          numRate: 1,
+          description:'',
+          cost: ''
         },
         zones: [],
         services: [],
