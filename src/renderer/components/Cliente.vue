@@ -43,9 +43,9 @@
                 </div>
               </div>
               <div class="field">
-                <label>Zona: <i class="asterisk blue icon"></i></label>
+                <label>Tarifa: <i class="asterisk blue icon"></i></label>
                 <select v-model="client.zone" class="ui dropdown" id="zoneDropdown">
-                  <option v-for="(zona, index) in zones" :value="zona.name">{{zona.name}}</option>
+                  <option v-for="(zona, index) in zones" :value="zona.numRate.toString()">{{zona.numRate}}</option>
                 </select>
               </div>
               <div class="field">

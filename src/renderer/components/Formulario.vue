@@ -246,7 +246,7 @@
           }
           this.zone = ipcRenderer.sendSync('get-zoneSync', parseInt(this.client.zone));
           this.service = ipcRenderer.sendSync('get-services-cost', (this.test==1 ? 'Agua' : 'Cable'), this.zone.numRate);
-          console.log(dd.value);
+          //console.log(dd.value);
           this.amount = (parseInt(this.service.cost) + parseInt(this.zone.cost));
           this.moras = JSON.parse(dd.value).moras;
           this.debts = JSON.parse(dd.value).debts;
@@ -303,8 +303,6 @@
             if(client.services.includes('Cable')){
               billsCable = ipcRenderer.sendSync('get-bills-cable-clientSync', client.idnumber);
               latestCable = this.lastBill(billsCable);
-              if(client.idnumber === "0801-9876-32323")
-                console.log('Latest cable ', JSON.stringify(latestCable));
             }
             if(latestAgua) {
               let currBillYear = parseInt(latestAgua.dateYear);
@@ -326,14 +324,14 @@
                     sameTime = true;
                   }
                 }
-                this.moraAgua.push({client, moras});
+                this.moraAgua.push({client, moras, debts: 0});
                 // console.log(`Cliente debe ${moras} pagos de agua`);
               }
             }else if(client.services.includes('Agua')){
               let joinMonth = parseInt(client.joinMonth);
               let joinYear = parseInt(client.joinYear);
               if(joinMonth === monthInt && joinYear === yearInt) {
-                  this.moraAgua.push({client, moras: 1});
+                  this.moraAgua.push({client, moras: 1, debts: 0});
               }else{
                 let sameTime = false;
                 let moras = 0;
@@ -349,7 +347,7 @@
                     sameTime = true;
                   }
                 }
-                this.moraAgua.push({client, moras});
+                this.moraAgua.push({client, moras, debts: 0});
               }
             }
 
@@ -392,7 +390,7 @@
                   }
                 }
                 if(moras > 0){
-                  this.moraCable.push({client, moras, debts});
+                  this.moraCable.push({client, moras, debts: 0});
                 }
               }
             }else if(client.services.includes('Cable')) {
