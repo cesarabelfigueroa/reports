@@ -11,3 +11,4 @@
 {"email":"pato@lucas.com","firstname":"pato","idnumber":"0801-1231-22323","joinDay":"11","joinMonth":"02","joinYear":"2018","lastname":"lucas","services":["Cable","Agua"],"zone":"2","_id":"bGIyfgLTsEPQsODy"}
 {"email":"mmatamoros@gmail.com","firstname":"Mauricio","idnumber":"0801-1441-43431","joinDay":"07","joinMonth":"05","joinYear":"2019","lastname":"Matamoros","services":["Cable","Agua"],"zone":"2","_id":"mgygISSvhm9x0sRc"}
 {"_id":"r7jjSb8FR92B4rz9","email":"rgaldam@gmail.com","firstname":"Ricardo","idnumber":"0801-1997-85671","lastname":"Galdamez","services":["Cable"],"zone":"1","joinDay":"02","joinMonth":"02","joinYear":"2018"}
+{"email":"elbryan@startek.com","firstname":"El Bryan","idnumber":"0801-1995-67875","joinDay":"06","joinMonth":"06","joinYear":"2019","lastname":"Madrid Lopez","services":["Cable","Agua"],"zone":"3","_id":"EnmydMRwdSmAmjJz"}
