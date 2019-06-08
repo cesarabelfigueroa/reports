@@ -6,7 +6,7 @@
        <div class="ui center aligned container">
          <div class="ui two inverted olive item menu">
            <a class="item" v-bind:class="{active: tabNumber===3}" v-on:click="tabSelected(3)"><h3><i class="suitcase icon"></i>Servicios</h3></a>
-           <a class="item" v-bind:class="{active: tabNumber===4}" v-on:click="tabSelected(4)"><h3><i class="home icon"></i>Zonas</h3></a>
+           <a class="item" v-bind:class="{active: tabNumber===4}" v-on:click="tabSelected(4)"><h3><i class="home icon"></i>Tarifas</h3></a>
          </div>
        </div>
        <div class="tabContent">
@@ -22,10 +22,13 @@
                <thead class="tableHeader">
                  <tr>
                    <!-- <th>Identidad</th> -->
-                   <th>Nombre</th>
+                   <th>Servicio</th>
                    <th>Descripción</th>
-                   <th>Zona</th>
-                   <th>Monto (Lps)</th>
+                   
+                   <th>Tarifa</th>
+                   <th>Monto Base(Lps)</th>
+                   <th>Costo Tarifa(Lps)</th>
+                   <th>Monto Total(Lps)</th>
                    <th>Modificar</th>
                  </tr>
                </thead>
@@ -36,6 +39,8 @@
                    <td>{{servicio.description}}</td>
                    <td>{{servicio.zone}}</td>
                    <td>{{servicio.cost}}</td>
+                   <td>{{zones[parseInt(servicio.zone)-1].cost}}</td>
+                   <td>{{parseInt(servicio.cost) + parseInt(zones[parseInt(servicio.zone)-1].cost)}}</td>
                    <td class="center aligned">
                      <button  v-on:click="modifyService(servicio._id,index)" class="circular ui teal icon button">
                        <i class="icon write"></i>
@@ -83,24 +88,24 @@
          <div v-if="tabNumber==4">
            <div id="tableContainer">
              <table class="ui celled padded table">
+               <col width="10%">
+               <col width="50%">
                <col width="20%">
-               <col width="20%">
-               <col width="40%">
-               <col width="5%">
-               <col width="5%">
+               <col width="10%">
+               <col width="10%">
                <thead class="tableHeader">
                  <tr>
-                   <th>Identidad</th>
-                   <th>Nombre</th>
+                   <th>Numero</th>
                    <th>Descripción</th>
+                   <th>Costo</th>
                    <th>Modificar</th>
                  </tr>
                </thead>
                <tbody>
                  <tr v-for="(zona, index) in zones">
-                   <td>{{zona._id}}</td>
-                   <td>{{zona.name}}</td>
+                   <td>{{zona.numRate}}</td>
                    <td>{{zona.description}}</td>
+                   <td>{{zona.cost}}</td>
                    <td class="center aligned">
                      <button  v-on:click="modifyZone(zona._id, index)" class="circular ui teal icon button">
                        <i class="icon write"></i>
@@ -134,12 +139,13 @@
         service:{
           name: '',
           description: '',
-          zone: '',
+          zone: 1,
           cost: ''
         },
         zone:{
-          name:'',
-          description:''
+          numRate: 1,
+          description:'',
+          cost: ''
         },
         zones: [],
         services: [],
@@ -164,7 +170,6 @@
           let name = this.zone.name.trim();
           let description = this.zone.description.trim();
           if(name!=''){
-            const {ipcRenderer} = require('electron');
             this.zone = {
               name,
               description
@@ -184,7 +189,7 @@
         ipcRenderer.on('delete-zone-ret', (event, err) => {
           if(!err) {
             this.message = 'Removido con exito!';
-            this.title = 'Eliminar Zona';
+            this.title = 'Eliminar Tarifa';
             this.modalType(5);
           } else {
             this.message = 'Error al eliminar';

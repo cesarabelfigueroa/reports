@@ -115,7 +115,7 @@
                   </div>
                   <div class="ui horizontal segments">
                     <div class="ui segment">
-                      <h3>Monto Anual:</h3>
+                      <h3>Monto Anual (1 mes gratuito):</h3>
                     </div>
                     <div class="ui segment">
                       <h3>{{total}} Lps</h3>
@@ -205,7 +205,7 @@
             <div class="modal-header">
               <slot name="header">
                 <div class="ui inverted segment">
-                  <h1><i class="write olive icon"></i> Modificar datos de Zona</h1>
+                  <h1><i class="write olive icon"></i> Modificar datos de Tarifa</h1>
                 </div>
                 <hr>
               </slot>
@@ -214,9 +214,9 @@
               <slot name="body">
                 <form class="ui form">
                   <div class="field">
-                    <label>Nombre:  <i class="asterisk blue icon"></i></label>
+                    <label>Tarifa  {{zone.numRate}}<i class="asterisk blue icon"></i></label>
                     <div class="ui left icon input" id="zonaLabel">
-                      <h4><i class="home icon"></i>{{zone.name}}</h4>
+                      <h4><i class="home icon"></i></h4>
                     </div>
                   </div>
                   <div class="field">
@@ -224,6 +224,10 @@
                     <div>
                       <textarea v-model="zone.description" placeholder="Descripción" rows="3"></textarea>
                     </div>
+                  </div>
+                  <div class="field">
+                    <label>Monto(Lps): </label>
+                    <input type="number" v-model="zone.cost"/>
                   </div>
                 </form>
               </slot>
@@ -333,7 +337,7 @@
       modifyService() {
         console.log('aqui si');
         let name = this.service.name.trim();
-        let zone = this.service.zone.trim();
+        let zone = this.service.zone;
         let cost = this.service.cost.trim();
         console.log(name+ ' '+zone+ ' '+cost);
         if (name!='' && zone!='' && cost!='') {
@@ -391,7 +395,7 @@
               fine: 0,
               dateYear,
               dateMonth: moment().month(i+1).format("MM"),
-              dateDay: moment().date(1).format("DD"),
+              dateDay,
               dateTime
             }
             newBills.push(tempBill);
@@ -409,8 +413,8 @@
       this.amount = 0;
       this.indexCliente = 0;
       if(this.mode == 2) {
-        let servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'), this.client.zone);
-        this.amount = parseInt(servicio.cost);
+        let servicio = ipcRenderer.sendSync('get-services-cost',(this.test==1 ? 'Agua' : 'Cable'), parseInt(this.client.zone));
+        this.amount = parseInt(servicio.cost) + parseInt(this.zone.cost);
       }
     },
     mounted(){

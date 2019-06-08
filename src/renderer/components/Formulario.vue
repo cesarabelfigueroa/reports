@@ -76,7 +76,7 @@
       </div>
     </div>
     <!-- ************************MODAL PROMOCION************************ -->
-    <Modal v-if="showModal" :client="client" :clients="clients" :service="service" :title="title" :message="message" :mode="modeIndex" :test="test" @close="showModal = false" @finish="closePromocion()">
+    <Modal v-if="showModal" :client="client" :clients="clients" :service="service" :title="title" :message="message" :mode="modeIndex" :zone="zone" :test="test" @close="showModal = false" @finish="closePromocion()">
 
     </Modal>
     <br><br>
@@ -115,12 +115,17 @@
           lastname: '',
           email: '',
           services:[],
-          zone: ''
+          zone: 1
         },
-        service:{
+        service: {
           name: '',
           description: '',
-          zone: '',
+          zone: 1,
+          cost: ''
+        },
+        zone: {
+          numRate: 1,
+          description: '',
           cost: ''
         },
         message: '',
@@ -135,23 +140,8 @@
     },
     computed : {
       total: function () {
-
-        // const dd = document.getElementById('clientdropdown');
-        // let cli = JSON.parse(dd.options[dd.selectedIndex]).client;
-        // let moras = JSON.parse(dd.options[dd.selectedIndex]).moras;
-        let day = parseInt(moment().format("DD"));
-        let mult = this.moras;
-        if(day <= 7){
-          mult = this.moras - 1;
-        }
-        if(mult < 0){
-          mult = 0;
-        }
-        if(this.test == 1) {
-          mult = 0;
-        }
-        this.mensajeMora = this.breakdown !='' ? `${this.debts} moras: ${this.debts*10} Lps`: '';
-        this.totalFine = this.debts > 0 ? 10*this.debts : 0;
+        this.totalFine = 10*this.debts;
+        this.mensajeMora = this.breakdown !='' ? `${this.debts} mora(s): ${this.totalFine} Lps`: '';
         return this.totalFine + (parseInt(this.amount)*this.moras);
       }
     },
@@ -161,6 +151,33 @@
         this.$electron.shell.openExternal(link)
       },
       closePromocion(){
+        let dd = document.getElementById('clientdropdown');
+        dd.selectedIndex = 0;
+        this.client = {
+          idnumber: '',
+          firstname: '',
+          lastname: '',
+          email: '',
+          services:[],
+          zone: ''
+        }
+        this.service = {
+          name: '',
+          description: '',
+          zone: 1,
+          cost: ''
+        }
+        this.zone = {
+          numRate: 1,
+          description: '',
+          cost: ''
+        }
+        this.debts = 0;
+        this.totalFine = 0;
+        this.amount = 0;
+        this.mensajeMora = '';
+        this.breakdown = '';
+        this.boolEnero = false;
         this.showModal = false;
         this.message = 'Factura ingresada con éxito';
         this.title = 'Alerta';
@@ -230,14 +247,16 @@
           if(parseInt(moment().format("DD")) > 7 && this.test==2){
             this.fine = 10;
           }
-          this.service = ipcRenderer.sendSync('get-services-cost', (this.test==1 ? 'Agua' : 'Cable'), this.clients[this.indexCliente].zone);
-          this.amount = parseInt(this.service.cost);
+          this.zone = ipcRenderer.sendSync('get-zoneSync', parseInt(this.client.zone));
+          this.service = ipcRenderer.sendSync('get-services-cost', (this.test==1 ? 'Agua' : 'Cable'), this.zone.numRate);
+          //console.log(dd.value);
+          this.amount = (parseInt(this.service.cost) + parseInt(this.zone.cost));
           this.moras = JSON.parse(dd.value).moras;
           this.debts = JSON.parse(dd.value).debts;
           this.breakdown = this.moras > 0 ? `${this.moras} Pago(s): ${this.moras*this.amount} Lps` : `0 Pago(s): 0 Lps`;
           
           //Determinar si aplica la promocion
-          if(moment().format("MM") === "05" && this.test == 2){
+          if(moment().format("MM") === "01" && this.test == 2){
             this.boolEnero = parseInt(moment().format("DD")) > 7 ? this.debts < 2 : this.debts == 0;
             if(this.boolEnero === false) {
               this.warnMessage = 'Cliente tiene moras pendientes de meses anteriores, no aplica para la promocion';
@@ -287,8 +306,6 @@
             if(client.services.includes('Cable')){
               billsCable = ipcRenderer.sendSync('get-bills-cable-clientSync', client.idnumber);
               latestCable = this.lastBill(billsCable);
-              if(client.idnumber === "0801-9876-32323")
-                console.log('Latest cable ', JSON.stringify(latestCable));
             }
             if(latestAgua) {
               let currBillYear = parseInt(latestAgua.dateYear);
@@ -310,14 +327,14 @@
                     sameTime = true;
                   }
                 }
-                this.moraAgua.push({client, moras});
+                this.moraAgua.push({client, moras, debts: 0});
                 // console.log(`Cliente debe ${moras} pagos de agua`);
               }
             }else if(client.services.includes('Agua')){
               let joinMonth = parseInt(client.joinMonth);
               let joinYear = parseInt(client.joinYear);
               if(joinMonth === monthInt && joinYear === yearInt) {
-                  this.moraAgua.push({client, moras: 1});
+                  this.moraAgua.push({client, moras: 1, debts: 0});
               }else{
                 let sameTime = false;
                 let moras = 0;
@@ -333,7 +350,7 @@
                     sameTime = true;
                   }
                 }
-                this.moraAgua.push({client, moras});
+                this.moraAgua.push({client, moras, debts: 0});
               }
             }
 
@@ -349,12 +366,7 @@
                 let debts = 0;
                 while(!sameTime) {
                   
-                  if(currBillMonth === 12){
-                    currBillMonth = 1;
-                    currBillYear++;
-                  }else{
-                    currBillMonth++;
-                  }
+                  
                   if(currBillMonth === monthInt && currBillYear === yearInt){
                     if(dayInt >= 30 || (monthInt === 2 && dayInt >= 28)){
                       moras++;
@@ -373,9 +385,15 @@
                   if(currBillMonth === monthInt && currBillYear === yearInt) {
                     sameTime = true;
                   }
+                  if(currBillMonth === 12){
+                    currBillMonth = 1;
+                    currBillYear++;
+                  }else{
+                    currBillMonth++;
+                  }
                 }
                 if(moras > 0){
-                  this.moraCable.push({client, moras, debts});
+                  this.moraCable.push({client, moras, debts: 0});
                 }
               }
             }else if(client.services.includes('Cable')) {
@@ -383,23 +401,17 @@
               let joinMonth = parseInt(client.joinMonth);
               let joinYear = parseInt(client.joinYear);
               if(joinMonth === monthInt && joinYear === yearInt) {
+                if(dayInt >= 30 || (monthInt === 2 && day >= 28)){
                   this.moraCable.push({client, moras: 1, debts: 0});
+                }
               }else{
                 let sameTime = false;
                 let moras = 0;
                 let debts = 0;
                 while(!sameTime){
-                  if(joinMonth === 12){
-                    joinMonth = 1;
-                    joinYear++;
-                  }else{
-                    joinMonth++;
-                  }
-                  if(joinMonth === monthInt && joinYear === yearInt){
-                    if(dayInt >= 30 || (monthInt === 2 && day >= 28)){
-                      moras++;
-                    }
-                  }else{
+                  if(joinYear < yearInt){
+                    moras++;
+                  }else if(joinMonth <= monthInt && joinYear === yearInt){
                     moras++;
                   }
                   if((joinMonth === monthInt-1 && joinYear === yearInt)||(joinMonth===12 && monthInt===1 && joinYear === yearInt-1)){
@@ -411,6 +423,12 @@
                   }
                   if(joinMonth === monthInt && joinYear === yearInt){
                     sameTime = true;
+                  }
+                  if(joinMonth === 12){
+                    joinMonth = 1;
+                    joinYear++;
+                  }else{
+                    joinMonth++;
                   }
                 }
                 this.moraCable.push({client, moras, debts});
@@ -444,6 +462,10 @@
 
       ipcRenderer.on('return-services-cost', (event,arg)=>{
         this.service = arg;
+      });
+
+      ipcRenderer.on('return-zone', (event, arg) => {
+        this.zone = arg;
       });
       this.clientesMora();
     },
