@@ -69,7 +69,7 @@
         <div class="ui bottom attached tab" v-bind:class="{active: activeTab==2}" v-bind:style="{display: activeTab==2}" data-tab="list">
           <div class="contentHeader">
             <h1><i class="user circle outline icon"></i>Lista de Clientes</h1>
-            <button class="ui olive button" id="nuevoCliente" v-on:click="JSONToXLSConvertor"><i class="plus icon"></i>Exportar Lista de Clientes a Excel</button>
+            <button class="ui yellow button" id="nuevoCliente" v-on:click="JSONToXLSConvertor"><i class="plus icon"></i>Exportar Lista de Clientes a Excel</button>
             <br><br>
           </div>
             <!-- <ol>
@@ -112,7 +112,7 @@
                       </div>
                     </td>
                     <td class="center aligned">
-                      <button  v-on:click="modifyContent(cli._id, index)" class="circular ui teal icon button">
+                      <button  v-on:click="modifyContent(cli._id, index)" class="circular ui blue icon button">
                         <i class="icon write"></i>
                       </button>
                     </td>

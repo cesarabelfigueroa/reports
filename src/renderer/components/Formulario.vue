@@ -4,13 +4,13 @@
     <br>
     <div id="contenido">
       <div class="titulo">
-        <div v-if="test==2" id="header-cable">
+        <div v-if="test==2" id="header-form">
           <br>
           <h1><i class="big tv icon"></i>Pago Cable</h1>
           <h3>*Por mora se cobran L.10 extra. (Se aplica despues del 7mo dia de cada mes)</h3>
           <br>
         </div>
-        <div v-if="test==1" id="header-agua">
+        <div v-if="test==1" id="header-form">
           <br>
           <h1><i class="big shower icon"></i>Pago Agua</h1>
           <h3>*No hay cobro extra por mora para este servicio</h3>
@@ -39,7 +39,7 @@
                 <h3>{{total}} Lps</h3>
               </div>
             </div>
-            <div v-if="warning!=''" class="ui small orange inverted segment">
+            <div v-if="warning!=''" class="ui small yellow inverted segment">
               <h5><i class="circle info icon"></i> {{warning}}</h5>
             </div>
             <br>
@@ -488,7 +488,6 @@
     text-align: center;
   }
   .fondo{
-    background-color: rgb(27, 62, 71);
     background-size: cover;
     filter: blur(2px) brightness(170%) ;
     position: fixed;
@@ -499,15 +498,10 @@
     z-index: -1;
   }
 
-  #header-cable{
-    background-color: #FFCC00;
-    box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75);
-    text-align: center;
-  }
-
-  #header-agua{
-    background-color: #58B7D2;
-    box-shadow: inset 3px 3px 34px 6px rgba(0,0,0,0.75);
+  #header-form{
+    /* background-color: #bfbfbf; */
+    background-color: rgb(33, 133, 208);
+    color: white;
     text-align: center;
   }
 

@@ -2,7 +2,12 @@
   <div class="principal">
     <div class="fondo"></div>
       <div class="ui center aligned container" id="contenedor">
-        <div class="ui two column grid">
+      <div class="header-container">
+        <div class="ui segment header-segment header-title">
+          <h1 class="">Sistema de Pago</h1>
+        </div>
+      </div>
+        <div class="ui two column grid menu-container">
           <div class="column">
             <router-link to="/formulario/1" test="hola">
               <div class="ui circular segment " id="menu1">
@@ -12,8 +17,6 @@
                 </h1>
               </div>
             </router-link>
-            <h2 class="agua">--------------------------
-              <br>Sistema de Pago</h2>
           </div>
           <div class="column">
             <router-link to="/formulario/2">
@@ -24,8 +27,6 @@
                 </h1>
               </div>
             </router-link>
-            <h2 class="cable">--------------------------
-              <br>Sistema de Pago</h2>
           </div>
         </div>
       </div>
@@ -45,12 +46,29 @@
 
 <style scoped>
 
+  .header-segment{
+    color: white !important;
+    background: black;
+    box-shadow: 0px 0px 23px 4px rgba(0,0,0,0.97);
+  }
+  
+  .header-container {
+    position: absolute;
+    top: 18%;
+    left: 50%;
+  }
+
+  .header-title {
+    position: relative;
+    left: -50%; 
+  }
+
   .fondo{
     background-color: white;
     background: linear-gradient(
       to right,
-      #58B7D2 0%,
-      #58B7D2 50%,
+      #0E6EB8 0%,
+      #0E6EB8 50%,
       #FFFFFE 50%,
       #FFFFFE 100%
     );
@@ -61,6 +79,10 @@
     left: 0;
     z-index: -1;
   }
+  .menu-container{
+    position: relative;
+    top: 60%;
+  }
   .principal{
     padding-top: 15%;
   }
@@ -68,25 +90,25 @@
     color: #FFFFFE;
   }
   .cable{
-    color: #58B7D2;
+    color: rgb(33, 133, 208);
   }
   #titulos{
     font-family: 'Quicksand', sans-serif;
     font-size: 30px;
   }
-  .circular, .segment{
+  .circular{
     height: 200px;
     width: 200px;
   }
   #menu1{
     background-color:#FFFFFE;
-    color: #58B7D2;
+    color: rgb(33, 133, 208);
   }
   #menu2{
-    background-color:#58B7D2;
+    background-color:rgb(33, 133, 208);
     color: #FFFFFE;
   }
-  .segment:hover{
+  .circular:hover{
     color: white !important;
     transition: background-color 1s, width 0.5s, height 0.5s !important;
     transition-timing-function: ease-in-out;
@@ -100,7 +122,7 @@
   #menu2:hover{
     background-color:#FFA300;
   }
-  .segment h2:hover{
+  .circular h2:hover{
     color: white !important;
   }
 

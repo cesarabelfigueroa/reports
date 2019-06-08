@@ -4,7 +4,7 @@
      <div class="ui container" id="contenedor">
        <div class="ui black inverted segment"><h1> <i class="setting icon"></i>Administración</h1></div>
        <div class="ui center aligned container">
-         <div class="ui two inverted olive item menu">
+         <div class="ui two inverted yellow item menu">
            <a class="item" v-bind:class="{active: tabNumber===3}" v-on:click="tabSelected(3)"><h3><i class="suitcase icon"></i>Servicios</h3></a>
            <a class="item" v-bind:class="{active: tabNumber===4}" v-on:click="tabSelected(4)"><h3><i class="home icon"></i>Tarifas</h3></a>
          </div>
@@ -42,7 +42,7 @@
                    <td>{{zones[parseInt(servicio.zone)-1].cost}}</td>
                    <td>{{parseInt(servicio.cost) + parseInt(zones[parseInt(servicio.zone)-1].cost)}}</td>
                    <td class="center aligned">
-                     <button  v-on:click="modifyService(servicio._id,index)" class="circular ui teal icon button">
+                     <button  v-on:click="modifyService(servicio._id,index)" class="circular ui blue icon button">
                        <i class="icon write"></i>
                      </button>
                    </td>
@@ -107,7 +107,7 @@
                    <td>{{zona.description}}</td>
                    <td>{{zona.cost}}</td>
                    <td class="center aligned">
-                     <button  v-on:click="modifyZone(zona._id, index)" class="circular ui teal icon button">
+                     <button  v-on:click="modifyZone(zona._id, index)" class="circular ui blue icon button">
                        <i class="icon write"></i>
                      </button>
                    </td>
@@ -287,8 +287,6 @@
 
   }
   .fondo{
-    background: url("~@/assets/financePuzzle.jpg") no-repeat center center;
-    background-size: cover;
     position: fixed;
     width: 100%;
     height: 100%;

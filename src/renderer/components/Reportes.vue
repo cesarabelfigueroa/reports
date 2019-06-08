@@ -2,7 +2,7 @@
   <div class="principal">
     <div class="fondo"></div>
       <div class="ui center aligned container" id="contenedor">
-        <div class="ui four item menu">
+        <div class="ui four item black inverted menu">
           <a class="item" v-bind:class="{active: tabNumber === 1}" v-on:click="tabSelected(1)">Clientes en Mora</a>
           <a class="item" v-bind:class="{active: tabNumber === 2}" v-on:click="tabSelected(2)">Ingreso diario</a>
           <a class="item" v-bind:class="{active: tabNumber === 3}" v-on:click="tabSelected(3)">Ingreso Mensual</a>
@@ -92,7 +92,7 @@
           </div>
           <br>
           <div v-if="bills.length!=0" class="reportaMora">
-            <button class="huge ui inverted orange button" v-on:click="generate(2)"><i class="file alternate outline icon"></i>  Generar PDF de Ingresos {{dayActive}}</button>
+            <button class="huge ui inverted yellow button" v-on:click="generate(2)"><i class="file alternate outline icon"></i>  Generar PDF de Ingresos {{dayActive}}</button>
             <table id="tableContainerDay" class="ui celled padded table">
               <col width="25%">
               <col width="30%">
@@ -122,17 +122,17 @@
         </div>
         <!-- *********** TERCERA TAB *********** -->
         <div v-else-if="tabNumber==3">
-          <div class="ui black inverted segment"><h1> <i class="calendar icon"></i>Ingreso Mensual {{yearActive}}</h1></div>
+          <div class="ui inverted segment black-unicredit"><h1> <i class="calendar icon"></i>Ingreso Mensual {{yearActive}}</h1></div>
           <div class="ui four column grid">
             <div class="row">
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='ENERO'}" v-on:click="cambioMes('ENERO')" class="fluid ui teal button">ENERO</button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='ENERO'}" v-on:click="cambioMes('ENERO')" class="fluid ui blue button">ENERO</button>
               </div>
               <div class="column">
                 <button id="botonMes" v-bind:class="{active:monthActive==='FEBRERO'}" v-on:click="cambioMes('FEBRERO')" class="fluid ui yellow button">FEBRERO </button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='MARZO'}" v-on:click="cambioMes('MARZO')" class="fluid ui teal button"> MARZO</button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='MARZO'}" v-on:click="cambioMes('MARZO')" class="fluid ui blue button"> MARZO</button>
               </div>
               <div class="column">
                 <button id="botonMes" v-bind:class="{active:monthActive==='ABRIL'}" v-on:click="cambioMes('ABRIL')" class="fluid ui yellow button">ABRIL </button>
@@ -143,24 +143,24 @@
                 <button id="botonMes" v-bind:class="{active:monthActive==='MAYO'}" v-on:click="cambioMes('MAYO')" class="fluid ui yellow button"> MAYO</button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='JUNIO'}" v-on:click="cambioMes('JUNIO')" class="fluid ui teal button">JUNIO </button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='JUNIO'}" v-on:click="cambioMes('JUNIO')" class="fluid ui blue button">JUNIO </button>
               </div>
               <div class="column">
                 <button id="botonMes" v-bind:class="{active:monthActive==='JULIO'}" v-on:click="cambioMes('JULIO')" class="fluid ui yellow button">JULIO </button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='AGOSTO'}" v-on:click="cambioMes('AGOSTO')" class="fluid ui teal button">AGOSTO </button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='AGOSTO'}" v-on:click="cambioMes('AGOSTO')" class="fluid ui blue button">AGOSTO </button>
               </div>
             </div>
             <div class="row">
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='SEPTIEMBRE'}" v-on:click="cambioMes('SEPTIEMBRE')" class="fluid ui teal button"> SEPTIEMBRE</button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='SEPTIEMBRE'}" v-on:click="cambioMes('SEPTIEMBRE')" class="fluid ui blue button"> SEPTIEMBRE</button>
               </div>
               <div class="column">
                 <button id="botonMes" v-bind:class="{active:monthActive==='OCTUBRE'}" v-on:click="cambioMes('OCTUBRE')" class="fluid ui yellow  button">OCTUBRE </button>
               </div>
               <div class="column">
-                <button id="botonMes" v-bind:class="{active:monthActive==='NOVIEMBRE'}" v-on:click="cambioMes('NOVIEMBRE')" class="fluid ui teal button">NOVIEMBRE </button>
+                <button id="botonMes" v-bind:class="{active:monthActive==='NOVIEMBRE'}" v-on:click="cambioMes('NOVIEMBRE')" class="fluid ui blue button">NOVIEMBRE </button>
               </div>
               <div class="column">
                 <button id="botonMes" v-bind:class="{active:monthActive==='DICIEMBRE'}" v-on:click="cambioMes('DICIEMBRE')" class="fluid ui yellow button"> DICIEMBRE</button>
@@ -168,7 +168,7 @@
             </div>
           </div>
           <br>
-           <button v-if="bills.length>0" class="huge ui inverted orange button" v-on:click="generate(3)"><i class="file alternate outline icon"></i> Generar PDF de de Ingresos de {{monthActive}}</button>
+           <button v-if="bills.length>0" class="huge ui inverted blue button" v-on:click="generate(3)"><i class="file alternate outline icon"></i> Generar PDF de de Ingresos de {{monthActive}}</button>
           <div class="ui segment"><h2> {{monthActive}}</h2></div>
           <div v-if="bills.length!=0" id="tableContainerMonth">
             <div class="reporteMora">
@@ -202,12 +202,12 @@
         </div>
         <!-- *********** CUARTA TAB *********** -->
         <div v-else>
-          <div class="ui black inverted segment">
+          <div class="ui inverted segment black-unicredit">
             <h1>
               <div class="ui grid">
                 <div class="three column row">
                   <div class="column">
-                    <button v-bind:class="{disabled:lastYear}" class="ui circular olive icon button" v-on:click="arrows('left')">
+                    <button v-bind:class="{disabled:lastYear}" class="ui circular blue icon button" v-on:click="arrows('left')">
                       <i class="arrow left icon"></i>
                     </button>
                   </div>
@@ -215,7 +215,7 @@
                     <i class="calendar icon"></i>Ingreso Anual {{yearActive}}
                   </div>
                   <div class="column">
-                    <button v-bind:class="{disabled:nextYear}" class="ui circular olive icon button" v-on:click="arrows('right')">
+                    <button v-bind:class="{disabled:nextYear}" class="ui circular blue icon button" v-on:click="arrows('right')">
                       <i class="arrow right icon"></i>
                     </button>
                   </div>
@@ -806,6 +806,10 @@ const $ = require('jquery');
 
   #reporteMoraCable, #reporteMoraAgua {
     height: 100%;
+  }
+
+  .black-unicredit{
+    background: rgba(0,0,0, .7)!important;
   }
 
 </style>
