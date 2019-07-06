@@ -287,6 +287,8 @@
 
   }
   .fondo{
+    background: linear-gradient(lightgray, white);
+    background-size: cover;
     position: fixed;
     width: 100%;
     height: 100%;

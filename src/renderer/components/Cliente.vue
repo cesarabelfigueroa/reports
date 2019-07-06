@@ -249,8 +249,8 @@
         }
       },
       modifyContent(_id, index) {
-        this.clientIndex = index;
-        this.client = Object.assign({}, this.clients[index]);
+        this.clientIndex = index+((this.pagina-1)*5);
+        this.client = Object.assign({}, this.clients[this.clientIndex]);
         this.modalType(1);
       },
       closePromocion(){
@@ -263,7 +263,7 @@
         // this.clients.splice(index, 1);
         // ipcRenderer.send('remove-client', _id);
         this.identidad = _id;
-        this.indexC = index;
+        this.indexC = index+((this.pagina-1)*5);
         this.message = 'Esta seguro que desea eliminar este cliente?';
         this.title = 'Alerta';
         this.modalType(6);
