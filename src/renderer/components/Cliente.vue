@@ -92,7 +92,7 @@
                     <th>Nombres</th>
                     <th>Apellidos</th>
                     <th>Correo</th>
-                    <th>Zona</th>
+                    <th>Tarifa</th>
                     <th>Servicios</th>
                     <th>Modificar</th>
                     <th>Eliminar</th>

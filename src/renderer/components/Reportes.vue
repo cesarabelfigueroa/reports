@@ -32,7 +32,7 @@
                   <td>{{cli.client.idnumber}}</td>
                   <td> {{cli.client.firstname}}</td>
                   <td>{{cli.client.lastname}}</td>
-                  <td>{{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}} Lps.</td>
+                  <td>{{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : `${cli.moras} pago`}}</td>
                 </tr>
               </tbody>
             </table>
@@ -64,7 +64,7 @@
                   <td>{{cli.client.idnumber}}</td>
                   <td> {{cli.client.firstname}}</td>
                   <td>{{cli.client.lastname}}</td>
-                  <td>{{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : 'pago'}} Lps.</td>
+                  <td>{{cli.moras === 0 ? '1 pago pero no esta en mora' : cli.moras > 1 ? `${cli.moras} pagos` : `${cli.moras} pago`}}</td>
                 </tr>
               </tbody>
             </table>
