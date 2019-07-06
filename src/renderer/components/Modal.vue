@@ -47,9 +47,9 @@
                     </div>
                   </div>
                   <div class="field">
-                    <label>Zona: <i class="asterisk olive icon"></i></label>
+                    <label>Tarifa: <i class="asterisk olive icon"></i></label>
                     <select v-model="client.zone" class="ui dropdown" id="zoneDropdown">
-                      <option v-for="(zona, index) in zones" v-bind:key="index" :value="zona.name">{{zona.name}}</option>
+                      <option v-for="(zona, index) in zones" v-bind:key="index" :value="zona.numRate">{{zona.numRate}}</option>
                     </select>
                   </div>
                   <div class="field">
@@ -335,11 +335,9 @@
         this.$emit('finish', this.client, this.index);
       },
       modifyService() {
-        console.log('aqui si');
         let name = this.service.name.trim();
         let zone = this.service.zone;
         let cost = this.service.cost.trim();
-        console.log(name+ ' '+zone+ ' '+cost);
         if (name!='' && zone!='' && cost!='') {
           ipcRenderer.send('update-service', this.service);
           this.$emit('finish', this.service, this.index);

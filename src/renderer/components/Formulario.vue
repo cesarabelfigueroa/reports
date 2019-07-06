@@ -488,8 +488,8 @@
     text-align: center;
   }
   .fondo{
+    background: linear-gradient(lightgray, white);
     background-size: cover;
-    filter: blur(2px) brightness(170%) ;
     position: fixed;
     width: 100%;
     height: 100%;
